@@ -55,7 +55,6 @@ class NewOrganization {
   Map<String, dynamic> toJson() => _$NewOrganizationToJson(this);
 }
 
-// Helper functions for longLat serialization
 LongitudeLatitudeModel _longLatFromJson(Map<String, dynamic> json) {
   return LongitudeLatitudeModel.fromJson(json);
 }
