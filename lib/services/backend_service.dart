@@ -316,24 +316,7 @@ class BackendService extends ChangeNotifier {
     }
   }
    
-//get images
 
-  Future<BackendResponse<List<Map<String,dynamic>>>> getImages() async {
-    try {
-      Response response = await _dio.get(
-        '/image/details',
-      );
-      return BackendResponse<List<Map<String,dynamic>>>(
-        title: response.data['title'] ?? '',
-        message: response.data['message'] ?? '',
-        data: response.data['title'] == 'error' ? [] : response.data['data'],
-        statusCode: response.statusCode,
-      );
-    } catch (e) {
-      debugPrint("Error while getting images :${e.toString()}");
-      throw Exception('Unable to get images');
-    }
-  }
   //get image
 
   Future<BackendResponse<Map<String,dynamic>>> getImage({required String imageUrl}) async {
@@ -425,23 +408,4 @@ class BackendService extends ChangeNotifier {
   }
 
 
-//place an order   
-Future<BackendResponse<Map<String,dynamic>>> placeOrder({required NewOrder newOrder}) async{
-
-  try{
-    Response response= await _dio.post("/order/",
-    data: newOrder.toJson());
-
-    return BackendResponse<Map<String,dynamic>>(
-      title: response.data['title']??'',
-      message: response.data['message']??'',
-      data: response.data['title'] == 'error' ? [] : response.data['data'],
-        statusCode: response.statusCode,
-    );
-  }
-  catch(e){
-    debugPrint("Error while placing order :${e.toString()}");
-    throw Exception('Unable to place order');
-}
-}
 }

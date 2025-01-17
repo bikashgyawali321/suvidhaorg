@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:suvidha/models/auth_models/user_model.dart';
-import 'package:suvidha/services/backend_service.dart';
+import 'package:suvidhaorg/models/auth_models/user_model.dart';
+import 'package:suvidhaorg/services/backend_service.dart';
 
 import '../models/backend_response.dart';
 

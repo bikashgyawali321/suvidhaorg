@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:simple_animations/simple_animations.dart';
-import 'package:suvidha/models/auth_models/auth_token.dart';
-import 'package:suvidha/providers/auth_provider.dart';
+import 'package:suvidhaorg/models/auth_models/auth_token.dart';
+import 'package:suvidhaorg/providers/auth_provider.dart';
 
 import '../providers/theme_provider.dart';
 import '../services/custom_hive.dart';

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:suvidha/models/auth_models/auth_token.dart';
-import 'package:suvidha/services/backend_service.dart';
-import 'package:suvidha/services/custom_hive.dart';
+import 'package:suvidhaorg/models/auth_models/auth_token.dart';
+import 'package:suvidhaorg/services/backend_service.dart';
+import 'package:suvidhaorg/services/custom_hive.dart';
 
 class TokenInterceptor extends Interceptor {
   @override

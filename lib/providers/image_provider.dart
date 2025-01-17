@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:suvidha/models/image_models/image_model.dart';
-import 'package:suvidha/services/backend_service.dart';
+import 'package:suvidhaorg/models/image_models/image_model.dart';
+import 'package:suvidhaorg/services/backend_service.dart';
 
 class ImageProvider extends ChangeNotifier{
 
@@ -53,25 +53,7 @@ class ImageProvider extends ChangeNotifier{
     }
   }
 
-//method to get the images
-Future<void> getImages()async{
-  try {
-    final response= await backendService.getImages();
-    if(response.data!=null){
-      images.addAll(response.data!.map((e) => ImageModel.fromJson(e)).toList());
-     
-      notifyListeners();
-    }
-    else{
-      _errorMessage= response.message;
-      notifyListeners();
-    }
-  } catch (e) {
-    debugPrint("Error in getting images :${e.toString()}");
-    _errorMessage="Something went wrong, please try again later";
-    notifyListeners();
-  }
-}
+
   //method to get the image
 Future<void> getImage()async{
    try {
@@ -115,7 +97,7 @@ Future<void> getImage()async{
       } catch (e) {
         debugPrint("Error in deleting image :${e.toString()}");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Something went wrong, please try again later."),
+          SnackBar(content: const Text("Something went wrong, please try again later."),
           backgroundColor: Theme.of(context).colorScheme.onError,
           ),
           );

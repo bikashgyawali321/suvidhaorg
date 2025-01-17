@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:suvidha/services/backend_service.dart';
+import 'package:suvidhaorg/services/backend_service.dart';
 
 import '../../../widgets/custom_button.dart';
 
@@ -41,9 +41,9 @@ class ForgotPasswordProvider extends ChangeNotifier {
     notifyListeners();
     focusNode.unfocus();
 
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     tabController.animateTo(1,
-        duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+        duration:const  Duration(milliseconds: 300), curve: Curves.easeIn);
     loading = false;
     await authService.sendForgotPasswordRequest(email: email);
     tabIndex = 1;
@@ -60,13 +60,13 @@ class ForgotPasswordProvider extends ChangeNotifier {
     notifyListeners();
 
     tabIndex = 2;
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     final response =
         await authService.verifyResetPasswordToken(email: email, token: token);
 
     if (response.statusCode == 200) {
       tabController.animateTo(2,
-          duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+          duration:const  Duration(milliseconds: 300), curve: Curves.easeIn);
       loading = false;
       focusNode.unfocus();
       notifyListeners();
@@ -95,7 +95,7 @@ class ForgotPasswordProvider extends ChangeNotifier {
       confirmPassword: confirmPassword,
     );
     if (response.statusCode == 200) {
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 3));
       loading = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -124,7 +124,7 @@ class ForgotPasswordSheet extends StatefulWidget {
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (context) => ForgotPasswordSheet());
+        builder: (context) =>const  ForgotPasswordSheet());
   }
 
   @override
@@ -160,12 +160,12 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
-                SizedBox(
+              const   SizedBox(
                   height: 10,
                 ),
                 TabBar(
                   controller: provider.tabController,
-                  labelPadding: EdgeInsets.only(right: 16),
+                  labelPadding:const EdgeInsets.only(right: 16),
                   onTap: (index) {
                     provider.setTabIndex();
                   },
@@ -198,9 +198,9 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: 16),
+                             const  SizedBox(height: 16),
                               TextFormField(
-                                decoration: InputDecoration(
+                                decoration:const  InputDecoration(
                                   labelText: 'Email',
                                 ),
                                 onChanged: (value) {
@@ -224,7 +224,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                                 },
                                 autofocus: false,
                               ),
-                              SizedBox(
+                            const   SizedBox(
                                 height: 30,
                               ),
                               CustomButton(
@@ -278,7 +278,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                                 },
                                 maxLength: 6,
                               ),
-                              SizedBox(
+                           const    SizedBox(
                                 height: 20,
                               ),
                               CustomButton(
@@ -293,7 +293,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(
+                            const   SizedBox(
                                 height: 16,
                               ),
                               TextFormField(
@@ -328,7 +328,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                                 },
                                 obscureText: provider.obsecureText,
                               ),
-                              SizedBox(
+                            const   SizedBox(
                                 height: 16,
                               ),
                               TextFormField(
@@ -365,7 +365,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                                 },
                                 obscureText: provider.obsecureText,
                               ),
-                              SizedBox(
+                           const    SizedBox(
                                 height: 20,
                               ),
                               CustomButton(

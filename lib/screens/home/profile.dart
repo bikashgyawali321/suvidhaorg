@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:suvidha/screens/auth/bottomsheets/logout.dart';
-import 'package:suvidha/screens/bottom_sheets/change_theme_bottom_sheet.dart';
+import 'package:suvidhaorg/screens/auth/bottomsheets/logout.dart';
+import 'package:suvidhaorg/screens/bottom_sheets/change_theme_bottom_sheet.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';

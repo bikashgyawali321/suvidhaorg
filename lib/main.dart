@@ -54,7 +54,7 @@ GoRouter _router = GoRouter(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
     ),
-    GoRoute(path: '/profile', builder: (context, state) =>const  Profile()),
+    GoRoute(path: '/profile', builder: (context, state) =>const  Profile(),),
   ],
 );
 

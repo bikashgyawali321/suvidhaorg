@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:suvidha/models/auth_models/auth_token.dart';
+import 'package:suvidhaorg/models/auth_models/auth_token.dart';
 
 class CustomHive {
   CustomHive._internal();
@@ -13,7 +13,7 @@ class CustomHive {
 
   Future<void> init() async {
     await Hive.initFlutter();
-    _box = await Hive.openBox('suvidha');
+    _box = await Hive.openBox('suvidhaOrg');
   }
 
   //save auth tokens

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:suvidha/services/custom_hive.dart';
+import 'package:suvidhaorg/services/custom_hive.dart';
 
 extension ColorX on String {
   Color get toColor => pastelCardColor[hashCode % pastelCardColor.length];

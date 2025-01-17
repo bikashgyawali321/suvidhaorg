@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:suvidha/models/offered_service.dart';
-import 'package:suvidha/providers/theme_provider.dart';
+import 'package:suvidhaorg/models/offered_service.dart';
+import 'package:suvidhaorg/providers/theme_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
