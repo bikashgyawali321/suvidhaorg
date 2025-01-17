@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:suvidha/models/auth_models/register_request.dart';
-import 'package:suvidha/providers/theme_provider.dart';
-import 'package:suvidha/services/backend_service.dart';
-import 'package:suvidha/widgets/custom_button.dart';
+import 'package:suvidhaorg/models/auth_models/register_request.dart';
+import 'package:suvidhaorg/providers/theme_provider.dart';
+import 'package:suvidhaorg/services/backend_service.dart';
+import 'package:suvidhaorg/widgets/custom_button.dart';
 
 class RegisterProvider extends ChangeNotifier {
   final BuildContext context;
@@ -30,7 +30,7 @@ class RegisterProvider extends ChangeNotifier {
   }
 
   //method to register user
-  Future<void> registerUser() async {
+  Future<void> registerOrganization() async {
     loading = true;
     notifyListeners();
 
@@ -41,7 +41,7 @@ class RegisterProvider extends ChangeNotifier {
     }
 
     try {
-      final response = await backendService.registerUser(request);
+      final response = await backendService.registerOrg(request);
 
       if (response.statusCode == 200) {
         loading = false;
@@ -69,7 +69,7 @@ class RegisterProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      debugPrint("Error in registering User: ${e.toString()}");
+      debugPrint("Error in registering organization: ${e.toString()}");
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -194,7 +194,7 @@ class RegisterScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Text(
-                                    "Create an account",
+                                    "Create an account as an organization",
                                     style: Theme.of(context)
                                         .textTheme
                                         .headlineMedium,
@@ -202,16 +202,16 @@ class RegisterScreen extends StatelessWidget {
                                   const SizedBox(height: 25),
                                   TextFormField(
                                     decoration: const InputDecoration(
-                                        labelText: 'Full Name'),
+                                        labelText: 'Organization Name'),
                                     onChanged: (value) =>
                                         provider.request.name = value,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Full Name is required';
+                                        return 'Org name is required';
                                       }
                                       if (!RegExp(r'^[a-zA-Z ]+$')
                                           .hasMatch(value)) {
-                                        return 'Full Name can only contain alphabets and spaces';
+                                        return 'Organization name can only contain alphabets and spaces';
                                       }
                                       return null;
                                     },
@@ -305,12 +305,12 @@ class RegisterScreen extends StatelessWidget {
                                       return null;
                                     },
                                     onFieldSubmitted: (value) =>
-                                        provider.registerUser,
+                                        provider.registerOrganization,
                                   ),
                                   const SizedBox(height: 20),
                                   CustomButton(
                                     label: 'Register',
-                                    onPressed: provider.registerUser,
+                                    onPressed: provider.registerOrganization,
                                     loading: provider.loading,
                                   ),
                                   TextButton(

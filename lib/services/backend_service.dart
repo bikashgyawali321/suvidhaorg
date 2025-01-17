@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:suvidha/models/auth_models/login_request.dart';
-import 'package:suvidha/models/auth_models/register_request.dart';
-import 'package:suvidha/models/backend_response.dart';
-import 'package:suvidha/services/interceptors/token_interceptor.dart';
+import 'package:suvidhaorg/models/auth_models/login_request.dart';
+import 'package:suvidhaorg/models/auth_models/register_request.dart';
+import 'package:suvidhaorg/models/backend_response.dart';
+import 'package:suvidhaorg/services/interceptors/token_interceptor.dart';
 import '../models/order_models/new_order.dart';
 import 'interceptors/log_interceptor.dart';
 
@@ -20,11 +20,11 @@ class BackendService extends ChangeNotifier {
     ..interceptors.add(CustomLogInterceptor());
 
   // Register user
-  Future<BackendResponse<Map<String, dynamic>>> registerUser(
+  Future<BackendResponse<Map<String, dynamic>>> registerOrg(
       RegisterRequest request) async {
     try {
       Response response = await _dio.post(
-        '/auth/registerUser',
+        '/auth/registerorg',
         data: request.toJson(),
       );
       return BackendResponse<Map<String, dynamic>>(
@@ -442,5 +442,6 @@ Future<BackendResponse<Map<String,dynamic>>> placeOrder({required NewOrder newOr
   catch(e){
     debugPrint("Error while placing order :${e.toString()}");
     throw Exception('Unable to place order');
+}
 }
 }
