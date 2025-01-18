@@ -50,6 +50,8 @@ class NotificationService extends ChangeNotifier {
     if (token == null) return;
 
     if (_customHive.getFCMToken() == token) return;
+    
+
 
     final resp = await  authService.addFcmToken(fcmToken: token);
     if (resp.statusCode == 200) {

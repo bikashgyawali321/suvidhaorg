@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:suvidhaorg/models/auth_models/user_model.dart';
-import 'longlat.dart';
+import 'coordinates.dart';
 
 part 'org.g.dart';
 
@@ -14,7 +14,7 @@ class Organization {
   String address;
 
   @JsonKey(fromJson: _longLatFromJson, toJson: _longLatToJson)
-  LongLat longLat;
+  LongitudeLatitudeModel longLat;
 
   bool isBlocked;
   bool isActive;
@@ -65,11 +65,11 @@ class Organization {
   Map<String, dynamic> toJson() => _$OrganizationToJson(this);
 }
 
-// Helper functions for longLat serialization
-LongLat _longLatFromJson(Map<String, dynamic> json) {
-  return LongLat.fromJson(json);
+
+LongitudeLatitudeModel _longLatFromJson(Map<String, dynamic> json) {
+  return LongitudeLatitudeModel.fromJson(json);
 }
 
-Map<String, dynamic> _longLatToJson(LongLat longLat) {
+Map<String, dynamic> _longLatToJson(LongitudeLatitudeModel longLat) {
   return longLat.toJson();
 }

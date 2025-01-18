@@ -12,14 +12,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final OfferedServiceList offeredServiceList = OfferedServiceList();
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-     
+            
         title:
-            Text('सुविधा', style: Theme.of(context).textTheme.headlineMedium),
+            Text('सुविधा सेवा', style: Theme.of(context).textTheme.headlineMedium),
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
           IconButton(

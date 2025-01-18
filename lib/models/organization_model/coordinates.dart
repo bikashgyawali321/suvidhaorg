@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'coordinates.g.dart'; // Correctly point to the generated file
+part 'coordinates.g.dart'; 
 
 @JsonSerializable()
 class LongitudeLatitudeModel {

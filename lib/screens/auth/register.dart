@@ -175,7 +175,7 @@ class RegisterScreen extends StatelessWidget {
                                   height: 200,
                                 ),
                                 Text(
-                                  'सुविधा',
+                                  'सुविधा सेवा',
                                   style: Theme.of(context)
                                       .textTheme
                                       .displaySmall
@@ -194,24 +194,24 @@ class RegisterScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Text(
-                                    "Create an account as an organization",
+                                    "Create an account for an organization",
                                     style: Theme.of(context)
                                         .textTheme
-                                        .headlineMedium,
+                                        .headlineSmall,
                                   ),
                                   const SizedBox(height: 25),
                                   TextFormField(
                                     decoration: const InputDecoration(
-                                        labelText: 'Organization Name'),
+                                        labelText: 'Name'),
                                     onChanged: (value) =>
                                         provider.request.name = value,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Org name is required';
+                                        return 'Name is required';
                                       }
                                       if (!RegExp(r'^[a-zA-Z ]+$')
                                           .hasMatch(value)) {
-                                        return 'Organization name can only contain alphabets and spaces';
+                                        return 'Name can only contain alphabets and spaces';
                                       }
                                       return null;
                                     },
@@ -343,7 +343,7 @@ class RegisterScreen extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    'सुविधा',
+                                    'सुविधा सेवा',
                                     style: Theme.of(context)
                                         .textTheme
                                         .displaySmall

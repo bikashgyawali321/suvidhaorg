@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:suvidhaorg/firebase_options.dart';
 import 'package:suvidhaorg/screens/home/home.dart';
 import 'package:suvidhaorg/screens/splash.dart';
 
@@ -12,10 +13,13 @@ import 'screens/auth/login.dart';
 import 'screens/auth/register.dart';
 import 'services/backend_service.dart';
 import 'services/custom_hive.dart';
+import 'services/notification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Firebase.initializeApp(
+    options: FirebaseOptionsAndroid.currentPlatform,
+  );
   await CustomHive().init();
   runApp( const ProviderWrappedApp());
 }
@@ -30,6 +34,9 @@ class ProviderWrappedApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => BackendService()),
         ChangeNotifierProvider(create: (_) => AuthProvider(_)),
+              ChangeNotifierProvider(
+          create: (_) => NotificationService(_.read<BackendService>()),
+              ),
       ],
       child: MyApp(),
     );

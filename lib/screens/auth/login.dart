@@ -74,7 +74,7 @@ class LoginScreen extends StatelessWidget {
                         Expanded(
                           flex: 6,
                           child: Text(
-                            'सुविधा',
+                            'सुविधा सेवा',
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall
@@ -97,7 +97,7 @@ class LoginScreen extends StatelessWidget {
                           children: [
                             Text(
                               "Let's login as an organization",
-                              style: Theme.of(context).textTheme.headlineMedium,
+                              style: Theme.of(context).textTheme.headlineSmall,
                             ),
                           const   SizedBox(
                               height: 30,

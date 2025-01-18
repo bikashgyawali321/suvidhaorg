@@ -7,12 +7,13 @@ import 'package:suvidhaorg/models/auth_models/register_request.dart';
 import 'package:suvidhaorg/models/backend_response.dart';
 import 'package:suvidhaorg/services/interceptors/token_interceptor.dart';
 import '../models/order_models/new_order.dart';
+import '../models/organization_model/new_org.dart';
 import 'interceptors/log_interceptor.dart';
 
 class BackendService extends ChangeNotifier {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: "http://127.0.0.1:4000/api",
+      baseUrl: "http://127.0.0.1:4040/api",
       headers: {"Content-Type": "application/json"},
     ),
   )
@@ -230,7 +231,7 @@ class BackendService extends ChangeNotifier {
   }
 
   // Get user details
-  Future<BackendResponse<Map<String, dynamic>>> getUserDetails() async {
+  Future<BackendResponse<Map<String, dynamic>>> getUserDetails () async {
     try {
       Response response = await _dio.get('/auth/me');
       return BackendResponse<Map<String, dynamic>>(
@@ -269,9 +270,9 @@ class BackendService extends ChangeNotifier {
   //remove fcm token
   Future<BackendResponse<Map<String,dynamic>>> removeFcmToken({required String fcmToken}) async {
     try {
-      Response response = await _dio.delete(
-        '/auth/removeFcm',
-        queryParameters: {
+      Response response = await _dio.post(
+        '/auth/removefcm',
+        data: {
           'fcmToken':fcmToken
         }
       );
@@ -406,6 +407,26 @@ class BackendService extends ChangeNotifier {
       
     } 
   }
+ 
 
+ //create an organization control
 
-}
+ Future<BackendResponse<Map<String,dynamic>>> createOrganization({ required NewOrganization newOrg }) async{
+  try{
+    Response response= await _dio.post('/org',
+    data: newOrg.toJson()
+    );
+
+    return BackendResponse<Map<String,dynamic>>(
+      title: response.data['title']??'',
+      message: response.data['message']??'',
+      data: response.data['title'] == 'error' ? null : response.data['data'],
+      statusCode: response.statusCode,
+    );
+  }
+  catch(e){
+    debugPrint("Error while creating organization: ${e.toString()}");
+    throw Exception('Unable to create organization: ${e.toString()}');
+  }
+ }
+ }
