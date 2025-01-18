@@ -11,19 +11,19 @@ class NewOrganization {
 
   @JsonKey(fromJson: _longLatFromJson, toJson: _longLatToJson)
   LongitudeLatitudeModel longLat;
-  
-  bool isBlocked;
-  bool isActive;
-  String? status;
+
   String contactPerson;
   String contactNumber;
   String panNo;
+
+  @JsonKey(includeIfNull: false)
   String? message;
-  num? ratedBy;
-  num? rating;
-  num? totalRating;
-  List<String> service;
-  String citzImg;
+
+  // Since citzImg is optional in Joi schema, it can be null or omitted
+  @JsonKey(includeIfNull: false)
+  String? citzImg;
+
+  // orgImg and panImg are required as per the Joi schema
   String orgImg;
   String panImg;
 
@@ -32,24 +32,18 @@ class NewOrganization {
     required this.intro,
     required this.address,
     required this.longLat,
-    required this.isBlocked,
-    required this.isActive,
-    this.status,
     required this.contactPerson,
     required this.contactNumber,
     required this.panNo,
     this.message,
-    this.ratedBy,
-    this.rating,
-    this.totalRating,
-    required this.service,
-    required this.citzImg,
+    this.citzImg,
     required this.orgImg,
     required this.panImg,
   });
 
   // fromJson
-  factory NewOrganization.fromJson(Map<String, dynamic> json) => _$NewOrganizationFromJson(json);
+  factory NewOrganization.fromJson(Map<String, dynamic> json) =>
+      _$NewOrganizationFromJson(json);
 
   // toJson
   Map<String, dynamic> toJson() => _$NewOrganizationToJson(this);

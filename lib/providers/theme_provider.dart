@@ -9,6 +9,9 @@ const primary = Colors.pink;
 const primaryDark = Color(0xFF0A1543);
 const secondary = Colors.grey;
 const suvidhaWhite = Color(0xFFE5E5E5);
+// const primaryIconColor = Color.fromARGB(129, 55, 44, 111);
+const primaryIconColor = Color(0xFF4159A4);
+
 const pastelCardColor = [
   Color(0xFF9B6F6B), // Much Darker Soft Peach
   Color(0xFF6B8B8A), // Much Darker Pale Mint Green
@@ -41,6 +44,7 @@ const pastelCardColor = [
   Color(0xFF8C6B9B), // Much Darker Light Lavender Grey
   Color(0xFF6B8C6B), // Much Darker Soft Pale Green
 ];
+
 class ThemeProvider extends ChangeNotifier {
   late ThemeMode _themeMode;
   final CustomHive customHive = CustomHive();

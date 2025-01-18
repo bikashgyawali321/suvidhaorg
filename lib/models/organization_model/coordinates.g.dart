@@ -10,9 +10,8 @@ LongitudeLatitudeModel _$LongitudeLatitudeModelFromJson(
         Map<String, dynamic> json) =>
     LongitudeLatitudeModel(
       type: json['type'] as String,
-      coordinates: (json['coordinates'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
-          .toList(),
+      coordinates:
+          (json['coordinates'] as List<dynamic>).map((e) => e as num).toList(),
     );
 
 Map<String, dynamic> _$LongitudeLatitudeModelToJson(

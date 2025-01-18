@@ -21,7 +21,7 @@ void main() async {
     options: FirebaseOptionsAndroid.currentPlatform,
   );
   await CustomHive().init();
-  runApp( const ProviderWrappedApp());
+  runApp(const ProviderWrappedApp());
 }
 
 class ProviderWrappedApp extends StatelessWidget {
@@ -34,9 +34,9 @@ class ProviderWrappedApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => BackendService()),
         ChangeNotifierProvider(create: (_) => AuthProvider(_)),
-              ChangeNotifierProvider(
+        ChangeNotifierProvider(
           create: (_) => NotificationService(_.read<BackendService>()),
-              ),
+        ),
       ],
       child: MyApp(),
     );
@@ -55,13 +55,16 @@ GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/login',
-      builder: (context, state) =>const  LoginScreen(),
+      builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
     ),
-    GoRoute(path: '/profile', builder: (context, state) =>const  Profile(),),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const Profile(),
+    ),
   ],
 );
 
@@ -76,10 +79,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         colorScheme: const ColorScheme.light(
-          primary:Color(0xFF6200EE),
-          secondary:  Color(0xFF03DAC6),
+          primary: Color(0xFF6200EE),
+          secondary: Color(0xFF03DAC6),
           surface: Colors.white,
-          error:  Color(0xFFB00020),
+          error: Color(0xFFB00020),
           onPrimary: Colors.white,
           onSecondary: Colors.black,
           onSurface: Colors.black,
@@ -91,7 +94,8 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(color: Colors.black12),
           ),
-          contentPadding:const  EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         ),
         dividerTheme: const DividerThemeData(
           space: 0,
@@ -101,12 +105,12 @@ class MyApp extends StatelessWidget {
         filledButtonTheme: FilledButtonThemeData(
           style: ButtonStyle(
             padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
-               EdgeInsets.symmetric(vertical: 16),
+              EdgeInsets.symmetric(vertical: 16),
             ),
-            backgroundColor:const WidgetStatePropertyAll<Color>(
+            backgroundColor: const WidgetStatePropertyAll<Color>(
               Colors.lightGreen,
             ),
-            foregroundColor:const WidgetStatePropertyAll<Color>(
+            foregroundColor: const WidgetStatePropertyAll<Color>(
               Colors.white,
             ),
             shape: WidgetStatePropertyAll(
@@ -119,7 +123,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        floatingActionButtonTheme:const FloatingActionButtonThemeData(
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.deepOrange,
           foregroundColor: Colors.white,
           elevation: 0,
@@ -136,15 +140,18 @@ class MyApp extends StatelessWidget {
           centerTitle: false,
           color: Colors.blueGrey[200],
         ),
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
       ),
       darkTheme: ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'Euclid',
-          colorScheme:const ColorScheme.dark(
-            primary:  Color(0xFFBB86FC),
-            secondary:  Color(0xFF03DAC6),
-            surface:  Color(0xFF121212),
-            error:  Color(0xFFCF6679),
+          colorScheme: const ColorScheme.dark(
+            primary: Color(0xFFBB86FC),
+            secondary: Color(0xFF03DAC6),
+            surface: Color(0xFF121212),
+            error: Color(0xFFCF6679),
             onPrimary: Colors.black,
             onSecondary: Colors.black,
             onSurface: Colors.white,
@@ -154,7 +161,7 @@ class MyApp extends StatelessWidget {
           inputDecorationTheme: InputDecorationTheme(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide:const BorderSide(color: Color(0xFFE0E0E0)),
+              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
             ),
           ),
           dividerTheme: const DividerThemeData(
@@ -164,11 +171,12 @@ class MyApp extends StatelessWidget {
           ),
           filledButtonTheme: FilledButtonThemeData(
             style: ButtonStyle(
-              padding:const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+              padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
                 EdgeInsets.symmetric(vertical: 16),
               ),
-              backgroundColor:const WidgetStatePropertyAll<Color>(Colors.lightGreen),
-              foregroundColor:const WidgetStatePropertyAll<Color>(
+              backgroundColor:
+                  const WidgetStatePropertyAll<Color>(Colors.lightGreen),
+              foregroundColor: const WidgetStatePropertyAll<Color>(
                 Colors.white,
               ),
               shape: WidgetStatePropertyAll(
@@ -181,7 +189,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
-          floatingActionButtonTheme:const FloatingActionButtonThemeData(
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
             backgroundColor: Colors.deepOrange,
             foregroundColor: Colors.white,
             elevation: 0,
@@ -197,6 +205,9 @@ class MyApp extends StatelessWidget {
             elevation: 0,
             centerTitle: false,
             color: Colors.blueGrey[600],
+          ),
+          iconTheme: IconThemeData(
+            color: Colors.white,
           )),
       routerConfig: _router,
       debugShowCheckedModeBanner: false,
