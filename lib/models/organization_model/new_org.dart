@@ -18,12 +18,9 @@ class NewOrganization {
 
   @JsonKey(includeIfNull: false)
   String? message;
-
-  // Since citzImg is optional in Joi schema, it can be null or omitted
   @JsonKey(includeIfNull: false)
   List<String>? citzImg;
 
-  // orgImg and panImg are now lists as per the updated schema
   List<String> orgImg;
   List<String> panImg;
 

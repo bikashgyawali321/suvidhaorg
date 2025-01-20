@@ -302,5 +302,11 @@ class BackendService extends ChangeNotifier {
     );
   }
 
-  //
+  //get organization
+  Future<BackendResponse> getOrganization() async {
+    return await handleRequest(
+      request: _dio.get('/org/byUser'),
+      titleOfRequest: 'get organization by uid',
+    );
+  }
 }

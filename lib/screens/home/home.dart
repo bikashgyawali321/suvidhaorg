@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/offered_service.dart';
-import 'package:suvidhaorg/screens/home/organization.dart';
+import 'package:suvidhaorg/providers/organization_provider.dart';
+import 'package:suvidhaorg/providers/theme_provider.dart';
+import 'package:suvidhaorg/screens/home/profile_content.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
+
+import '../../providers/auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,24 +20,79 @@ class _HomeScreenState extends State<HomeScreen> {
   final OfferedServiceList offeredServiceList = OfferedServiceList();
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<OrganizationProvider>(context, listen: false)
+        .getOrganizationDetails();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text('सुविधा सेवा',
-              style: Theme.of(context).textTheme.headlineMedium),
-          actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
-            IconButton(
-                onPressed: () {
-                  context.push('/profile');
-                },
-                icon: const Icon(
-                  Icons.account_circle_outlined,
-                  size: 30,
-                ))
-          ],
+          iconTheme: IconThemeData(color: suvidhaWhite),
+          backgroundColor: primaryDark,
+          title: Text(
+            'सुविधा सेवा',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: suvidhaWhite,
+                ),
+          ),
           centerTitle: true,
+        ),
+        drawer: Drawer(
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: primaryDark,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: suvidhaWhite,
+                        child: Icon(
+                          Icons.business,
+                          size: 50,
+                          color: primaryIconColor,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Flexible(
+                        child: Text(
+                          authProvider.user?.name ?? 'N/A',
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: suvidhaWhite,
+                                  ),
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          authProvider.user?.email ?? 'N/A',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: suvidhaWhite,
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const ProfileContent(),
+              ],
+            ),
+          ),
         ),
         body: SafeArea(
           child: Padding(
@@ -106,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(children: [
                 CustomButton(
                   label: 'Add organization',
-                  onPressed: () => AddOrganizationScreen.show(context),
+                  onPressed: () => context.push('/add_organization'),
                 )
               ])),
         ));

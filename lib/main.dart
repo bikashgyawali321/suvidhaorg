@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/firebase_options.dart';
+import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/screens/home/home.dart';
 import 'package:suvidhaorg/screens/splash.dart';
 
 import 'providers/auth_provider.dart';
+import 'providers/organization_provider.dart';
 import 'providers/theme_provider.dart';
-import 'screens/home/profile.dart';
+import 'screens/home/organization_screens/add_organization.dart';
+import 'screens/home/organization_screens/organization_details.dart';
+import 'screens/home/profile_content.dart';
 import 'screens/auth/login.dart';
 import 'screens/auth/register.dart';
 import 'services/backend_service.dart';
@@ -37,6 +41,7 @@ class ProviderWrappedApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => NotificationService(_.read<BackendService>()),
         ),
+        ChangeNotifierProvider(create: (_) => OrganizationProvider(_)),
       ],
       child: MyApp(),
     );
@@ -63,8 +68,19 @@ GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/profile',
-      builder: (context, state) => const Profile(),
+      builder: (context, state) => const ProfileContent(),
     ),
+    GoRoute(
+      path: '/add_organization',
+      builder: (context, state) => AddOrganizationScreen(),
+    ),
+    GoRoute(
+      path: '/organization_details',
+      builder: (context, state) {
+        final organization = state.extra as OrganizationModel;
+        return OrganizationDetailsScreen(organizationModel: organization);
+      },
+    )
   ],
 );
 
@@ -135,11 +151,8 @@ class MyApp extends StatelessWidget {
           ),
           backgroundColor: Colors.black.withOpacity(0.8),
         ),
-        appBarTheme: AppBarTheme(
-          elevation: 0,
-          centerTitle: false,
-          color: Colors.blueGrey[200],
-        ),
+        appBarTheme:
+            AppBarTheme(elevation: 0, centerTitle: false, color: primaryDark),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -204,7 +217,7 @@ class MyApp extends StatelessWidget {
           appBarTheme: AppBarTheme(
             elevation: 0,
             centerTitle: false,
-            color: Colors.blueGrey[600],
+            color: primaryDark,
           ),
           iconTheme: IconThemeData(
             color: Colors.white,
