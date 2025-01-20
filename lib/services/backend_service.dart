@@ -20,116 +20,98 @@ class BackendService extends ChangeNotifier {
     ..interceptors.add(TokenInterceptor())
     ..interceptors.add(CustomLogInterceptor());
 
-  Future<BackendResponse> registerOrg(RegisterRequest request) async {
+  //custom request handler for all methods
+
+  Future<BackendResponse> handleRequest(
+      {required Future<Response> request,
+      required String titleOfRequest}) async {
     try {
-      Response resp = await _dio.post(
-        '/auth/registerorg',
-        data: request.toJson(),
+      final res = await request;
+      return BackendResponse(
+        title: res.data['title'],
+        message: res.data['message'],
+        result: res.data['data'],
+        statusCode: res.statusCode,
       );
-      if (resp.statusCode != null) {
-        BackendResponse response =
-            BackendResponse.fromJson(resp.data, resp.statusCode!);
-        return response;
+    } on DioError catch (dioError) {
+      if (dioError.response != null) {
+        debugPrint(
+            "Server responded with error while $titleOfRequest: ${dioError.response?.data}");
+        return BackendResponse(
+          title: dioError.response?.data['title'] ?? '',
+          result: dioError.response?.data['data'],
+          statusCode: dioError.response?.statusCode,
+          errorMessage: dioError.response?.data['message'],
+        );
       } else {
-        throw Exception('Failed to register organization');
+        debugPrint(
+            "Request failed with error while $titleOfRequest: ${dioError.message}");
+        throw Exception(
+            'Unable to process request $titleOfRequest: ${dioError.message}');
       }
     } catch (e) {
-      debugPrint("Error in registering User :${e.toString()}");
-      throw Exception('Failed to register user');
+      debugPrint(
+          "Request failed with error while $titleOfRequest: ${e.toString()}");
+      throw Exception(
+          'Unable to process request $titleOfRequest: ${e.toString()}');
     }
   }
 
-  // Login user
-  Future<BackendResponse> loginUser(LoginRequest request) async {
-    try {
-      Response resp = await _dio.post(
-        '/auth/login',
-        data: request.toJson(),
-      );
+//register organization
+  Future<BackendResponse> registerOrg(RegisterRequest request) async {
+    return await handleRequest(
+      request: _dio.post('/auth/registerorg', data: request.toJson()),
+      titleOfRequest: 'registering organization',
+    );
+  }
 
-      if (resp.statusCode != null) {
-        BackendResponse response =
-            BackendResponse.fromJson(resp.data, resp.statusCode!);
-        return response;
-      } else {
-        throw Exception('Failed to login user');
-      }
-    } catch (e) {
-      debugPrint("Error while logging in: ${e.toString()}");
-      throw Exception('Unable to login');
-    }
+  // Login user
+  Future<BackendResponse> login(LoginRequest request) async {
+    return await handleRequest(
+      request: _dio.post('/auth/login', data: request.toJson()),
+      titleOfRequest: 'logging in',
+    );
   }
 
   // Verify email
   Future<BackendResponse> verifyEmail(
       {required String email, required num otp}) async {
-    try {
-      Response response = await _dio.post(
-        '/auth/verifyEmail',
-        data: {
-          'email': email,
-          'otp': otp,
-        },
-      );
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to verify email');
-      }
-    } catch (e) {
-      debugPrint("Error while verifying email :${e.toString()}");
-      throw Exception('Unable to verify email');
-    }
+    return await handleRequest(
+      request: _dio.post('/auth/verifyOtp', data: {
+        'email': email,
+        'otp': otp,
+      }),
+      titleOfRequest: 'verifying email',
+    );
   }
 
   // Resend verification email
   Future<BackendResponse> resendVerificationEmail(
       {required String email}) async {
-    try {
-      Response response = await _dio.post(
+    return await handleRequest(
+      request: _dio.post(
         '/auth/resendVerificationEmail',
         data: {
           'email': email,
         },
-      );
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to resend verification email');
-      }
-    } catch (e) {
-      debugPrint("Error while resending verification email :${e.toString()}");
-      throw Exception('Unable to resend verification email');
-    }
+      ),
+      titleOfRequest: 'resending verification email',
+    );
   }
 
   // Send forgot password request
   Future<BackendResponse> sendForgotPasswordRequest({
     required String email,
   }) async {
-    try {
-      Response response = await _dio.post(
+    return await handleRequest(
+      request: _dio.post(
         '/auth/forgetPassword',
         data: {
           'email': email,
         },
-      );
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to send forgot password request');
-      }
-    } catch (e) {
-      debugPrint(
-          "Error while sending forgot password request :${e.toString()}");
-      throw Exception('Unable to send forgot password request');
-    }
+      ),
+      titleOfRequest: 'sending forgot password request',
+    );
   }
 
   // Verify reset password token
@@ -137,33 +119,24 @@ class BackendService extends ChangeNotifier {
     required String email,
     required num token,
   }) async {
-    try {
-      Response resp = await _dio.post('/auth/verifyOtp', data: {
+    return await handleRequest(
+      request: _dio.post('/auth/verifyOtp', data: {
         'email': email,
         'otp': token,
-      });
-      if (resp.statusCode != null) {
-        BackendResponse response =
-            BackendResponse.fromJson(resp.data, resp.statusCode!);
-        return response;
-      } else {
-        throw Exception('Failed to verify reset password token');
-      }
-    } catch (e) {
-      debugPrint("Error while verifying reset password token :${e.toString()}");
-      throw Exception('Unable to verify reset password token');
-    }
+      }),
+      titleOfRequest: 'verifying reset password token',
+    );
   }
 
   // Reset password
-  Future<BackendResponse<Map<String, dynamic>>> resetPassword({
+  Future<BackendResponse> resetPassword({
     required String email,
     required num token,
     required String password,
     required String confirmPassword,
   }) async {
-    try {
-      Response resp = await _dio.post(
+    return await handleRequest(
+      request: _dio.post(
         '/auth/resetPassword',
         data: {
           'email': email,
@@ -171,336 +144,162 @@ class BackendService extends ChangeNotifier {
           'password': password,
           'confirmPassword': confirmPassword,
         },
-      );
-      return BackendResponse<Map<String, dynamic>>(
-        title: resp.data['title'] ?? '',
-        message: resp.data['message'] ?? '',
-        result: resp.data['title'] == 'error' ? null : resp.data['data'],
-        statusCode: resp.statusCode,
-      );
-    } catch (e) {
-      debugPrint("Error while resetting password :${e.toString()}");
-      throw Exception('Unable to reset password');
-    }
+      ),
+      titleOfRequest: 'resetting password',
+    );
   }
 
   // Refresh token
-  Future<BackendResponse<Map<String, dynamic>>> refreshToken({
+  Future<BackendResponse> refreshToken({
     required String refreshToken,
   }) async {
-    try {
-      Response response = await _dio.post(
+    return await handleRequest(
+      request: _dio.post(
         '/auth/refreshToken',
         data: {
           'refreshToken': refreshToken,
         },
-      );
-      return BackendResponse<Map<String, dynamic>>(
-        title: response.data['title'] ?? '',
-        message: response.data['message'] ?? '',
-        result:
-            response.data['title'] == 'error' ? null : response.data['data'],
-        statusCode: response.statusCode,
-      );
-    } catch (e) {
-      debugPrint("Error while refreshing token :${e.toString()}");
-      throw Exception('Unable to refresh token');
-    }
+      ),
+      titleOfRequest: 'refreshing token',
+    );
   }
 
   // Change password
-  Future<BackendResponse<Map<String, dynamic>>> changePassword({
+  Future<BackendResponse> changePassword({
     required String oldPassword,
     required String newPassword,
     required String confirmPassword,
   }) async {
-    try {
-      Response resp = await _dio.post(
+    return await handleRequest(
+      request: _dio.post(
         '/auth/changePassword',
         data: {
           'oldPassword': oldPassword,
           'newPassword': newPassword,
           'confirmPassword': confirmPassword,
         },
-      );
-      return BackendResponse<Map<String, dynamic>>(
-        title: resp.data['title'] ?? '',
-        message: resp.data['message'] ?? '',
-        result: resp.data['title'] == 'error' ? null : resp.data['data'],
-        statusCode: resp.statusCode,
-      );
-    } catch (e) {
-      debugPrint("Error while changing password :${e.toString()}");
-      throw Exception('Unable to change password');
-    }
+      ),
+      titleOfRequest: 'changing password',
+    );
   }
 
   // Get user details
   Future<BackendResponse> getUserDetails() async {
-    try {
-      Response resp = await _dio.get('/auth/me');
-      if (resp.statusCode != null) {
-        BackendResponse response =
-            BackendResponse.fromJson(resp.data, resp.statusCode!);
-        return response;
-      } else {
-        throw Exception('Failed to get user details');
-      }
-    } catch (e) {
-      debugPrint("Error while getting user details :${e.toString()}");
-      throw Exception('Unable to get user details');
-    }
+    return await handleRequest(
+      request: _dio.get('/auth/me'),
+      titleOfRequest: 'getting user details',
+    );
   }
   //add fcm token
 
   Future<BackendResponse> addFcmToken({required String fcmToken}) async {
-    try {
-      Response response = await _dio.post(
-        '/auth/addFcm',
-        data: {
-          'fcmToken': fcmToken,
-        },
-      );
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to add fcm token');
-      }
-    } catch (e) {
-      debugPrint("Error while adding fcm token :${e.toString()}");
-      throw Exception('Unable to add fcm token');
-    }
+    return await handleRequest(
+      request: _dio.post('/auth/addFcm', data: {'fcmToken': fcmToken}),
+      titleOfRequest: 'adding fcm token',
+    );
   }
 
   //remove fcm token
   Future<BackendResponse> removeFcmToken({required String fcmToken}) async {
-    try {
-      Response response =
-          await _dio.post('/auth/removefcm', data: {'fcmToken': fcmToken});
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to remove fcm token');
-      }
-    } catch (e) {
-      debugPrint("Error while removing fcm token :${e.toString()}");
-      throw Exception('Unable to remove fcm token');
-    }
+    return await handleRequest(
+      request: _dio.post('/auth/removefcm', data: {'fcmToken': fcmToken}),
+      titleOfRequest: 'removing fcm token',
+    );
   }
 
 // Post image method
-  Future<BackendResponse> postImage({
-    required File image,
-  }) async {
-    try {
-      final imageName = image.path.split('/').last;
-
-      final fileExtension = imageName.split('.').last.toLowerCase();
-      final supportedFormats = ['jpg', 'jpeg', 'png'];
-      if (!supportedFormats.contains(fileExtension)) {
-        throw Exception('Unsupported file format: $fileExtension');
-      }
-
-      final formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(
-          image.path,
-          filename: imageName,
-          contentType: MediaType('image', fileExtension),
-        ),
-      });
-
-      Response response = await _dio.post(
-        '/image/details',
-        data: formData,
-        options: Options(
-          contentType: 'multipart/form-data',
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        ),
-      );
-
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to post image');
-      }
-    } catch (e) {
-      debugPrint("Error while posting image: ${e.toString()}");
-      throw Exception('Unable to post image');
+  Future<BackendResponse> postImage({required File image}) async {
+    final imageName = image.path.split('/').last;
+    final fileExtension = imageName.split('.').last.toLowerCase();
+    final supportedFormats = ['jpg', 'jpeg', 'png'];
+    if (!supportedFormats.contains(fileExtension)) {
+      throw Exception('Unsupported file format: $fileExtension');
     }
+
+    final formData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(
+        image.path,
+        filename: imageName,
+        contentType: MediaType('image', fileExtension),
+      ),
+    });
+
+    return await handleRequest(
+      request: _dio.post('/image/details', data: formData),
+      titleOfRequest: 'posting image',
+    );
   }
 
   //get image
-
   Future<BackendResponse> getImage({required String imageUrl}) async {
-    try {
-      Response response =
-          await _dio.get('/image/details', queryParameters: {'url': imageUrl});
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to get image');
-      }
-    } catch (e) {
-      debugPrint("Error while getting image :${e.toString()}");
-      throw Exception('Unable to get image');
-    }
+    return await handleRequest(
+      request: _dio.get('/image/details', queryParameters: {'url': imageUrl}),
+      titleOfRequest: 'getting image',
+    );
   }
 
   //delete image
   Future<BackendResponse> deleteImage({required String imageUrl}) async {
-    try {
-      Response response = await _dio
-          .delete('/image/details', queryParameters: {'url': imageUrl});
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to delete image');
-      }
-    } catch (e) {
-      debugPrint("Error while deleting image :${e.toString()}");
-      throw Exception('Unable to delete image');
-    }
+    return await handleRequest(
+      request:
+          _dio.delete('/image/details', queryParameters: {'url': imageUrl}),
+      titleOfRequest: 'deleting image',
+    );
   }
 
   //get all the service name
-
   Future<BackendResponse> getServiceNames() async {
-    try {
-      Response response = await _dio.get(
-        '/service/serviceName',
-      );
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to get service names');
-      }
-    } catch (e) {
-      debugPrint("Error while getting service names :${e.toString()}");
-      throw Exception('Unable to get service names');
-    }
+    return await handleRequest(
+      request: _dio.get('/service/serviceName'),
+      titleOfRequest: 'getting service names',
+    );
   }
 
   //get service name by id
-
   Future<BackendResponse> getServiceName({required String serviceId}) async {
-    try {
-      Response response = await _dio
-          .get('/service/serviceName/:id', queryParameters: {'id': serviceId});
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to get service name');
-      }
-    } catch (e) {
-      debugPrint("Error while fetching service name by id: ${e.toString()}");
-      throw Exception('Unable to get service name');
-    }
+    return await handleRequest(
+      request: _dio
+          .get('/service/serviceName/:id', queryParameters: {'id': serviceId}),
+      titleOfRequest: 'getting service name by id',
+    );
   }
 
   //create an organization control
 
   Future<BackendResponse> createOrganization(
       {required NewOrganization newOrg}) async {
-    print(newOrg.toJson());
-    try {
-      Response response = await _dio.post(
-        '/org',
-        data: newOrg.toJson(),
-      );
-
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to create organization');
-      }
-    } catch (e) {
-      debugPrint("Error while creating organization: ${e.toString()}");
-      throw Exception('Unable to create organization: ${e.toString()}');
-    }
+    return await handleRequest(
+      request: _dio.post('/org', data: newOrg.toJson()),
+      titleOfRequest: 'creating organization',
+    );
   }
 
   //request for organization verification
 
-  Future<BackendResponse> requestOrgVerification({
-    required String orgId,
-  }) async {
-    try {
-      Response response = await _dio.put(
-        '/org/requestverification/$orgId', // Replace :id with $orgId
-      );
-
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to request organization verification');
-      }
-    } catch (e) {
-      debugPrint(
-          "Error while requesting organization verification: ${e.toString()}");
-      throw Exception('Unable to request organization verification');
-    }
+  Future<BackendResponse> requestOrgVerification(
+      {required String orgId}) async {
+    return await handleRequest(
+      request: _dio.put('/org/requestverification/$orgId'),
+      titleOfRequest: 'requesting organization verification',
+    );
   }
 
   //get organization by id
 
   Future<BackendResponse> getOrganizationById({required String orgId}) async {
-    try {
-      Response response = await _dio.get(
-        '/org/$orgId',
-      );
-      if (response.statusCode != null) {
-        BackendResponse resp =
-            BackendResponse.fromJson(response.data, response.statusCode!);
-        return resp;
-      } else {
-        throw Exception('Failed to get organization');
-      }
-    } catch (e) {
-      debugPrint("Error while fetching organization by id: ${e.toString()}");
-      throw Exception('Unable to get organization');
-    }
+    return await handleRequest(
+      request: _dio.get('/org/$orgId'),
+      titleOfRequest: 'getting organization by id',
+    );
   }
 
   //update org
-  Future<BackendResponse<Map<String, dynamic>>> updateOrg(
+  Future<BackendResponse> updateOrg(
       {required OrganizationModel organization}) async {
-    try {
-      Response response = await _dio.put(
-        '/org',
-        data: organization.toJson(),
-      );
-
-      return BackendResponse<Map<String, dynamic>>(
-        title: response.data['title'] ?? '',
-        message: response.data['message'] ?? '',
-        result:
-            response.data['title'] == 'error' ? null : response.data['data'],
-        statusCode: response.statusCode,
-      );
-    } catch (e) {
-      debugPrint("Error while updating organization: ${e.toString()}");
-      throw Exception('Unable to update organization');
-    }
+    return await handleRequest(
+      request: _dio.put('/org', data: organization.toJson()),
+      titleOfRequest: 'updating organization',
+    );
   }
 
   //

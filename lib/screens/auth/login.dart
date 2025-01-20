@@ -9,6 +9,7 @@ import 'package:suvidhaorg/widgets/custom_button.dart';
 
 import '../../models/auth_models/auth_token.dart';
 import '../../providers/theme_provider.dart';
+import '../../widgets/snackbar.dart';
 
 class LoginProvider extends ChangeNotifier {
   final BuildContext context;
@@ -31,17 +32,20 @@ class LoginProvider extends ChangeNotifier {
     loading = true;
     notifyListeners();
 
-    final response = await _backendService.loginUser(request);
+    final response = await _backendService.login(request);
     if (response.result != null &&
         response.statusCode == 200 &&
         response.errorMessage == null) {
+      loading = false;
       AuthToken token = AuthToken.fromJson(response.result!);
       await CustomHive().saveAuthToken(token);
       context.go('/');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(response.errorMessage!),
-      ));
+      loading = false;
+      SnackbarHelper.showSnackbar(
+        context: context,
+        errorMessage: response.errorMessage,
+      );
     }
   }
 }

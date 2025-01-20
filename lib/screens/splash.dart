@@ -21,18 +21,11 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
   bool loading = false;
 
   void _handleRouting() async {
-    AuthToken? token =  CustomHive().getAuthToken();
+    AuthToken? token = CustomHive().getAuthToken();
     if (token == null) {
       if (mounted) context.go("/login");
     } else {
-      await _authProvider.fetchUserDetails().then((e) async {
-        context.go('/home');
-        context.read<NotificationService>().sendFCMToken();
-      }).catchError((e) async {
-
-        await Future.delayed(const Duration(seconds: 5));
-        _handleRouting();
-      });
+      await _authProvider.fetchUserDetails(context);
     }
   }
 
@@ -58,19 +51,20 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                         'assets/icon/app_icon.png',
                         height: 200,
                       ),
-                           Text('सुविधा सेवा',
-                           style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                             color: suvidhaWhite,
-                           ),
-
-                           ),
-                           Text(
-                            'घरमै सेवा, तपाइको सेवा हाम्रो प्राथमिकता',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                             color: Colors.amber[600],
+                      Text(
+                        'सुविधा सेवा',
+                        style:
+                            Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  color: suvidhaWhite,
+                                ),
+                      ),
+                      Text(
+                        'घरमै सेवा, तपाइको सेवा हाम्रो प्राथमिकता',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Colors.amber[600],
                               fontStyle: FontStyle.italic,
-                  ),
-                   ),
+                            ),
+                      ),
                     ],
                   ),
                 ),

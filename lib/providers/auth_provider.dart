@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/auth_models/user_model.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
@@ -16,22 +17,26 @@ class AuthProvider extends ChangeNotifier {
       : service = Provider.of<BackendService>(context, listen: false);
   String? error;
 
-  // Fetch user details from the backend
-  Future<void> fetchUserDetails() async {
+ 
+  Future<void> fetchUserDetails(BuildContext context) async {
     loading = true;
     notifyListeners();
 
     try {
       BackendResponse response = await service.getUserDetails();
 
-      if (response.result != null) {
+      if (response.result != null && response.statusCode == 200) {
         user = UserModel.fromJson(response.result);
+        context.go('/home');
         debugPrint("User details: ${user!.name}");
       } else {
-        error = response.message;
-        notifyListeners();
+        context.go('/login');
+        throw Exception(response.errorMessage);
       }
+      error = response.message;
+      notifyListeners();
     } catch (e) {
+      context.go('/login');
       debugPrint("Exception while fetching user details: $e");
     } finally {
       loading = false;
