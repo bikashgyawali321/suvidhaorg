@@ -231,6 +231,7 @@ class AddOrganizationProvider extends ChangeNotifier {
         RequestOrganizationVerification.show(context, organizationModel!.id);
         notifyListeners();
       } else {
+        loading = false;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(response.errorMessage!),
