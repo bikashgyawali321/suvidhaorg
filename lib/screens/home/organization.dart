@@ -4,12 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
 import 'package:suvidhaorg/widgets/form_bottom_sheet_header.dart';
 import 'dart:io';
 
-import '../../models/image_models/image_model.dart';
 import '../../models/organization_model/coordinates.dart';
 import '../../models/organization_model/new_org.dart';
 import '../../services/backend_service.dart';
@@ -28,6 +28,10 @@ class AddOrganizationProvider extends ChangeNotifier {
   File? citzImg;
   String? imageType;
   final _formKey = GlobalKey<FormState>();
+  OrganizationModel? organizationModel;
+  String? panImageError;
+  String? orgImageError;
+  String? citizenImageError;
 
   NewOrganization org = NewOrganization(
     nameOrg: '',
@@ -37,9 +41,9 @@ class AddOrganizationProvider extends ChangeNotifier {
     contactPerson: '',
     contactNumber: '',
     panNo: '',
-    citzImg: '',
-    orgImg: '',
-    panImg: '',
+    citzImg: [],
+    orgImg: [],
+    panImg: [],
   );
 
   // Function to get the current user location
@@ -50,7 +54,7 @@ class AddOrganizationProvider extends ChangeNotifier {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       org.longLat = LongitudeLatitudeModel(
-        type: 'point',
+        type: 'Point',
         coordinates: [position.longitude, position.latitude],
       );
       notifyListeners();
@@ -71,34 +75,19 @@ class AddOrganizationProvider extends ChangeNotifier {
   // Function to add PAN image
   Future<void> addPanImage() async {
     try {
-      if (panImg == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select an image to upload')),
-        );
-        return;
-      }
-
       final response = await backendService.postImage(image: panImg!);
 
-      if (response.statusCode == 200 && response.data != null) {
-        // ImageModel imageModel = ImageModel.fromJson(response.data!);
-        // org.panImg = imageModel.url!;
-        print(response.data);
-        org.panImg = response.data!;
+      if (response.statusCode == 200 && response.result != null) {
+        panImageError = null;
+
+        org.panImg.add(response.result!);
         notifyListeners();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        panImageError = response.message;
+        notifyListeners();
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Something went wrong, please try again later."),
-        backgroundColor: Theme.of(context).colorScheme.error,
-      ));
+      panImageError = 'Something went wrong, please try again later.';
       notifyListeners();
       debugPrint("Error uploading PAN image: ${e.toString()}");
     } finally {
@@ -109,32 +98,19 @@ class AddOrganizationProvider extends ChangeNotifier {
   // Function to add Organization image
   Future<void> addOrgImage() async {
     try {
-      if (orgImg == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select an image to upload')),
-        );
-        return;
-      }
-
       final response = await backendService.postImage(image: orgImg!);
 
-      if (response.statusCode == 200 && response.data != null) {
-        org.orgImg = response.data!;
+      if (response.statusCode == 200 && response.result != null) {
+        orgImageError = null;
+        org.orgImg.add(response.result!);
         await Future.delayed(const Duration(seconds: 2));
         notifyListeners();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        orgImageError = response.message;
+        notifyListeners();
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Something went wrong, please try again later."),
-        backgroundColor: Theme.of(context).colorScheme.error,
-      ));
+      orgImageError = 'Something went wrong, please try again later.';
       notifyListeners();
       debugPrint("Error uploading Organization image: ${e.toString()}");
     } finally {
@@ -145,32 +121,19 @@ class AddOrganizationProvider extends ChangeNotifier {
   // Function to add Citizenship image
   Future<void> addCitzImage() async {
     try {
-      if (citzImg == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select an image to upload')),
-        );
-        return;
-      }
-
       final response = await backendService.postImage(image: citzImg!);
 
-      if (response.statusCode == 200 && response.data != null) {
-        org.citzImg = response.data!;
+      if (response.statusCode == 200 && response.result != null) {
+        citizenImageError = null;
+        org.citzImg?.add(response.result!);
         notifyListeners();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        citizenImageError = response.message;
+        notifyListeners();
       }
     } catch (e) {
       debugPrint("Error uploading Citizenship  image: ${e.toString()}");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Something went wrong, please try again later."),
-        backgroundColor: Theme.of(context).colorScheme.error,
-      ));
+      citizenImageError = 'Something went wrong, please try again later.';
     } finally {
       notifyListeners();
     }
@@ -250,36 +213,78 @@ class AddOrganizationProvider extends ChangeNotifier {
       loading = true;
       notifyListeners();
 
-      if (!_formKey.currentState!.validate()) {
+      if (!_formKey.currentState!.validate() ||
+          org.panImg.isEmpty ||
+          org.orgImg.isEmpty) {
         loading = false;
+        orgImageError = 'Please select an image to upload';
+        panImageError = 'Please select an image to upload';
         notifyListeners();
         return;
       }
 
       final response = await backendService.createOrganization(newOrg: org);
 
-      if (response.statusCode == 200 && response.data != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message),
-          ),
-        );
-        context.pop();
+      if (response.statusCode == 200 && response.result != null) {
+        organizationModel = OrganizationModel.fromJson(response.result!);
+        // await sendVerificationRequest();
+
+        notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.message),
+            content: Text(response.errorMessage!),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
     } catch (e) {
       debugPrint("Error in creating an organization");
-
+      loading = false;
+      context.pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Something went wrong, please try again later."),
         backgroundColor: Theme.of(context).colorScheme.error,
       ));
+      notifyListeners();
+    }
+  }
+
+  //send verification organization request
+  Future<void> sendVerificationRequest() async {
+    try {
+      loading = true;
+      notifyListeners();
+      if (organizationModel == null) {
+        loading = false;
+        notifyListeners();
+        return;
+      }
+
+      final response = await backendService.requestOrgVerification(
+          orgId: organizationModel!.id);
+
+      if (response.statusCode == 200 && response.result != null) {
+        loading = false;
+        organizationModel = OrganizationModel.fromJson(response.result!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message!),
+          ),
+        );
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.errorMessage ??
+                'Something went wrong, please try again later.'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("Error in sending verification request");
+      loading = false;
       notifyListeners();
     }
   }
@@ -398,6 +403,7 @@ class AddOrganizationScreen extends StatelessWidget {
                             ),
                             onChanged: (value) =>
                                 provider.org.contactNumber = value,
+                            maxLength: 10,
                             keyboardType: TextInputType.phone,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -422,11 +428,14 @@ class AddOrganizationScreen extends StatelessWidget {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter the PAN number';
                               }
-                              if (!RegExp(r'^\d{5,20}$').hasMatch(value)) {
+                              //pan number should only contain numbers and only 10 digits long
+                              if (!RegExp(r'^\d{10}$').hasMatch(value)) {
                                 return 'Please enter a valid PAN number';
                               }
+
                               return null;
                             },
+                            maxLength: 10,
                           ),
 
                           // Image Containers
@@ -453,6 +462,9 @@ class AddOrganizationScreen extends StatelessWidget {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a brief introduction to the organization';
                               }
+                              if (value.length < 10) {
+                                return 'Introduction should be at least 10 characters long';
+                              }
 
                               return null;
                             },
@@ -460,32 +472,47 @@ class AddOrganizationScreen extends StatelessWidget {
 
                           _imageContainer(
                             context,
-                            imageUrl: provider.org.panImg,
+                            imageUrls: provider.org.panImg,
                             label: 'PAN Card Photo',
                             onTap: () => provider.pickImage('pan'),
+                            errorMessage: provider.panImageError,
                           ),
                           _imageContainer(
                             context,
-                            imageUrl: provider.org.orgImg,
+                            imageUrls: provider.org.orgImg,
                             label: 'Organization Photo',
                             onTap: () => provider.pickImage('orgimage'),
+                            errorMessage: provider.orgImageError,
                           ),
                           _imageContainer(
                             context,
-                            imageUrl: provider.org.citzImg,
+                            imageUrls: provider.org.citzImg,
                             label: 'Citizenship Photo',
                             onTap: () => provider.pickImage('citizen'),
+                            errorMessage: provider.citizenImageError,
                           ),
 
                           SizedBox(
                             height: 20,
                           ),
                           // Submit Button
-                          CustomButton(
-                            label: 'Add Organization',
-                            onPressed: provider.addOrganization,
-                            loading: provider.loading,
-                          ),
+
+                          if (provider.organizationModel == null) ...[
+                            CustomButton(
+                              label: 'Add Organization',
+                              onPressed: provider.addOrganization,
+                              loading: provider.loading,
+                            ),
+                          ] else ...[
+                            Text(
+                                'Organization created successfully, please request  for verification'),
+                            CustomButton(
+                              label: 'Request Verification',
+                              onPressed: provider.sendVerificationRequest,
+                              loading: provider.loading,
+                            ),
+                          ],
+
                           SizedBox(
                             height: 20,
                           )
@@ -504,13 +531,15 @@ class AddOrganizationScreen extends StatelessWidget {
 
   Widget _imageContainer(
     BuildContext context, {
-    required String? imageUrl,
+    required List<String>? imageUrls,
     required String label,
     required VoidCallback onTap,
+    required String? errorMessage,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Displaying label text
         Text(
           label,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -518,46 +547,93 @@ class AddOrganizationScreen extends StatelessWidget {
               ),
         ),
         const SizedBox(height: 8),
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.grey[400],
-              borderRadius: BorderRadius.circular(12),
-              image: imageUrl != null && imageUrl.isNotEmpty
-                  ? DecorationImage(
-                      image: NetworkImage(imageUrl),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: imageUrl == null || imageUrl.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.photo_library,
-                          color: primaryIconColor,
-                          size: 40,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Add Image',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: primaryIconColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                      ],
+
+        // Gesture Detector for interaction or Image Display
+        if (imageUrls == null || imageUrls.isEmpty) ...[
+          GestureDetector(
+            onTap: onTap,
+            child: Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[400],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.photo_library,
+                      color: primaryIconColor,
+                      size: 40,
                     ),
-                  )
-                : null,
+                    const SizedBox(height: 8),
+                    Text(
+                      'Add Image',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600, color: primaryIconColor),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+        ] else ...[
+          Column(
+            children: imageUrls.map((imageUrl) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: NetworkImage(imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.053,
+            width: MediaQuery.of(context).size.width * 0.24,
+            child: FloatingActionButton.small(
+              onPressed: onTap,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(
+                    Icons.add,
+                    size: 25,
+                  ),
+                  Text(
+                    'Add More',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                  ),
+                  Spacer(),
+                ],
+              ),
+            ),
+          ),
+        ],
+
+        // Error Message Display
+        if (errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              errorMessage,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                    fontStyle: FontStyle.italic,
+                  ),
+            ),
+          ),
       ],
     );
   }

@@ -43,7 +43,7 @@ class ForgotPasswordProvider extends ChangeNotifier {
 
     await Future.delayed(const Duration(seconds: 3));
     tabController.animateTo(1,
-        duration:const  Duration(milliseconds: 300), curve: Curves.easeIn);
+        duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
     loading = false;
     await authService.sendForgotPasswordRequest(email: email);
     tabIndex = 1;
@@ -64,9 +64,9 @@ class ForgotPasswordProvider extends ChangeNotifier {
     final response =
         await authService.verifyResetPasswordToken(email: email, token: token);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && response.errorMessage == null) {
       tabController.animateTo(2,
-          duration:const  Duration(milliseconds: 300), curve: Curves.easeIn);
+          duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
       loading = false;
       focusNode.unfocus();
       notifyListeners();
@@ -74,7 +74,7 @@ class ForgotPasswordProvider extends ChangeNotifier {
       loading = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(response.message),
+          content: Text(response.errorMessage!),
         ),
       );
 
@@ -94,12 +94,12 @@ class ForgotPasswordProvider extends ChangeNotifier {
       password: newPassword,
       confirmPassword: confirmPassword,
     );
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && response.errorMessage == null) {
       await Future.delayed(const Duration(seconds: 3));
       loading = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(response.message),
+          content: Text(response.message!),
         ),
       );
       notifyListeners();
@@ -109,7 +109,7 @@ class ForgotPasswordProvider extends ChangeNotifier {
       loading = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(response.message),
+          content: Text(response.errorMessage!),
           backgroundColor: Colors.red,
         ),
       );
@@ -124,7 +124,7 @@ class ForgotPasswordSheet extends StatefulWidget {
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (context) =>const  ForgotPasswordSheet());
+        builder: (context) => const ForgotPasswordSheet());
   }
 
   @override
@@ -160,12 +160,12 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
-              const   SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 TabBar(
                   controller: provider.tabController,
-                  labelPadding:const EdgeInsets.only(right: 16),
+                  labelPadding: const EdgeInsets.only(right: 16),
                   onTap: (index) {
                     provider.setTabIndex();
                   },
@@ -198,9 +198,9 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                             const  SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               TextFormField(
-                                decoration:const  InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Email',
                                 ),
                                 onChanged: (value) {
@@ -224,7 +224,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                                 },
                                 autofocus: false,
                               ),
-                            const   SizedBox(
+                              const SizedBox(
                                 height: 30,
                               ),
                               CustomButton(
@@ -278,7 +278,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                                 },
                                 maxLength: 6,
                               ),
-                           const    SizedBox(
+                              const SizedBox(
                                 height: 20,
                               ),
                               CustomButton(
@@ -293,7 +293,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                            const   SizedBox(
+                              const SizedBox(
                                 height: 16,
                               ),
                               TextFormField(
@@ -328,7 +328,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                                 },
                                 obscureText: provider.obsecureText,
                               ),
-                            const   SizedBox(
+                              const SizedBox(
                                 height: 16,
                               ),
                               TextFormField(
@@ -365,7 +365,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet>
                                 },
                                 obscureText: provider.obsecureText,
                               ),
-                           const    SizedBox(
+                              const SizedBox(
                                 height: 20,
                               ),
                               CustomButton(

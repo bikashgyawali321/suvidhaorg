@@ -43,7 +43,7 @@ class RegisterProvider extends ChangeNotifier {
     try {
       final response = await backendService.registerOrg(request);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.errorMessage == null) {
         loading = false;
 
         if (controller.page == 0) {
@@ -56,14 +56,14 @@ class RegisterProvider extends ChangeNotifier {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.message),
+            content: Text(response.message!),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.message),
+            content: Text(response.errorMessage!),
             backgroundColor: Colors.red,
           ),
         );
@@ -90,11 +90,11 @@ class RegisterProvider extends ChangeNotifier {
     try {
       final response =
           await backendService.verifyEmail(email: request.email, otp: otp);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.errorMessage == null) {
         loading = false;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.message),
+            content: Text(response.message!),
             backgroundColor: Colors.green,
           ),
         );
@@ -104,7 +104,7 @@ class RegisterProvider extends ChangeNotifier {
         loading = false;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.message),
+            content: Text(response.errorMessage ?? 'Something went wrong'),
             backgroundColor: Colors.red,
           ),
         );
@@ -121,17 +121,17 @@ class RegisterProvider extends ChangeNotifier {
     try {
       final response =
           await backendService.resendVerificationEmail(email: request.email);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.errorMessage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.message),
+            content: Text(response.message!),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.message),
+            content: Text(response.errorMessage ?? 'Something went wrong'),
             backgroundColor: Colors.red,
           ),
         );

@@ -24,8 +24,8 @@ class AuthProvider extends ChangeNotifier {
     try {
       BackendResponse response = await service.getUserDetails();
 
-      if (response.data != null) {
-        user = UserModel.fromJson(response.data);
+      if (response.result != null) {
+        user = UserModel.fromJson(response.result);
         debugPrint("User details: ${user!.name}");
       } else {
         error = response.message;

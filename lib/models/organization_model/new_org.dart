@@ -21,11 +21,11 @@ class NewOrganization {
 
   // Since citzImg is optional in Joi schema, it can be null or omitted
   @JsonKey(includeIfNull: false)
-  String? citzImg;
+  List<String>? citzImg;
 
-  // orgImg and panImg are required as per the Joi schema
-  String orgImg;
-  String panImg;
+  // orgImg and panImg are now lists as per the updated schema
+  List<String> orgImg;
+  List<String> panImg;
 
   NewOrganization({
     required this.nameOrg,

@@ -32,13 +32,15 @@ class LoginProvider extends ChangeNotifier {
     notifyListeners();
 
     final response = await _backendService.loginUser(request);
-    if (response.data != null) {
-      AuthToken token = AuthToken.fromJson(response.data!);
+    if (response.result != null &&
+        response.statusCode == 200 &&
+        response.errorMessage == null) {
+      AuthToken token = AuthToken.fromJson(response.result!);
       await CustomHive().saveAuthToken(token);
       context.go('/');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(response.message),
+        content: Text(response.errorMessage!),
       ));
     }
   }
@@ -99,11 +101,11 @@ class LoginScreen extends StatelessWidget {
                               "Let's login as an organization",
                               style: Theme.of(context).textTheme.headlineSmall,
                             ),
-                          const   SizedBox(
+                            const SizedBox(
                               height: 30,
                             ),
                             TextFormField(
-                              decoration:const  InputDecoration(
+                              decoration: const InputDecoration(
                                 label: Text('Email'),
                               ),
                               onChanged: (value) =>
@@ -122,7 +124,7 @@ class LoginScreen extends StatelessWidget {
                                 return null;
                               },
                             ),
-                      const       SizedBox(
+                            const SizedBox(
                               height: 15,
                             ),
                             TextFormField(
@@ -159,7 +161,7 @@ class LoginScreen extends StatelessWidget {
                                       // context.push('/forgotPassword');
                                       ForgotPasswordSheet.show(context);
                                     },
-                                    child:const  Text('Forgot password?'))
+                                    child: const Text('Forgot password?'))
                               ],
                             ),
                             CustomButton(
@@ -179,7 +181,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-             const      SizedBox(
+                  const SizedBox(
                     height: 30,
                   )
                 ],

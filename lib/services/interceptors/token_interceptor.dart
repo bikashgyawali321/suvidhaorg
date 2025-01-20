@@ -37,11 +37,11 @@ class TokenInterceptor extends Interceptor {
     if (!options.path.contains('refreshToken')) {
       try {
         // Refresh token using the stored refresh token
-        final response =
-            await BackendService().refreshToken(refreshToken: token.refreshToken!);
+        final response = await BackendService()
+            .refreshToken(refreshToken: token.refreshToken!);
 
-        if (response.data != null) {
-          AuthToken newToken = AuthToken.fromJson(response.data!);
+        if (response.result != null) {
+          AuthToken newToken = AuthToken.fromJson(response.result!);
           // Save new token to Hive
           await CustomHive().saveAuthToken(newToken);
           options.headers.addAll({

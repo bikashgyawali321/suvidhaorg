@@ -6,7 +6,8 @@ part of 'org.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization(
+OrganizationModel _$OrganizationModelFromJson(Map<String, dynamic> json) =>
+    OrganizationModel(
       id: json['_id'] as String,
       nameOrg: json['nameOrg'] as String,
       intro: json['intro'] as String,
@@ -31,10 +32,10 @@ Organization _$OrganizationFromJson(Map<String, dynamic> json) => Organization(
           (json['panImg'] as List<dynamic>).map((e) => e as String).toList(),
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
-      user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
+      user: json['user'] as String,
     );
 
-Map<String, dynamic> _$OrganizationToJson(Organization instance) =>
+Map<String, dynamic> _$OrganizationModelToJson(OrganizationModel instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'nameOrg': instance.nameOrg,

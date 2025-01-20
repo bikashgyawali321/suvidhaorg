@@ -31,11 +31,11 @@ class ChangePasswordProvider extends ChangeNotifier {
         newPassword: newPassword,
         oldPassword: oldPassword,
         confirmPassword: confirmPassword);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && response.errorMessage == null) {
       context.pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(response.message),
+          content: Text(response.message!),
         ),
       );
 
@@ -44,7 +44,7 @@ class ChangePasswordProvider extends ChangeNotifier {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(response.message),
+          content: Text(response.errorMessage!),
         ),
       );
       loading = false;
@@ -85,7 +85,7 @@ class ChangePassword extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            const   FormBottomSheetHeader(title: 'Change Password'),
+              const FormBottomSheetHeader(title: 'Change Password'),
               const SizedBox(height: 10),
               Form(
                   key: provider._formKey,
@@ -150,7 +150,7 @@ class ChangePassword extends StatelessWidget {
                             return null;
                           },
                         ),
-                      const   SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                         TextFormField(

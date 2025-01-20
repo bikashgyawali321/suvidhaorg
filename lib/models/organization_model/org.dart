@@ -1,11 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:suvidhaorg/models/auth_models/user_model.dart';
 import 'coordinates.dart';
 
 part 'org.g.dart';
 
 @JsonSerializable()
-class Organization {
+class OrganizationModel {
   @JsonKey(name: '_id')
   String id;
   String nameOrg;
@@ -31,9 +30,9 @@ class Organization {
   List<String> panImg;
   DateTime createdAt;
   DateTime updatedAt;
-  UserModel user; 
+  String user;
 
-  Organization({
+  OrganizationModel({
     required this.id,
     required this.nameOrg,
     required this.intro,
@@ -55,16 +54,16 @@ class Organization {
     required this.panImg,
     required this.createdAt,
     required this.updatedAt,
-    required this.user,  
+    required this.user,
   });
 
   // fromJson
-  factory Organization.fromJson(Map<String, dynamic> json) => _$OrganizationFromJson(json);
+  factory OrganizationModel.fromJson(Map<String, dynamic> json) =>
+      _$OrganizationModelFromJson(json);
 
   // toJson
-  Map<String, dynamic> toJson() => _$OrganizationToJson(this);
+  Map<String, dynamic> toJson() => _$OrganizationModelToJson(this);
 }
-
 
 LongitudeLatitudeModel _longLatFromJson(Map<String, dynamic> json) {
   return LongitudeLatitudeModel.fromJson(json);

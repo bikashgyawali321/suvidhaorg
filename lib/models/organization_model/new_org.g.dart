@@ -16,9 +16,12 @@ NewOrganization _$NewOrganizationFromJson(Map<String, dynamic> json) =>
       contactNumber: json['contactNumber'] as String,
       panNo: json['panNo'] as String,
       message: json['message'] as String?,
-      citzImg: json['citzImg'] as String?,
-      orgImg: json['orgImg'] as String,
-      panImg: json['panImg'] as String,
+      citzImg:
+          (json['citzImg'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      orgImg:
+          (json['orgImg'] as List<dynamic>).map((e) => e as String).toList(),
+      panImg:
+          (json['panImg'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$NewOrganizationToJson(NewOrganization instance) =>

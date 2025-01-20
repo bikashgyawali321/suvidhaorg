@@ -1,27 +1,26 @@
+
 class BackendResponse<T> {
   final String title;
-  final String message;
-  final T? data;
+  final String? message;
+  final T? result;
   final int? statusCode;
+  final String? errorMessage;
 
   BackendResponse({
     required this.title,
-    required this.message,
-    this.data,
+    this.message,
+    this.result,
     this.statusCode,
+    this.errorMessage,
   });
 
-  factory BackendResponse.fromJson(
-    Map<String, dynamic> json,
-    T Function(Object? json) fromJsonT,
-  ) {
-    return BackendResponse<T>(
-      title: json['title'] ?? '',
-      message: json['message'] ?? '',
-      data: (json['title'] == 'error')
-          ? null
-          : (json['data'] != null ? fromJsonT(json['data']) : null),
-      statusCode: json['statusCode'],
+  factory BackendResponse.fromJson(Map<String, dynamic> json, int statusCode) {
+    return BackendResponse(
+      title: json['title'],
+      message: statusCode == 200 ? json['message'] : null,
+      result: json['data'],
+      statusCode: statusCode,
+      errorMessage: statusCode != 200 ? json['message'] : null,
     );
   }
 }
