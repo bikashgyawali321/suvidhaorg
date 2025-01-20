@@ -9,6 +9,8 @@ const primary = Colors.pink;
 const primaryDark = Color(0xFF0A1543);
 const secondary = Colors.grey;
 const suvidhaWhite = Color(0xFFE5E5E5);
+const suvidhaDark = Color(0xFF1C1C1C);
+
 // const primaryIconColor = Color.fromARGB(129, 55, 44, 111);
 const primaryIconColor = Color(0xFF4159A4);
 

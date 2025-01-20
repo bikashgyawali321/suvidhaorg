@@ -1,6 +1,6 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:suvidhaorg/extensions/date.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 
 class OrganizationDetailsScreen extends StatelessWidget {
@@ -13,225 +13,502 @@ class OrganizationDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          organizationModel.nameOrg,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.white,
-              ),
+          'Organization Profile',
+          maxLines: 2,
         ),
-        centerTitle: true,
+        elevation: 4,
+        backgroundColor: Colors.deepPurple,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Organization Images Section
+            Text(
+              'Basic Information',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 10),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Text(
+                        'Organization Name',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.nameOrg,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Introduction',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.intro,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Address',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.address,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    //active status
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Active Status',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.isActive == true
+                            ? 'Active'
+                            : 'Inactive',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Contact Person',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.contactPerson,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Contact Number',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.contactNumber,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    //org slug
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Organization Slug',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.slug,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Rating',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.rating != null
+                            ? '${organizationModel.rating} / 5'
+                            : 'Not Rated Yet',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+
+                    // Organization Status
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Verification Status',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.status!,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+
+                    // Organization block status
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Block Status',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.isBlocked == true
+                            ? 'Blocked'
+                            : 'Not Blocked',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+
+                    //organization created at
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Created At',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.createdAt.toLocal().toVerbalDateTime,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+
+                    //organization updated at
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Updated At',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        organizationModel.updatedAt.toLocal().toVerbalDateTime,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Organization Image Section Label
             Text(
               organizationModel.orgImg.length > 1
                   ? 'Organization Images'
                   : 'Organization Image',
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 10),
-            SizedBox(
-              height: 200,
-              child: organizationModel.orgImg.isNotEmpty
-                  ? ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: organizationModel.orgImg.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) => Stack(
-                                children: [
-                                  BackdropFilter(
-                                    filter: ImageFilter.blur(
-                                      sigmaX: 10,
-                                      sigmaY: 10,
-                                    ),
-                                    child: Container(
-                                      color: Colors.black.withOpacity(0.4),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: GestureDetector(
-                                      onTap: () => Navigator.pop(context),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                        child: Image.network(
-                                          organizationModel.orgImg[index],
-                                          fit: BoxFit.contain,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  const Icon(
-                                            Icons.broken_image,
-                                            size: 80,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+
+            if (organizationModel.orgImg.isNotEmpty)
+              Column(
+                spacing: 5,
+                children: organizationModel.orgImg.map((imgUrl) {
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => Stack(
+                          children: [
+                            BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 10,
+                                sigmaY: 10,
                               ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12.0),
-                              child: Image.network(
-                                organizationModel.orgImg[index],
-                                fit: BoxFit.cover,
-                                width: 300,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                  color: Colors.grey[200],
-                                  child: const Icon(
-                                    Icons.broken_image,
-                                    size: 50,
-                                    color: Colors.grey,
+                              child: Container(
+                                color: Colors.black.withOpacity(0.4),
+                              ),
+                            ),
+                            Center(
+                              child: GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  child: Image.network(
+                                    imgUrl,
+                                    fit: BoxFit.contain,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                      Icons.broken_image,
+                                      size: 80,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    )
-                  : Container(
-                      height: 200,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(12.0),
+                          ],
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Text(
-                        'No Images Available',
-                        style: TextStyle(color: Colors.grey),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          imgUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 200,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                            color: Colors.grey[200],
+                            child: const Icon(
+                              Icons.broken_image,
+                              size: 80,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-            ),
+                  );
+                }).toList(),
+              )
+            else
+              Container(
+                height: 200,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: const Text(
+                  'No Image Available',
+                ),
+              ),
             const SizedBox(height: 20),
 
-            // Organization Details Section
+            // Citizenship Image Section Label
             Text(
-              'Organization Details',
-              style: Theme.of(context).textTheme.titleLarge,
+              organizationModel.citzImg.length > 1
+                  ? 'Citizenship Images'
+                  : 'Citizenship Image',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 10),
-            buildDetailRow(
-              context,
-              title: 'Introduction',
-              value: organizationModel.intro,
-            ),
-            buildDetailRow(
-              context,
-              title: 'Address',
-              value: organizationModel.address,
-            ),
-            buildDetailRow(
-              context,
-              title: 'Contact Person',
-              value: organizationModel.contactPerson,
-            ),
-            buildDetailRow(
-              context,
-              title: 'Contact Number',
-              value: organizationModel.contactNumber,
-            ),
-            buildDetailRow(
-              context,
-              title: 'PAN Number',
-              value: organizationModel.panNo,
-            ),
-            buildDetailRow(
-              context,
-              title: 'Rating',
-              value: organizationModel.rating != null
-                  ? '${organizationModel.rating} / 5'
-                  : 'Not Rated Yet',
-            ),
-            const SizedBox(height: 20),
 
-            Text(
-              'Additional Images',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 150,
-              child: organizationModel.citzImg.isNotEmpty
-                  ? ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: organizationModel.citzImg.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: Image.network(
-                              organizationModel.citzImg[index],
-                              fit: BoxFit.cover,
-                              width: 150,
-                              height: 150,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Container(
-                                color: Colors.grey[200],
-                                child: const Icon(
-                                  Icons.broken_image,
-                                  size: 50,
-                                  color: Colors.grey,
+            // Citizenship Image Section in Card using Map
+            if (organizationModel.citzImg.isNotEmpty)
+              Column(
+                spacing: 5,
+                children: organizationModel.citzImg.map((imgUrl) {
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => Stack(
+                          children: [
+                            BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 10,
+                                sigmaY: 10,
+                              ),
+                              child: Container(
+                                color: Colors.black.withOpacity(0.4),
+                              ),
+                            ),
+                            Center(
+                              child: GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  child: Image.network(
+                                    imgUrl,
+                                    fit: BoxFit.contain,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                      Icons.broken_image,
+                                      size: 80,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    )
-                  : Container(
-                      height: 150,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(12.0),
+                          ],
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Text(
-                        'No Additional Images Available',
-                        style: TextStyle(color: Colors.grey),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          imgUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 200,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                            color: Colors.grey[200],
+                            child: const Icon(
+                              Icons.broken_image,
+                              size: 80,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
+                  );
+                }).toList(),
+              )
+            else
+              Container(
+                height: 200,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: const Text(
+                  'No Citizenship Image Available',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            const SizedBox(height: 20),
+
+            // PAN Image Section Label
+            Text(
+              organizationModel.panImg.length > 1 ? 'PAN Images' : 'PAN Image',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
+            const SizedBox(height: 10),
+
+            // PAN Image Section in Card using Map
+            if (organizationModel.panImg.isNotEmpty)
+              Column(
+                spacing: 5,
+                children: organizationModel.panImg.map((imgUrl) {
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => Stack(
+                          children: [
+                            BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 10,
+                                sigmaY: 10,
+                              ),
+                              child: Container(
+                                color: Colors.black.withOpacity(0.4),
+                              ),
+                            ),
+                            Center(
+                              child: GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  child: Image.network(
+                                    imgUrl,
+                                    fit: BoxFit.contain,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                      Icons.broken_image,
+                                      size: 80,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          imgUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 200,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                            color: Colors.grey[200],
+                            child: const Icon(
+                              Icons.broken_image,
+                              size: 80,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              )
+            else
+              Container(
+                height: 200,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: const Text(
+                  'No PAN Image Available',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
 
-  // Widget to display a single detail row
-  Widget buildDetailRow(BuildContext context,
-      {required String title, required String? value}) {
+  // create a divider widget
+  Widget customDivider() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$title: ',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          Expanded(
-            child: Text(
-              value ?? 'N/A',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Divider(
+        thickness: 0,
+        color: Colors.blueGrey[400],
       ),
     );
   }

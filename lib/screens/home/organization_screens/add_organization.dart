@@ -8,7 +8,6 @@ import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
 import 'package:suvidhaorg/screens/home/organization_screens/request_organization_verification.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
-import 'package:suvidhaorg/widgets/form_bottom_sheet_header.dart';
 import 'dart:io';
 
 import '../../../models/organization_model/coordinates.dart';
@@ -261,204 +260,235 @@ class AddOrganizationScreen extends StatelessWidget {
       create: (_) => AddOrganizationProvider(context),
       builder: (context, child) => Consumer<AddOrganizationProvider>(
         builder: (context, provider, child) => Scaffold(
-          appBar: AppBar(
-            title: Flexible(
-              child: Text(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(70),
+            child: AppBar(
+              title: Text(
                 'Get Started with Your Organization',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: suvidhaWhite,
-                      fontWeight: FontWeight.w500,
-                    ),
+                maxLines: 2,
+                textAlign: TextAlign.left,
               ),
+              centerTitle: false,
+              automaticallyImplyLeading: true,
             ),
-            centerTitle: false,
-            automaticallyImplyLeading: false,
           ),
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Let's get your organization started by filling out the details below.",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                     ),
                     const SizedBox(height: 20),
 
-                    // Organization Name
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Organization Name',
-                        hintText: 'Enter the organization name',
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 14,
-                          horizontal: 16,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                    Text(
+                      "Basic Organization Details",
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        child: Form(
+                          key: provider._formKey,
+                          child: Column(
+                            children: [
+                              // Organization Name Field
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Organization Name',
+                                  hintText: 'Enter the organization name',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 16),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                onChanged: (value) =>
+                                    provider.org.nameOrg = value,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter the organization name';
+                                  }
+                                  if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
+                                    return 'Organization name should contain at least one alphabet';
+                                  }
+                                  //org name should be 5 characters long
+                                  if (value.length < 5) {
+                                    return 'Organization name should be at least 5 characters long';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Address Field
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Organization Address',
+                                  hintText: 'Enter the organization address',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 16),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                onChanged: (value) =>
+                                    provider.org.address = value,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter the address of the organization';
+                                  }
+                                  if (!RegExp(r"^[a-zA-Z0-9\s,.'-]{3,}$")
+                                      .hasMatch(value)) {
+                                    return 'Please enter a valid address';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Contact Person Field
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Contact Person',
+                                  hintText: 'Name of the contact person',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 16),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                onChanged: (value) =>
+                                    provider.org.contactPerson = value,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter the contact person\'s name';
+                                  }
+                                  if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
+                                    return 'Contact person\'s name should contain at least one alphabet';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Contact Number Field
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Contact Number',
+                                  hintText: 'Enter the contact number',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 16),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  prefixIcon: Icon(Icons.phone),
+                                ),
+                                maxLength: 10,
+                                onChanged: (value) =>
+                                    provider.org.contactNumber = value,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter the contact number';
+                                  }
+                                  if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                                    return 'Please enter a valid contact number';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.phone,
+                              ),
+                              const SizedBox(height: 16),
+
+                              // PAN Number Field
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'PAN Number',
+                                  hintText: 'Enter PAN number',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 16),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) =>
+                                    provider.org.panNo = value,
+                                maxLength: 10,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter the PAN number';
+                                  }
+                                  if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                                    return 'Please enter a valid PAN number';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Brief Introduction Field
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Brief Introduction',
+                                  hintText:
+                                      'Enter a brief introduction to the organization',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 16),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                onChanged: (value) =>
+                                    provider.org.intro = value,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a brief introduction to the organization';
+                                  }
+                                  if (value.length < 10) {
+                                    return 'Introduction should be at least 10 characters long';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.multiline,
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Message Field (Optional)
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Message',
+                                  hintText: 'Message for the admin (optional)',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 16),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                onChanged: (value) =>
+                                    provider.org.message = value,
+                                keyboardType: TextInputType.multiline,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      onChanged: (value) => provider.org.nameOrg = value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the organization name';
-                        }
-                        if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
-                          return 'Organization name should contain at least one alphabet';
-                        }
-                        return null;
-                      },
                     ),
-                    const SizedBox(height: 16),
-
-                    // Address
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Organization Address',
-                        hintText: 'Enter the organization address',
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14, horizontal: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onChanged: (value) => provider.org.address = value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the address of the organization';
-                        }
-                        if (!RegExp(r"^[a-zA-Z0-9\s,.'-]{3,}$")
-                            .hasMatch(value)) {
-                          return 'Please enter a valid address';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Contact Person
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Contact Person',
-                        hintText: 'Name of the contact person',
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 14,
-                          horizontal: 16,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onChanged: (value) => provider.org.contactPerson = value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the contact person\'s name';
-                        }
-                        if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
-                          return 'Contact person\'s name should contain at least one alphabet';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Contact Number
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Contact Number',
-                        hintText: 'Enter the contact number',
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14, horizontal: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onChanged: (value) => provider.org.contactNumber = value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the contact number';
-                        }
-                        if (!RegExp(r'^\d{10}$').hasMatch(value)) {
-                          return 'Please enter a valid contact number';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // PAN Number
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'PAN Number',
-                        hintText: 'Enter PAN number',
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14, horizontal: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onChanged: (value) => provider.org.panNo = value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the PAN number';
-                        }
-                        if (!RegExp(r'^\d{10}$').hasMatch(value)) {
-                          return 'Please enter a valid PAN number';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Brief Introduction
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Brief Introduction',
-                        hintText:
-                            'Enter a brief introduction to the organization',
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14, horizontal: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onChanged: (value) => provider.org.intro = value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a brief introduction to the organization';
-                        }
-                        if (value.length < 10) {
-                          return 'Introduction should be at least 10 characters long';
-                        }
-                        return null;
-                      },
-                      keyboardType: TextInputType.multiline,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Message (Optional)
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Message',
-                        hintText: 'Message for the admin (optional)',
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14, horizontal: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                      ),
-                      onChanged: (value) => provider.org.message = value,
-                      keyboardType: TextInputType.multiline,
-                    ),
-
                     const SizedBox(height: 20),
 
-                    // Image Containers
+                    // Image Containers with error message
                     _imageContainer(
                       context,
                       imageUrls: provider.org.panImg,
@@ -485,10 +515,9 @@ class AddOrganizationScreen extends StatelessWidget {
                     const SizedBox(height: 30),
 
                     // Submit Button
-
                     CustomButton(
                       label: 'Add Organization',
-                      onPressed: provider.addOrganization,
+                      onPressed: () => provider.addOrganization(),
                       loading: provider.loading,
                     ),
                   ],
@@ -501,6 +530,7 @@ class AddOrganizationScreen extends StatelessWidget {
     );
   }
 
+  // Image Container with error message
   Widget _imageContainer(
     BuildContext context, {
     required List<String>? imageUrls,
@@ -521,63 +551,64 @@ class AddOrganizationScreen extends StatelessWidget {
         if (imageUrls == null || imageUrls.isEmpty) ...[
           GestureDetector(
             onTap: onTap,
-            child: Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[400],
+            child: Card(
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 6,
-                    spreadRadius: 2,
-                  ),
-                ],
               ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.photo_library,
-                      color: primaryIconColor,
-                      size: 40,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Add Image',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: primaryIconColor,
-                          ),
-                    ),
-                  ],
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.photo_library,
+                        color: primaryIconColor,
+                        size: 40,
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Add Image',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: primaryIconColor,
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ] else ...[
           Column(
+            spacing: 5,
             children: imageUrls.map((imageUrl) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                height: 200,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  image: DecorationImage(
-                    image: NetworkImage(imageUrl),
-                    fit: BoxFit.cover,
+              return Card(
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(imageUrl),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
               );
             }).toList(),
           ),
           const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
+          Card(
+            color: primaryIconColor,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              color: Colors.blue[700],
             ),
             child: TextButton(
                 onPressed: onTap,
@@ -585,13 +616,16 @@ class AddOrganizationScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.add_a_photo_outlined,
-                        color: suvidhaWhite, size: 25),
+                    Icon(
+                      Icons.add_a_photo_outlined,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                     const SizedBox(width: 5),
                     Text(
-                      'Add image',
+                      'Add more',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: suvidhaWhite,
+                            color: Colors.white,
                           ),
                     ),
                   ],

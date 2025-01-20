@@ -37,6 +37,7 @@ class OrganizationProvider extends ChangeNotifier {
         loading = false;
         organization = OrganizationModel.fromJson(response.result);
         notifyListeners();
+        context.pop();
         context.go('/home');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
