@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:lottie/lottie.dart'; // Import the lottie package
 import 'package:suvidhaorg/models/offered_service.dart';
 import 'package:suvidhaorg/providers/organization_provider.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
 import 'package:suvidhaorg/screens/home/profile_content.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
+
 import '../../providers/auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,17 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final organizationProvider = Provider.of<OrganizationProvider>(context);
-    bool isOrganizationAvailable = organizationProvider.organization != null;
 
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: suvidhaWhite),
-        backgroundColor: primaryDark,
-        title: Text(
+        title: const Text(
           'सुविधा सेवा',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: suvidhaWhite,
-              ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -67,10 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: primaryIconColor,
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     Flexible(
+                      flex: 5,
                       child: Text(
                         authProvider.user?.name ?? 'N/A',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -79,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     Flexible(
+                      flex: 3,
                       child: Text(
                         authProvider.user?.email ?? 'N/A',
                         maxLines: 2,
@@ -98,34 +93,47 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-          child: isOrganizationAvailable
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: organizationProvider.organization != null
               ? Column(
-                  children: [
-                    CustomButton(
-                      label: 'Add organization',
-                      onPressed: () => context.push('/add_organization'),
-                    )
-                  ],
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: const [],
                 )
-              : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'No organization found! Create one now.',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.black,
-                            ),
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Card(
+                      child: Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(
+                          FontAwesomeIcons.buildingCircleExclamation,
+                          size: 100,
+                          color: Colors.redAccent,
+                        ),
                       ),
-                      SizedBox(height: 20),
-                      CustomButton(
-                        label: 'Create Organization',
-                        onPressed: () => context.push('/add_organization'),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'No organization found!',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                        'Create your organization today and unlock all the features.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium),
+                    const SizedBox(height: 30),
+                    CustomButton(
+                      label: 'Create One Now',
+                      onPressed: () => context.push('/add_organization'),
+                    ),
+                  ],
                 ),
         ),
       ),

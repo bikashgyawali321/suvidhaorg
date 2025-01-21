@@ -50,13 +50,12 @@ class CustomHive {
 
   //save fcm token
 
-    Future<void> saveFCMToken(String token) {
+  Future<void> saveFCMToken(String token) {
     return _box.put('fcmToken', jsonEncode(token));
   }
 
   //get fcm token
   String? getFCMToken() {
-
     String? encodedToken = _box.get('fcmToken');
     if (encodedToken == null) return null;
     String decodedToken = jsonDecode(encodedToken);

@@ -1,25 +1,28 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:suvidhaorg/models/organization_model/coordinates.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
-import 'package:suvidhaorg/providers/theme_provider.dart';
+import 'package:suvidhaorg/providers/organization_provider.dart';
 import 'package:suvidhaorg/screens/home/organization_screens/request_organization_verification.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
+import 'package:suvidhaorg/widgets/custom_button_sheet.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
-import 'dart:io';
 
-import '../../../models/organization_model/coordinates.dart';
 import '../../../models/organization_model/new_org.dart';
+import '../../../providers/theme_provider.dart';
 import '../../../services/backend_service.dart';
 
-class AddOrganizationProvider extends ChangeNotifier {
+class UpdateOrganizationProvider extends ChangeNotifier {
   final BuildContext context;
-  AddOrganizationProvider(this.context) {
-    backendService = Provider.of<BackendService>(context);
-    getCurrentLocation();
+  OrganizationModel? orgModel;
+  UpdateOrganizationProvider(this.context, this.orgModel) {
+    initialize();
   }
 
   late BackendService backendService;
@@ -29,23 +32,33 @@ class AddOrganizationProvider extends ChangeNotifier {
   File? citzImg;
   String? imageType;
   final _formKey = GlobalKey<FormState>();
-  OrganizationModel? organizationModel;
   String? panImageError;
   String? orgImageError;
   String? citizenImageError;
+  late OrganizationProvider _organizationProvider;
 
-  NewOrganization org = NewOrganization(
-    nameOrg: '',
-    intro: '',
-    address: '',
-    longLat: LongitudeLatitudeModel(type: 'Point', coordinates: [0, 0]),
-    contactPerson: '',
-    contactNumber: '',
-    panNo: '',
-    citzImg: [],
-    orgImg: [],
-    panImg: [],
-  );
+  NewOrganization? org;
+
+//initialize the new org instance
+  void initialize() {
+    backendService = Provider.of<BackendService>(context);
+    _organizationProvider = Provider.of<OrganizationProvider>(context);
+    getCurrentLocation();
+    org = NewOrganization(
+      nameOrg: orgModel?.nameOrg ?? '',
+      intro: orgModel?.intro ?? '',
+      address: orgModel?.address ?? '',
+      longLat: orgModel?.longLat ??
+          LongitudeLatitudeModel(type: 'Point', coordinates: [0.0, 0.0]),
+      panImg: orgModel?.panImg ?? [],
+      orgImg: orgModel?.orgImg ?? [],
+      citzImg: orgModel?.citzImg ?? [],
+      contactNumber: orgModel?.contactNumber ?? '',
+      contactPerson: orgModel?.contactPerson ?? '',
+      panNo: orgModel?.panNo ?? '',
+      message: orgModel?.message ?? '',
+    );
+  }
 
   // Function to get the current user location
   Future<void> getCurrentLocation() async {
@@ -54,7 +67,7 @@ class AddOrganizationProvider extends ChangeNotifier {
     if (status.isGranted) {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      org.longLat = LongitudeLatitudeModel(
+      org!.longLat = LongitudeLatitudeModel(
         type: 'Point',
         coordinates: [position.longitude, position.latitude],
       );
@@ -81,7 +94,7 @@ class AddOrganizationProvider extends ChangeNotifier {
       if (response.statusCode == 200 && response.result != null) {
         panImageError = null;
 
-        org.panImg.add(response.result!);
+        org?.panImg.add(response.result!);
         notifyListeners();
       } else {
         panImageError = response.message;
@@ -103,7 +116,7 @@ class AddOrganizationProvider extends ChangeNotifier {
 
       if (response.statusCode == 200 && response.result != null) {
         orgImageError = null;
-        org.orgImg.add(response.result!);
+        org?.orgImg.add(response.result!);
         await Future.delayed(const Duration(seconds: 2));
         notifyListeners();
       } else {
@@ -126,7 +139,7 @@ class AddOrganizationProvider extends ChangeNotifier {
 
       if (response.statusCode == 200 && response.result != null) {
         citizenImageError = null;
-        org.citzImg?.add(response.result!);
+        org?.citzImg?.add(response.result!);
         notifyListeners();
       } else {
         citizenImageError = response.message;
@@ -207,16 +220,32 @@ class AddOrganizationProvider extends ChangeNotifier {
     );
   }
 
-  //function to add organization
+  //function to delete image
+  void deleteImage(String imageUrl, String imageType) async {
+    final response = await backendService.deleteImage(imageUrl: imageUrl);
+    if (response.statusCode == 200 && response.errorMessage == null) {
+      imageType == 'Pan'
+          ? org!.panImg.remove(imageUrl)
+          : imageType == 'Org'
+              ? org!.orgImg.remove(imageUrl)
+              : org!.citzImg?.remove(imageUrl);
+    } else {
+      SnackbarHelper.showSnackbar(
+        context: context,
+        errorMessage: response.errorMessage,
+      );
+    }
+  }
 
-  Future<void> addOrganization() async {
+  //function to add organization
+  Future<void> updateOrganization() async {
     try {
       loading = true;
       notifyListeners();
 
       if (!_formKey.currentState!.validate() ||
-          org.panImg.isEmpty ||
-          org.orgImg.isEmpty) {
+          org!.panImg.isEmpty ||
+          org!.orgImg.isEmpty) {
         loading = false;
         orgImageError = 'Please select an image to upload';
         panImageError = 'Please select an image to upload';
@@ -224,48 +253,57 @@ class AddOrganizationProvider extends ChangeNotifier {
         return;
       }
 
-      final response = await backendService.createOrganization(newOrg: org);
+      final response = await backendService.updateOrg(organization: org!);
 
       if (response.statusCode == 200 && response.result != null) {
         loading = false;
-        organizationModel = OrganizationModel.fromJson(response.result!);
-        RequestOrganizationVerification.show(context, organizationModel!.id);
+        orgModel = OrganizationModel.fromJson(response.result!);
+        SnackbarHelper.showSnackbar(
+          context: context,
+          successMessage: response.message,
+        );
+        context.go('/home');
         notifyListeners();
       } else {
         loading = false;
         notifyListeners();
-        context.pop();
+
         SnackbarHelper.showSnackbar(
           context: context,
           errorMessage: response.errorMessage,
         );
       }
     } catch (e) {
-      debugPrint("Error in creating an organization");
+      debugPrint("Error in updating  organization");
       loading = false;
       SnackbarHelper.showSnackbar(
         context: context,
         errorMessage: 'Something went wrong, please try again later.',
       );
       notifyListeners();
+    } finally {
+      _organizationProvider.getOrganizationDetails();
+      notifyListeners();
     }
   }
 }
 
-class AddOrganizationScreen extends StatelessWidget {
-  const AddOrganizationScreen({super.key});
+class UpdateOrganizationScreen extends StatelessWidget {
+  final OrganizationModel organization;
+
+  const UpdateOrganizationScreen({super.key, required this.organization});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => AddOrganizationProvider(context),
-      builder: (context, child) => Consumer<AddOrganizationProvider>(
+      create: (_) => UpdateOrganizationProvider(context, organization),
+      builder: (context, child) => Consumer<UpdateOrganizationProvider>(
         builder: (context, provider, child) => Scaffold(
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(70),
             child: AppBar(
               title: Text(
-                'Get Started with Your Organization',
+                'Update Organization Details',
                 maxLines: 2,
                 textAlign: TextAlign.left,
               ),
@@ -281,7 +319,7 @@ class AddOrganizationScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Let's get your organization started by filling out the details below.",
+                      "Update the details for your organization.",
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -294,9 +332,7 @@ class AddOrganizationScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -309,6 +345,7 @@ class AddOrganizationScreen extends StatelessWidget {
                             children: [
                               // Organization Name Field
                               TextFormField(
+                                initialValue: provider.org?.nameOrg,
                                 decoration: InputDecoration(
                                   labelText: 'Organization Name',
                                   hintText: 'Enter the organization name',
@@ -319,7 +356,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onChanged: (value) =>
-                                    provider.org.nameOrg = value,
+                                    provider.org!.nameOrg = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter the organization name';
@@ -327,17 +364,17 @@ class AddOrganizationScreen extends StatelessWidget {
                                   if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
                                     return 'Organization name should contain at least one alphabet';
                                   }
-                                  //org name should be 5 characters long
                                   if (value.length < 5) {
                                     return 'Organization name should be at least 5 characters long';
                                   }
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
 
                               // Address Field
                               TextFormField(
+                                initialValue: provider.org?.address,
                                 decoration: InputDecoration(
                                   labelText: 'Organization Address',
                                   hintText: 'Enter the organization address',
@@ -348,7 +385,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onChanged: (value) =>
-                                    provider.org.address = value,
+                                    provider.org?.address = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter the address of the organization';
@@ -360,8 +397,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 16),
-
+                              SizedBox(height: 16),
                               // Contact Person Field
                               TextFormField(
                                 decoration: InputDecoration(
@@ -373,8 +409,9 @@ class AddOrganizationScreen extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
+                                initialValue: provider.org?.contactPerson,
                                 onChanged: (value) =>
-                                    provider.org.contactPerson = value,
+                                    provider.org?.contactPerson = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter the contact person\'s name';
@@ -385,10 +422,10 @@ class AddOrganizationScreen extends StatelessWidget {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 16),
-
+                              SizedBox(height: 16),
                               // Contact Number Field
                               TextFormField(
+                                initialValue: provider.org?.contactNumber,
                                 decoration: InputDecoration(
                                   labelText: 'Contact Number',
                                   hintText: 'Enter the contact number',
@@ -401,7 +438,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                 ),
                                 maxLength: 10,
                                 onChanged: (value) =>
-                                    provider.org.contactNumber = value,
+                                    provider.org?.contactNumber = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter the contact number';
@@ -413,10 +450,10 @@ class AddOrganizationScreen extends StatelessWidget {
                                 },
                                 keyboardType: TextInputType.phone,
                               ),
-                              const SizedBox(height: 16),
-
+                              SizedBox(height: 8),
                               // PAN Number Field
                               TextFormField(
+                                initialValue: provider.org?.panNo,
                                 decoration: InputDecoration(
                                   labelText: 'PAN Number',
                                   hintText: 'Enter PAN number',
@@ -428,7 +465,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                 ),
                                 keyboardType: TextInputType.number,
                                 onChanged: (value) =>
-                                    provider.org.panNo = value,
+                                    provider.org?.panNo = value,
                                 maxLength: 10,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -440,8 +477,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 16),
-
+                              SizedBox(height: 8),
                               // Brief Introduction Field
                               TextFormField(
                                 decoration: InputDecoration(
@@ -449,13 +485,16 @@ class AddOrganizationScreen extends StatelessWidget {
                                   hintText:
                                       'Enter a brief introduction to the organization',
                                   contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 16, horizontal: 16),
+                                    vertical: 16,
+                                    horizontal: 16,
+                                  ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
+                                initialValue: provider.org?.intro,
                                 onChanged: (value) =>
-                                    provider.org.intro = value,
+                                    provider.org?.intro = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter a brief introduction to the organization';
@@ -467,10 +506,10 @@ class AddOrganizationScreen extends StatelessWidget {
                                 },
                                 keyboardType: TextInputType.multiline,
                               ),
-                              const SizedBox(height: 16),
-
+                              SizedBox(height: 16),
                               // Message Field (Optional)
                               TextFormField(
+                                initialValue: provider.org?.message,
                                 decoration: InputDecoration(
                                   labelText: 'Message',
                                   hintText: 'Message for the admin (optional)',
@@ -481,7 +520,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onChanged: (value) =>
-                                    provider.org.message = value,
+                                    provider.org?.message = value,
                                 keyboardType: TextInputType.multiline,
                               ),
                             ],
@@ -491,36 +530,43 @@ class AddOrganizationScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    // Image Containers with error message
-                    _imageContainer(
-                      context,
-                      imageUrls: provider.org.panImg,
-                      label: 'PAN Card Photo',
-                      onTap: () => provider.pickImage('pan'),
-                      errorMessage: provider.panImageError,
-                    ),
+                    // Image Containers with error message and options to add more or delete
+                    _imageContainer(context,
+                        imageUrls: provider.org?.panImg,
+                        label: 'PAN Card Photo',
+                        onTap: () => provider.pickImage('pan'),
+                        errorMessage: provider.panImageError,
+                        onDelete: (imageUrl) =>
+                            provider.deleteImage(imageUrl, 'Pan'),
+                        loading: provider.loading),
                     const SizedBox(height: 20),
                     _imageContainer(
                       context,
-                      imageUrls: provider.org.orgImg,
+                      imageUrls: provider.org?.orgImg,
                       label: 'Organization Photo',
                       onTap: () => provider.pickImage('orgimage'),
                       errorMessage: provider.orgImageError,
+                      onDelete: (imageUrl) =>
+                          provider.deleteImage(imageUrl, 'orgimage'),
+                      loading: provider.loading,
                     ),
                     const SizedBox(height: 20),
                     _imageContainer(
                       context,
-                      imageUrls: provider.org.citzImg,
+                      imageUrls: provider.org?.citzImg,
                       label: 'Citizenship Photo',
                       onTap: () => provider.pickImage('citizen'),
                       errorMessage: provider.citizenImageError,
+                      onDelete: (imageUrl) =>
+                          provider.deleteImage(imageUrl, 'citizen'),
+                      loading: provider.loading,
                     ),
                     const SizedBox(height: 30),
 
                     // Submit Button
                     CustomButton(
-                      label: 'Add Organization',
-                      onPressed: () => provider.addOrganization(),
+                      label: 'Update Organization',
+                      onPressed: () => provider.updateOrganization(),
                       loading: provider.loading,
                     ),
                   ],
@@ -533,17 +579,19 @@ class AddOrganizationScreen extends StatelessWidget {
     );
   }
 
-  // Image Container with error message
   Widget _imageContainer(
     BuildContext context, {
     required List<String>? imageUrls,
     required String label,
     required VoidCallback onTap,
     required String? errorMessage,
+    required Function(String imageUrl) onDelete,
+    bool loading = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Label for the section
         Text(
           label,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -552,6 +600,7 @@ class AddOrganizationScreen extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         if (imageUrls == null || imageUrls.isEmpty) ...[
+          // Add Image Card
           GestureDetector(
             onTap: onTap,
             child: Card(
@@ -568,14 +617,14 @@ class AddOrganizationScreen extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.photo_library,
-                        color: primaryIconColor,
+                        color: Colors.grey[700],
                         size: 40,
                       ),
                       const SizedBox(height: 5),
                       Text(
                         'Add Image',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: primaryIconColor,
+                              color: Colors.grey[700],
                             ),
                       ),
                     ],
@@ -586,49 +635,59 @@ class AddOrganizationScreen extends StatelessWidget {
           ),
         ] else ...[
           Column(
-            spacing: 5,
             children: imageUrls.map((imageUrl) {
-              return Card(
-                child: Container(
-                  height: 200,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(imageUrl),
-                      fit: BoxFit.cover,
-                    ),
+              return GestureDetector(
+                onLongPress: () => CustomButtonSheet.show(
+                  context: context,
+                  title: 'Delete Image',
+                  message: 'Are you sure you want to delete this image?',
+                  positiveLabel: 'Cancel',
+                  negativeLabel: 'Delete',
+                  onTap: () => onDelete(imageUrl),
+                  loading: loading,
+                ),
+                child: Card(
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
+                  ),
+
+                  // Image display
+                  child: Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(imageUrl),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               );
             }).toList(),
           ),
           const SizedBox(height: 10),
-          Card(
-            color: primaryIconColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+          // Add More button
+          Container(
+            height: MediaQuery.of(context).size.height * 0.05,
+            width: MediaQuery.of(context).size.width * 0.27,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: TextButton(
+            child: Card(
+              child: TextButton.icon(
                 onPressed: onTap,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(
-                      Icons.add_a_photo_outlined,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      'Add more',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white,
-                          ),
-                    ),
-                  ],
-                )),
+                icon: Icon(
+                  Icons.add_a_photo_outlined,
+                  size: 18,
+                ),
+                label: Text(
+                  'Add More',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ),
           ),
         ],
         if (errorMessage != null)

@@ -241,8 +241,10 @@ class BackendService extends ChangeNotifier {
   //delete image
   Future<BackendResponse> deleteImage({required String imageUrl}) async {
     return await handleRequest(
-      request:
-          _dio.delete('/image/details', queryParameters: {'url': imageUrl}),
+      request: _dio.put(
+        '/image/details',
+        queryParameters: {'url': imageUrl},
+      ),
       titleOfRequest: 'deleting image',
     );
   }
@@ -295,7 +297,7 @@ class BackendService extends ChangeNotifier {
 
   //update org
   Future<BackendResponse> updateOrg(
-      {required OrganizationModel organization}) async {
+      {required NewOrganization organization}) async {
     return await handleRequest(
       request: _dio.put('/org', data: organization.toJson()),
       titleOfRequest: 'updating organization',
@@ -307,6 +309,23 @@ class BackendService extends ChangeNotifier {
     return await handleRequest(
       request: _dio.get('/org/byUser'),
       titleOfRequest: 'get organization by uid',
+    );
+  }
+
+  //update organization
+  Future<BackendResponse> updateOrganization(
+      {required NewOrganization organization}) async {
+    return await handleRequest(
+      request: _dio.put('/org', data: organization.toJson()),
+      titleOfRequest: 'updating organization',
+    );
+  }
+
+  //delete organization
+  Future<BackendResponse> deleteOrganization() async {
+    return await handleRequest(
+      request: _dio.put('/org/deleteOrg'),
+      titleOfRequest: 'deleting organization',
     );
   }
 }

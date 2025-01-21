@@ -14,11 +14,8 @@ class OrganizationDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Organization Profile',
-          maxLines: 2,
         ),
-        elevation: 4,
-        backgroundColor: Colors.deepPurple,
-      ),
+        ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         child: Column(

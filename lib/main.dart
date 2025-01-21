@@ -12,6 +12,7 @@ import 'providers/organization_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home/organization_screens/add_organization.dart';
 import 'screens/home/organization_screens/organization_details.dart';
+import 'screens/home/organization_screens/update_organization.dart';
 import 'screens/home/profile_content.dart';
 import 'screens/auth/login.dart';
 import 'screens/auth/register.dart';
@@ -80,7 +81,16 @@ GoRouter _router = GoRouter(
         final organization = state.extra as OrganizationModel;
         return OrganizationDetailsScreen(organizationModel: organization);
       },
-    )
+    ),
+    GoRoute(
+      path: '/update_organization',
+      builder: (context, state) {
+        final organization = state.extra as OrganizationModel;
+        return UpdateOrganizationScreen(
+          organization: organization,
+        );
+      },
+    ),
   ],
 );
 
@@ -116,9 +126,10 @@ class MyApp extends StatelessWidget {
         cardTheme: const CardTheme(
           elevation: 0,
           margin: EdgeInsets.all(0),
+          shadowColor: suvidhaDark,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(8),
+              Radius.circular(10),
             ),
           ),
           color: suvidhaWhite,
@@ -164,14 +175,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           elevation: 0,
           centerTitle: false,
-          color: primaryDark,
-          iconTheme: IconThemeData(
-            color: suvidhaWhite,
-          ),
-          titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: suvidhaWhite,
-                
-              ),
+          color: suvidhaWhite,
         ),
         iconTheme: IconThemeData(
           color: Colors.black,
@@ -237,17 +241,14 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           elevation: 0,
           centerTitle: false,
-          color: primaryDark,
-        ),
-        iconTheme: IconThemeData(
-          color: Colors.white,
+          color: suvidhaDark,
         ),
         cardTheme: const CardTheme(
           elevation: 0,
-          margin: EdgeInsets.all(0),
+          shadowColor: suvidhaWhite,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(8),
+              Radius.circular(10),
             ),
           ),
           color: suvidhaDark,
