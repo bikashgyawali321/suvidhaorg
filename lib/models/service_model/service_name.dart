@@ -1,24 +1,37 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'service_name.g.dart';
 
 @JsonSerializable()
-class ServiceName {
+class ServiceNameModel {
   @JsonKey(name: '_id')
   String? id;
   @JsonKey(name: 'name')
   final String name;
   @JsonKey(name: 'isActive')
   final bool isActive;
-   
-  ServiceName({
+
+  @JsonKey(name: 'servicecode')
+  final String serviceCode;
+
+  @JsonKey(name: 'createdAt')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updatedAt')
+  final DateTime? updatedAt;
+
+  ServiceNameModel({
     required this.name,
     required this.isActive,
+    required this.serviceCode,
+    this.id,
+    this.createdAt,
+    this.updatedAt,
   });
- 
-  factory ServiceName.fromJson(Map<String, dynamic> json) => _$ServiceNameFromJson(json);
-  Map<String, dynamic> toJson() => _$ServiceNameToJson(this);
 
-
-
+  factory ServiceNameModel.fromJson(Map<String, dynamic> json) =>
+      _$ServiceNameModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ServiceNameModelToJson(this);
 }

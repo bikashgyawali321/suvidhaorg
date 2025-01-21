@@ -6,32 +6,49 @@ part of 'service.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Service _$ServiceFromJson(Map<String, dynamic> json) => Service(
+ServiceModel _$ServiceModelFromJson(Map<String, dynamic> json) => ServiceModel(
+      id: json['_id'] as String,
+      org: json['org'] as String,
       service: json['service'] as String,
-      serviceprovidername: json['serviceprovidername'] as String,
-      serviceprovideremail: json['serviceprovideremail'] as String,
-      serviceproviderphone: json['serviceproviderphone'] as String,
+      serviceProviderName: json['serviceProviderName'] as String,
+      serviceProviderEmail: json['serviceProviderEmail'] as String,
+      serviceProviderPhone: json['serviceProviderPhone'] as String,
       description: json['description'] as String,
       price: (json['price'] as num).toDouble(),
+      isBlocked: json['isBlocked'] as bool? ?? false,
       isActive: json['isActive'] as bool? ?? true,
-      status: json['status'] as String? ?? "Rejected",
-      img: (json['img'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      totalratedby: (json['totalratedby'] as num?)?.toInt(),
-      totalrating: (json['totalrating'] as num?)?.toDouble(),
+      status: json['status'] as String? ?? 'Not Requested',
+      message: json['message'] as String?,
+      img: (json['img'] as List<dynamic>).map((e) => e as String).toList(),
+      totalRatedBy: (json['totalRatedBy'] as num?)?.toInt(),
+      totalRating: (json['totalRating'] as num?)?.toDouble(),
       rating: (json['rating'] as num?)?.toDouble(),
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$ServiceToJson(Service instance) => <String, dynamic>{
+Map<String, dynamic> _$ServiceModelToJson(ServiceModel instance) =>
+    <String, dynamic>{
+      '_id': instance.id,
+      'org': instance.org,
       'service': instance.service,
-      'serviceprovidername': instance.serviceprovidername,
-      'serviceprovideremail': instance.serviceprovideremail,
-      'serviceproviderphone': instance.serviceproviderphone,
+      'serviceProviderName': instance.serviceProviderName,
+      'serviceProviderEmail': instance.serviceProviderEmail,
+      'serviceProviderPhone': instance.serviceProviderPhone,
       'description': instance.description,
       'price': instance.price,
+      'isBlocked': instance.isBlocked,
       'isActive': instance.isActive,
       'status': instance.status,
+      'message': instance.message,
       'img': instance.img,
-      'totalratedby': instance.totalratedby,
-      'totalrating': instance.totalrating,
+      'totalRatedBy': instance.totalRatedBy,
+      'totalRating': instance.totalRating,
       'rating': instance.rating,
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
     };

@@ -15,7 +15,7 @@ class OrganizationDetailsScreen extends StatelessWidget {
         title: Text(
           'Organization Profile',
         ),
-        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         child: Column(
@@ -499,7 +499,6 @@ class OrganizationDetailsScreen extends StatelessWidget {
     );
   }
 
-  // create a divider widget
   Widget customDivider() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SnackbarHelper {
+class SnackBarHelper {
   static void showSnackbar({
     required BuildContext context,
     String? successMessage,

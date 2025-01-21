@@ -235,7 +235,7 @@ class AddOrganizationProvider extends ChangeNotifier {
         loading = false;
         notifyListeners();
         context.pop();
-        SnackbarHelper.showSnackbar(
+        SnackBarHelper.showSnackbar(
           context: context,
           errorMessage: response.errorMessage,
         );
@@ -243,7 +243,7 @@ class AddOrganizationProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint("Error in creating an organization");
       loading = false;
-      SnackbarHelper.showSnackbar(
+      SnackBarHelper.showSnackbar(
         context: context,
         errorMessage: 'Something went wrong, please try again later.',
       );

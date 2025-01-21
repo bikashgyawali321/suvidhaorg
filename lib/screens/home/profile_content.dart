@@ -49,14 +49,14 @@ class ProfileContentProvider extends ChangeNotifier {
     if (response.result != null && response.statusCode == 200) {
       organizationProvider.organization = null;
       context.pop();
-      SnackbarHelper.showSnackbar(
+      SnackBarHelper.showSnackbar(
         context: context,
         successMessage: response.message,
       );
     } else {
       loading = false;
       context.pop();
-      SnackbarHelper.showSnackbar(
+      SnackBarHelper.showSnackbar(
         context: context,
         errorMessage: response.errorMessage,
       );

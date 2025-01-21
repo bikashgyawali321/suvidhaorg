@@ -34,7 +34,7 @@ class RequestOrganizationVerificationProvider extends ChangeNotifier {
       context.pop();
       context.go('/home');
 
-      SnackbarHelper.showSnackbar(
+      SnackBarHelper.showSnackbar(
         context: context,
         successMessage: response.message,
       );
@@ -42,7 +42,7 @@ class RequestOrganizationVerificationProvider extends ChangeNotifier {
       context.pop();
 
       loading = false;
-      SnackbarHelper.showSnackbar(
+      SnackBarHelper.showSnackbar(
         context: context,
         errorMessage: response.errorMessage,
       );

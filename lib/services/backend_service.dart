@@ -6,9 +6,9 @@ import 'package:http_parser/http_parser.dart';
 import 'package:suvidhaorg/models/auth_models/login_request.dart';
 import 'package:suvidhaorg/models/auth_models/register_request.dart';
 import 'package:suvidhaorg/models/backend_response.dart';
-import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/services/interceptors/token_interceptor.dart';
 import '../models/organization_model/new_org.dart';
+import '../models/service_model/new_service.dart';
 import 'interceptors/log_interceptor.dart';
 
 class BackendService extends ChangeNotifier {
@@ -249,23 +249,6 @@ class BackendService extends ChangeNotifier {
     );
   }
 
-  //get all the service name
-  Future<BackendResponse> getServiceNames() async {
-    return await handleRequest(
-      request: _dio.get('/service/serviceName'),
-      titleOfRequest: 'getting service names',
-    );
-  }
-
-  //get service name by id
-  Future<BackendResponse> getServiceName({required String serviceId}) async {
-    return await handleRequest(
-      request: _dio
-          .get('/service/serviceName/:id', queryParameters: {'id': serviceId}),
-      titleOfRequest: 'getting service name by id',
-    );
-  }
-
   //create an organization control
 
   Future<BackendResponse> createOrganization(
@@ -326,6 +309,25 @@ class BackendService extends ChangeNotifier {
     return await handleRequest(
       request: _dio.put('/org/deleteOrg'),
       titleOfRequest: 'deleting organization',
+    );
+  }
+
+  // get all services name
+  Future<BackendResponse> getAllServiceNames() async {
+    return await handleRequest(
+      request: _dio.get('/service/servicenames'),
+      titleOfRequest: 'getting all service',
+    );
+  }
+  // add service
+
+  Future<BackendResponse> addService({required NewServiceModel service}) async {
+    return await handleRequest(
+      request: _dio.post(
+        '/service/details',
+        data: service.toJson(),
+      ),
+      titleOfRequest: 'adding organization service',
     );
   }
 }

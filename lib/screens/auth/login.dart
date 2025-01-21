@@ -42,7 +42,7 @@ class LoginProvider extends ChangeNotifier {
       context.go('/');
     } else {
       loading = false;
-      SnackbarHelper.showSnackbar(
+      SnackBarHelper.showSnackbar(
         context: context,
         errorMessage: response.errorMessage,
       );

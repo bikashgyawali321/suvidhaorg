@@ -9,13 +9,11 @@ import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/organization_model/coordinates.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/providers/organization_provider.dart';
-import 'package:suvidhaorg/screens/home/organization_screens/request_organization_verification.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
 import 'package:suvidhaorg/widgets/custom_button_sheet.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
 
 import '../../../models/organization_model/new_org.dart';
-import '../../../providers/theme_provider.dart';
 import '../../../services/backend_service.dart';
 
 class UpdateOrganizationProvider extends ChangeNotifier {
@@ -39,7 +37,6 @@ class UpdateOrganizationProvider extends ChangeNotifier {
 
   NewOrganization? org;
 
-//initialize the new org instance
   void initialize() {
     backendService = Provider.of<BackendService>(context);
     _organizationProvider = Provider.of<OrganizationProvider>(context);
@@ -230,7 +227,7 @@ class UpdateOrganizationProvider extends ChangeNotifier {
               ? org!.orgImg.remove(imageUrl)
               : org!.citzImg?.remove(imageUrl);
     } else {
-      SnackbarHelper.showSnackbar(
+      SnackBarHelper.showSnackbar(
         context: context,
         errorMessage: response.errorMessage,
       );
@@ -258,7 +255,7 @@ class UpdateOrganizationProvider extends ChangeNotifier {
       if (response.statusCode == 200 && response.result != null) {
         loading = false;
         orgModel = OrganizationModel.fromJson(response.result!);
-        SnackbarHelper.showSnackbar(
+        SnackBarHelper.showSnackbar(
           context: context,
           successMessage: response.message,
         );
@@ -268,7 +265,7 @@ class UpdateOrganizationProvider extends ChangeNotifier {
         loading = false;
         notifyListeners();
 
-        SnackbarHelper.showSnackbar(
+        SnackBarHelper.showSnackbar(
           context: context,
           errorMessage: response.errorMessage,
         );
@@ -276,7 +273,7 @@ class UpdateOrganizationProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint("Error in updating  organization");
       loading = false;
-      SnackbarHelper.showSnackbar(
+      SnackBarHelper.showSnackbar(
         context: context,
         errorMessage: 'Something went wrong, please try again later.',
       );

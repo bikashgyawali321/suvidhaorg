@@ -3,38 +3,84 @@ import 'package:json_annotation/json_annotation.dart';
 part 'service.g.dart';
 
 @JsonSerializable()
-class Service {
+class ServiceModel {
+  @JsonKey(name: '_id')
+  final String id;
+
+  @JsonKey(name: 'org')
+  final String org;
+
+  @JsonKey(name: 'service')
   final String service;
-  final String serviceprovidername;
-  final String serviceprovideremail;
-  final String serviceproviderphone;
+
+  @JsonKey(name: 'serviceProviderName')
+  final String serviceProviderName;
+
+  @JsonKey(name: 'serviceProviderEmail')
+  final String serviceProviderEmail;
+
+  @JsonKey(name: 'serviceProviderPhone')
+  final String serviceProviderPhone;
+
+  @JsonKey(name: 'description')
   final String description;
+
+  @JsonKey(name: 'price')
   final double price;
+
+  @JsonKey(name: 'isBlocked', defaultValue: false)
+  final bool isBlocked;
+
+  @JsonKey(name: 'isActive', defaultValue: true)
   final bool isActive;
+
+  @JsonKey(name: 'status', defaultValue: 'Not Requested')
   final String status;
-  final List<String>? img;
-  final int? totalratedby;
-  final double? totalrating;
+
+  @JsonKey(name: 'message')
+  final String? message;
+
+  @JsonKey(name: 'img')
+  final List<String> img;
+
+  @JsonKey(name: 'totalRatedBy')
+  final int? totalRatedBy;
+
+  @JsonKey(name: 'totalRating')
+  final double? totalRating;
+
+  @JsonKey(name: 'rating')
   final double? rating;
 
-  Service({
+  @JsonKey(name: 'createdAt')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updatedAt')
+  final DateTime? updatedAt;
+
+  ServiceModel({
+    required this.id,
+    required this.org,
     required this.service,
-    required this.serviceprovidername,
-    required this.serviceprovideremail,
-    required this.serviceproviderphone,
+    required this.serviceProviderName,
+    required this.serviceProviderEmail,
+    required this.serviceProviderPhone,
     required this.description,
     required this.price,
+    this.isBlocked = false,
     this.isActive = true,
-    this.status = "Rejected",
-    this.img,
-    this.totalratedby,
-    this.totalrating,
+    this.status = 'Not Requested',
+    this.message,
+    required this.img,
+    this.totalRatedBy,
+    this.totalRating,
     this.rating,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  /// Factory method to create a `NewService` instance from JSON.
-  factory Service.fromJson(Map<String, dynamic> json) => _$ServiceFromJson(json);
+  factory ServiceModel.fromJson(Map<String, dynamic> json) =>
+      _$ServiceModelFromJson(json);
 
-  /// Method to convert a `NewService` instance into a JSON map.
-  Map<String, dynamic> toJson() => _$ServiceToJson(this);
+  Map<String, dynamic> toJson() => _$ServiceModelToJson(this);
 }

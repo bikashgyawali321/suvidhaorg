@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:suvidhaorg/firebase_options.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/screens/home/home.dart';
+import 'package:suvidhaorg/screens/home/service_screens/service_names_screen.dart';
 import 'package:suvidhaorg/screens/splash.dart';
 
 import 'providers/auth_provider.dart';
@@ -16,6 +17,7 @@ import 'screens/home/organization_screens/update_organization.dart';
 import 'screens/home/profile_content.dart';
 import 'screens/auth/login.dart';
 import 'screens/auth/register.dart';
+import 'screens/home/service_screens/add_service.dart';
 import 'services/backend_service.dart';
 import 'services/custom_hive.dart';
 import 'services/notification.dart';
@@ -90,6 +92,19 @@ GoRouter _router = GoRouter(
           organization: organization,
         );
       },
+    ),
+    GoRoute(
+      path: '/add_service/:serviceNameId',
+      builder: (context, state) {
+        final serviceNameId = state.pathParameters['serviceNameId']!;
+        return AddServiceScreen(
+          serviceNameId: serviceNameId,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/service_names',
+      builder: (context, state) => const ServiceNameScreen(),
     ),
   ],
 );
