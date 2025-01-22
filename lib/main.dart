@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:suvidhaorg/firebase_options.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/screens/home/home.dart';
+import 'package:suvidhaorg/screens/home/service_screens/offered_services.dart';
 import 'package:suvidhaorg/screens/home/service_screens/service_names_screen.dart';
 import 'package:suvidhaorg/screens/splash.dart';
 
+import 'models/service_model/service_array_response.dart';
 import 'providers/auth_provider.dart';
 import 'providers/organization_provider.dart';
 import 'providers/theme_provider.dart';
@@ -106,6 +108,13 @@ GoRouter _router = GoRouter(
       path: '/service_names',
       builder: (context, state) => const ServiceNameScreen(),
     ),
+    GoRoute(
+      path: '/service_list',
+      builder: (context, state) {
+        final services = state.extra as List<DocsService>;
+        return OfferedServicesScreen(services: services);
+      },
+    )
   ],
 );
 
