@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
 import 'package:suvidhaorg/widgets/form_bottom_sheet_header.dart';
 
-class CustomButtonSheet extends StatelessWidget {
-  CustomButtonSheet({
+class AlertBottomSheet extends StatelessWidget {
+  AlertBottomSheet({
     super.key,
     required this.positiveLabel,
     required this.negativeLabel,
@@ -30,7 +30,7 @@ class CustomButtonSheet extends StatelessWidget {
   }) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => CustomButtonSheet(
+      builder: (context) => AlertBottomSheet(
         title: title,
         positiveLabel: positiveLabel,
         negativeLabel: negativeLabel,

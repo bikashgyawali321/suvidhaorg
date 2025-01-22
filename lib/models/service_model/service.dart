@@ -13,13 +13,13 @@ class ServiceModel {
   @JsonKey(name: 'service')
   final String service;
 
-  @JsonKey(name: 'serviceProviderName')
+  @JsonKey(name: 'serviceprovidername')
   final String serviceProviderName;
 
-  @JsonKey(name: 'serviceProviderEmail')
+  @JsonKey(name: 'serviceprovideremail')
   final String serviceProviderEmail;
 
-  @JsonKey(name: 'serviceProviderPhone')
+  @JsonKey(name: 'serviceproviderphone')
   final String serviceProviderPhone;
 
   @JsonKey(name: 'description')

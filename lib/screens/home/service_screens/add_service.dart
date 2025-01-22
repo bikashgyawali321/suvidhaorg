@@ -1,10 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/service_model/new_service.dart';
+import 'package:suvidhaorg/widgets/custom_button.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
+import 'package:suvidhaorg/widgets/verification_botttom_sheet.dart';
 
 import '../../../models/service_model/service.dart';
 import '../../../providers/theme_provider.dart';
@@ -70,13 +73,27 @@ class AddServiceProvider extends ChangeNotifier {
     final response = await backendService.addService(service: newServiceModel!);
 
     if (response.result != null && response.statusCode == 200) {
-      loading = false;
+ 
       serviceModel = ServiceModel.fromJson(response.result!);
+
+
+      loading = false;
+      notifyListeners();
+      VerificationBottomSheet.show(
+        context: context,
+        title: "Request Service Verification",
+        positiveLabel: "Request Now",
+        negativeLabel: "Not Now",
+        onTap: requestVerification,
+        loading: loading,
+        message:
+            'Your service has been added successfully, request for verification now!',
+      );
+    } else {
       SnackBarHelper.showSnackbar(
         context: context,
-        successMessage: response.message,
+        errorMessage: response.errorMessage,
       );
-      notifyListeners();
     }
   }
 
@@ -115,6 +132,31 @@ class AddServiceProvider extends ChangeNotifier {
     if (pickedFile == null) return;
     serviceProviderImage = File(pickedFile.path);
     addImage();
+  }
+
+  //request for service verification
+  Future<void> requestVerification() async {
+    if (serviceModel == null) return;
+    loading = true;
+    notifyListeners();
+
+    final response = await backendService.requestServiceVerification(
+        serviceId: serviceModel!.id);
+    if (response.result != null && response.statusCode == 200) {
+      serviceModel = ServiceModel.fromJson(response.result!);
+      context.go('/home');
+      SnackBarHelper.showSnackbar(
+        context: context,
+        successMessage: response.message,
+      );
+      loading = false;
+      notifyListeners();
+    } else {
+      SnackBarHelper.showSnackbar(
+        context: context,
+        errorMessage: response.errorMessage,
+      );
+    }
   }
 }
 
@@ -238,6 +280,7 @@ class AddServiceScreen extends StatelessWidget {
                               ),
                               onChanged: (value) => provider.newServiceModel
                                   ?.serviceProviderPhone = value,
+                              maxLength: 10,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter service provider phone number';
@@ -272,13 +315,14 @@ class AddServiceScreen extends StatelessWidget {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter service description';
                                 }
-                                if (value.length < 10) {
-                                  return 'Service description should be atleast 10 characters long';
+                                if (value.length < 20) {
+                                  return 'Service description should be atleast 20 characters long';
                                 }
                                 return null;
                               },
                               keyboardType: TextInputType.multiline,
                               maxLines: 2,
+                              expands: false,
                             ),
                             SizedBox(
                               height: 16,
@@ -287,6 +331,7 @@ class AddServiceScreen extends StatelessWidget {
                               decoration: InputDecoration(
                                 labelText: 'Price',
                                 hintText: "Price of the service",
+                                prefix: Text('Rs.'),
                                 contentPadding: const EdgeInsets.symmetric(
                                   vertical: 16,
                                   horizontal: 16,
@@ -331,6 +376,14 @@ class AddServiceScreen extends StatelessWidget {
                     label: 'Service Provider Photo',
                     onTap: provider.pickImage,
                     errorMessage: provider.errorMessage,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  CustomButton(
+                    label: 'Add service',
+                    onPressed: provider.addService,
+                    loading: provider.loading,
                   ),
                 ],
               ),

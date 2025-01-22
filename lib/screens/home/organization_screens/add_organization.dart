@@ -397,7 +397,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  prefixIcon: Icon(Icons.phone),
+                                  suffixIcon: Icon(Icons.phone),
                                 ),
                                 maxLength: 10,
                                 onChanged: (value) =>

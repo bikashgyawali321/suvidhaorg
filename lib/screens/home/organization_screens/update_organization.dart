@@ -10,7 +10,7 @@ import 'package:suvidhaorg/models/organization_model/coordinates.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/providers/organization_provider.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
-import 'package:suvidhaorg/widgets/custom_button_sheet.dart';
+import 'package:suvidhaorg/widgets/alert_bottom_sheet.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
 
 import '../../../models/organization_model/new_org.dart';
@@ -634,7 +634,7 @@ class UpdateOrganizationScreen extends StatelessWidget {
           Column(
             children: imageUrls.map((imageUrl) {
               return GestureDetector(
-                onLongPress: () => CustomButtonSheet.show(
+                onLongPress: () => AlertBottomSheet.show(
                   context: context,
                   title: 'Delete Image',
                   message: 'Are you sure you want to delete this image?',

@@ -22,23 +22,8 @@ class NewServiceModel {
   @JsonKey(name: 'price')
   double price;
 
-  @JsonKey(name: 'isActive', defaultValue: true)
-  bool isActive;
-
-  @JsonKey(name: 'status', defaultValue: 'Rejected')
-  String status;
-
   @JsonKey(name: 'img')
   List<String>? img;
-
-  @JsonKey(name: 'totalratedby')
-  int? totalRatedBy;
-
-  @JsonKey(name: 'totalrating')
-  double? totalRating;
-
-  @JsonKey(name: 'rating')
-  double? rating;
 
   NewServiceModel({
     required this.service,
@@ -47,12 +32,7 @@ class NewServiceModel {
     required this.serviceProviderPhone,
     required this.description,
     required this.price,
-    this.isActive = true,
-    this.status = 'Rejected',
     this.img,
-    this.totalRatedBy,
-    this.totalRating,
-    this.rating,
   });
 
   factory NewServiceModel.fromJson(Map<String, dynamic> json) =>

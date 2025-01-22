@@ -5,7 +5,7 @@ import 'package:suvidhaorg/screens/bottom_sheets/change_theme_bottom_sheet.dart'
 import 'package:suvidhaorg/screens/home/organization_screens/request_organization_verification.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
 import 'package:suvidhaorg/services/custom_hive.dart';
-import 'package:suvidhaorg/widgets/custom_button_sheet.dart';
+import 'package:suvidhaorg/widgets/alert_bottom_sheet.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
 
 import '../../providers/organization_provider.dart';
@@ -134,7 +134,7 @@ class ProfileContent extends StatelessWidget {
                 title: const Text('Delete Organization'),
                 leading: const Icon(Icons.delete),
                 onTap: () {
-                  CustomButtonSheet.show(
+                  AlertBottomSheet.show(
                     context: context,
                     title: 'Delete Organization',
                     positiveLabel: "Cancel",
@@ -151,14 +151,36 @@ class ProfileContent extends StatelessWidget {
                 provider.organizationProvider.organization?.status ==
                     "Pending") ...[
               ListTile(
-                  title: Text('Request Verification'),
-                  leading: Icon(Icons.request_page),
-                  onTap: () {
-                    RequestOrganizationVerification.show(
-                      context,
-                      provider.organizationProvider.organization!.id,
-                    );
-                  }),
+                title: Text('Request Verification'),
+                leading: Icon(Icons.request_page),
+                onTap: () {
+                  RequestOrganizationVerification.show(
+                    context,
+                    provider.organizationProvider.organization!.id,
+                  );
+                },
+              ),
+            ],
+            const Divider(),
+            ListTile(
+              title: const Text(
+                'Service Names',
+              ),
+              leading: Icon(
+                Icons.label_important_outline,
+              ),
+              onTap: () => context.push('/service_names'),
+            ),
+            if (provider.organizationProvider.services.isNotEmpty) ...[
+              ListTile(
+                title: const Text(
+                  'Services Offered',
+                ),
+                leading: Icon(
+                  Icons.business_center_outlined,
+                ),
+                onTap: () => context.push('/services'),
+              ),
             ],
             ListTile(
               title: const Text('Orders History'),
@@ -192,7 +214,7 @@ class ProfileContent extends StatelessWidget {
             ListTile(
               title: const Text('Logout'),
               leading: const Icon(Icons.logout),
-              onTap: () => CustomButtonSheet.show(
+              onTap: () => AlertBottomSheet.show(
                 context: context,
                 title: 'Logout',
                 positiveLabel: "Cancel",

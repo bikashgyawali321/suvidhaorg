@@ -26,6 +26,10 @@ class _HomeScreenState extends State<HomeScreen> {
     // Fetch organization details
     Provider.of<OrganizationProvider>(context, listen: false)
         .getOrganizationDetails();
+
+    // //fetch all services
+    // Provider.of<OrganizationProvider>(context, listen: false)
+    //     .getAllOrganizationServices();
   }
 
   @override

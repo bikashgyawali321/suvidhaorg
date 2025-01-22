@@ -315,7 +315,7 @@ class BackendService extends ChangeNotifier {
   // get all services name
   Future<BackendResponse> getAllServiceNames() async {
     return await handleRequest(
-      request: _dio.get('/service/servicenames'),
+      request: _dio.get('/service/serviceName'),
       titleOfRequest: 'getting all service',
     );
   }
@@ -328,6 +328,23 @@ class BackendService extends ChangeNotifier {
         data: service.toJson(),
       ),
       titleOfRequest: 'adding organization service',
+    );
+  }
+
+  //request for service verification
+  Future<BackendResponse> requestServiceVerification(
+      {required String serviceId}) async {
+    return await handleRequest(
+      request: _dio.put('/service/requestverification/$serviceId'),
+      titleOfRequest: 'requesting service verification',
+    );
+  }
+
+  //get all services
+  Future<BackendResponse> getAllServices({required String orgId}) async {
+    return await handleRequest(
+      request: _dio.get('/service/org/$orgId'),
+      titleOfRequest: 'getting all services',
     );
   }
 }
