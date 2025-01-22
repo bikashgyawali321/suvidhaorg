@@ -20,6 +20,8 @@ class OfferedServicesScreen extends StatelessWidget {
 
             //TODO: map each service to a listtile inside a , mathi deko service tyo yeha aauxa aafai  , see service name screen for demo
             //ontap listtile ma gayera service details screen ma janu parxa, create it and add a goroute to it in main.dart, each listtile tap garda teha jana paro
+
+            //on onTap of the listtile, use this context.push('/service_details',extra:service as DocsService) to navigate to the service details screen
           ],
         ),
       ),
