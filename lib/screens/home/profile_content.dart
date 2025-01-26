@@ -179,7 +179,8 @@ class ProfileContent extends StatelessWidget {
                 leading: Icon(
                   Icons.business_center_outlined,
                 ),
-                onTap: () => context.push('/services'),
+                onTap: () => context.push('/service_list',
+                    extra: provider.organizationProvider.services),
               ),
             ],
             ListTile(

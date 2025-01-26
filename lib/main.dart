@@ -20,6 +20,7 @@ import 'screens/home/profile_content.dart';
 import 'screens/auth/login.dart';
 import 'screens/auth/register.dart';
 import 'screens/home/service_screens/add_service.dart';
+import 'screens/home/service_screens/service_details.dart';
 import 'services/backend_service.dart';
 import 'services/custom_hive.dart';
 import 'services/notification.dart';
@@ -113,6 +114,13 @@ GoRouter _router = GoRouter(
       builder: (context, state) {
         final services = state.extra as List<DocsService>;
         return OfferedServicesScreen(services: services);
+      },
+    ),
+    GoRoute(
+      path: '/service_details',
+      builder: (context, state) {
+        final services = state.extra as DocsService;
+        return ServiceDetailsScreen(service: services);
       },
     )
   ],

@@ -26,27 +26,25 @@ Map<String, dynamic> _$ServiceArrayResponseToJson(
 DocsOrganization _$DocsOrganizationFromJson(Map<String, dynamic> json) =>
     DocsOrganization(
       id: json['_id'] as String,
-      organizationSlug: json['slug'] as String,
+      organizationName: json['nameOrg'] as String,
     );
 
 Map<String, dynamic> _$DocsOrganizationToJson(DocsOrganization instance) =>
     <String, dynamic>{
       '_id': instance.id,
-      'slug': instance.organizationSlug,
+      'nameOrg': instance.organizationName,
     };
 
 DocsServiceName _$DocsServiceNameFromJson(Map<String, dynamic> json) =>
     DocsServiceName(
       id: json['_id'] as String,
       name: json['name'] as String,
-      serviceCode: json['servicecode'] as String,
     );
 
 Map<String, dynamic> _$DocsServiceNameToJson(DocsServiceName instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'name': instance.name,
-      'servicecode': instance.serviceCode,
     };
 
 DocsService _$DocsServiceFromJson(Map<String, dynamic> json) => DocsService(

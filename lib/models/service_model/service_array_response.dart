@@ -29,12 +29,12 @@ class ServiceArrayResponse {
 class DocsOrganization {
   @JsonKey(name: '_id')
   final String id;
-  @JsonKey(name: 'slug')
-  final String organizationSlug;
+  @JsonKey(name: 'nameOrg')
+  final String organizationName;
 
   DocsOrganization({
     required this.id,
-    required this.organizationSlug,
+    required this.organizationName,
   });
 
   factory DocsOrganization.fromJson(Map<String, dynamic> json) =>
@@ -49,13 +49,10 @@ class DocsServiceName {
   final String id;
   @JsonKey(name: 'name')
   final String name;
-  @JsonKey(name: 'servicecode')
-  final String serviceCode;
 
   DocsServiceName({
     required this.id,
     required this.name,
-    required this.serviceCode,
   });
 
   factory DocsServiceName.fromJson(Map<String, dynamic> json) =>
