@@ -56,6 +56,8 @@ class Pagination {
 class DocsBooking {
   @JsonKey(name: '_id')
   final String id;
+  @JsonKey(name: 'user', fromJson: DocsUserForBooking.fromJson)
+  final DocsUserForBooking user;
   @JsonKey(name: 'org', fromJson: DocsOrganization.fromJson)
   final DocsOrganization org;
   @JsonKey(name: 'servicename', fromJson: DocsServiceName.fromJson)
@@ -93,6 +95,8 @@ class DocsBooking {
     required this.serviceName,
     required this.service,
     required this.totalPrice,
+    required this.user,
+    
     this.bookingTime,
     this.optionalContact,
     this.optionalEmail,
@@ -171,4 +175,34 @@ class DocsServiceForBooking {
       _$DocsServiceForBookingFromJson(json);
 
   Map<String, dynamic> toJson() => _$DocsServiceForBookingToJson(this);
+}
+
+@JsonSerializable()
+class DocsUserForBooking {
+  @JsonKey(name: '_id')
+  final String userId;
+  @JsonKey(name: 'name')
+  final String userName;
+  @JsonKey(name: 'email')
+  final String userEmail;
+  @JsonKey(name: 'phoneNumber')
+  final String userPhoneNumber;
+  @JsonKey(
+    name: 'profile pic',
+    defaultValue: null,
+  )
+  final String? profilePic;
+
+  DocsUserForBooking({
+    required this.userId,
+    required this.userName,
+    required this.userEmail,
+    required this.userPhoneNumber,
+    this.profilePic,
+  });
+
+  factory DocsUserForBooking.fromJson(Map<String, dynamic> json) =>
+      _$DocsUserForBookingFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DocsUserForBookingToJson(this);
 }

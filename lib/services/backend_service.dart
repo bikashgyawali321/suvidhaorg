@@ -78,7 +78,7 @@ class BackendService extends ChangeNotifier {
   Future<BackendResponse> verifyEmail(
       {required String email, required num otp}) async {
     return await handleRequest(
-      request: _dio.post('/auth/verifyOtp', data: {
+      request: _dio.post('/auth/verifyEmail', data: {
         'email': email,
         'otp': otp,
       }),
@@ -350,13 +350,13 @@ class BackendService extends ChangeNotifier {
   }
 
   //get all bookings
-  Future<BackendResponse> getAllBookings(
-      // required ListingSchema listingSchema,
-      ) async {
+  Future<BackendResponse> getAllBookings({
+    required ListingSchema listingSchema,
+  }) async {
     return await handleRequest(
       request: _dio.get(
         '/booking/',
-        // queryParameters: listingSchema.toJson(),
+        queryParameters: listingSchema.toJson(),
       ),
       titleOfRequest: 'getting all bookings',
     );

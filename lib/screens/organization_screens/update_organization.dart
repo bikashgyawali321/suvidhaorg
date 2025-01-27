@@ -11,7 +11,6 @@ import 'package:suvidhaorg/models/organization_model/coordinates.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/providers/organization_provider.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
-import 'package:suvidhaorg/widgets/alert_bottom_sheet.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
 
 import '../../models/organization_model/new_org.dart';

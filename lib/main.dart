@@ -4,11 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/firebase_options.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
+import 'package:suvidhaorg/providers/location_provider.dart';
+import 'package:suvidhaorg/screens/booking/booking_details.dart';
 import 'package:suvidhaorg/screens/home.dart';
 import 'package:suvidhaorg/screens/service_screens/offered_services.dart';
 import 'package:suvidhaorg/screens/service_screens/service_names_screen.dart';
 import 'package:suvidhaorg/screens/splash.dart';
 
+import 'models/bookings/booking_model.dart';
 import 'models/service_model/service_array_response.dart';
 import 'providers/auth_provider.dart';
 import 'providers/organization_provider.dart';
@@ -48,6 +51,7 @@ class ProviderWrappedApp extends StatelessWidget {
           create: (_) => NotificationService(_.read<BackendService>()),
         ),
         ChangeNotifierProvider(create: (_) => OrganizationProvider(_)),
+        ChangeNotifierProvider(create: (_) => LocationProvider())
       ],
       child: MyApp(),
     );
@@ -121,6 +125,15 @@ GoRouter _router = GoRouter(
       builder: (context, state) {
         final service = state.extra as DocsService;
         return ServiceDetailScreen(service: service);
+      },
+    ),
+    GoRoute(
+      path: '/booking_details',
+      builder: (context, state) {
+        final booking = state.extra as DocsBooking;
+        return BookingDetailsScreen(
+          booking: booking,
+        );
       },
     )
   ],

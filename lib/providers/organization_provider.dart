@@ -38,7 +38,6 @@ class OrganizationProvider extends ChangeNotifier {
     final response = await backendService.getAllServices(
       orgId: organizationId ?? organization!.id,
     );
-    print(response.result);
     if (response.result != null &&
         response.statusCode == 200 &&
         response.errorMessage == null) {

@@ -14,7 +14,7 @@ class OfferedServicesScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         child: Column(
-          children: [],
+          children: const [],
         ),
       ),
     );

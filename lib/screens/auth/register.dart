@@ -5,6 +5,7 @@ import 'package:suvidhaorg/models/auth_models/register_request.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
+import 'package:suvidhaorg/widgets/snackbar.dart';
 
 class RegisterProvider extends ChangeNotifier {
   final BuildContext context;
@@ -92,22 +93,16 @@ class RegisterProvider extends ChangeNotifier {
           await backendService.verifyEmail(email: request.email, otp: otp);
       if (response.statusCode == 200 && response.errorMessage == null) {
         loading = false;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message!),
-            backgroundColor: Colors.green,
-          ),
+        SnackBarHelper.showSnackbar(
+          context: context,
+          successMessage: response.message,
         );
         context.go('/login');
         notifyListeners();
       } else {
         loading = false;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.errorMessage ?? 'Something went wrong'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showSnackbar(
+            context: context, errorMessage: response.errorMessage);
         notifyListeners();
       }
     } catch (e) {

@@ -15,7 +15,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       role: json['role'] as String?,
       isBlocked: json['isBlocked'] as bool?,
       isEmailVerified: json['isEmailVerified'] as bool?,
-      otp: json['otp'] as String?,
+      otp: json['otp'] as num?,
       otpExpires: json['otpExpires'] == null
           ? null
           : DateTime.parse(json['otpExpires'] as String),

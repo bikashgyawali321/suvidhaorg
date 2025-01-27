@@ -5,10 +5,10 @@ part 'list_model.g.dart';
 @JsonSerializable()
 class ListingSchema {
   @JsonKey(name: 'page')
-  int page;
+  num page;
 
   @JsonKey(name: 'limit')
-  int limit;
+  num limit;
 
   ListingSchema({
     required this.page,

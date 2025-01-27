@@ -51,6 +51,7 @@ DocsBooking _$DocsBookingFromJson(Map<String, dynamic> json) => DocsBooking(
       service: DocsServiceForBooking.fromJson(
           json['service'] as Map<String, dynamic>),
       totalPrice: json['totalprice'] as num,
+      user: DocsUserForBooking.fromJson(json['user'] as Map<String, dynamic>),
       bookingTime: json['bookingtime'] == null
           ? null
           : DateTime.parse(json['bookingtime'] as String),
@@ -61,6 +62,7 @@ DocsBooking _$DocsBookingFromJson(Map<String, dynamic> json) => DocsBooking(
 Map<String, dynamic> _$DocsBookingToJson(DocsBooking instance) =>
     <String, dynamic>{
       '_id': instance.id,
+      'user': instance.user,
       'org': instance.org,
       'servicename': instance.serviceName,
       'service': instance.service,
@@ -119,4 +121,22 @@ Map<String, dynamic> _$DocsServiceForBookingToJson(
       'serviceproviderphone': instance.serviceProviderPhoneNumber,
       'price': instance.totalPrice,
       'img': instance.images,
+    };
+
+DocsUserForBooking _$DocsUserForBookingFromJson(Map<String, dynamic> json) =>
+    DocsUserForBooking(
+      userId: json['_id'] as String,
+      userName: json['name'] as String,
+      userEmail: json['email'] as String,
+      userPhoneNumber: json['phoneNumber'] as String,
+      profilePic: json['profile pic'] as String?,
+    );
+
+Map<String, dynamic> _$DocsUserForBookingToJson(DocsUserForBooking instance) =>
+    <String, dynamic>{
+      '_id': instance.userId,
+      'name': instance.userName,
+      'email': instance.userEmail,
+      'phoneNumber': instance.userPhoneNumber,
+      'profile pic': instance.profilePic,
     };

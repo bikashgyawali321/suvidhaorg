@@ -13,27 +13,28 @@ class UserModel {
   String? role;
   bool? isBlocked;
   bool? isEmailVerified;
-  String? otp;
+  @JsonKey(name: 'otp', defaultValue: null)
+  num? otp;
+  @JsonKey(name: 'otpExpires', defaultValue: null)
   DateTime? otpExpires;
   DateTime? createdAt;
   DateTime? updatedAt;
   List<String>? fcmTokens;
 
-  UserModel({
-    this.id,
-    this.email,
-    this.name,
-    this.password,
-    this.phoneNumber,
-    this.role,
-    this.isBlocked,
-    this.isEmailVerified,
-    this.otp,
-    this.otpExpires,
-    this.createdAt,
-    this.updatedAt,
-    this.fcmTokens
-  });
+  UserModel(
+      {this.id,
+      this.email,
+      this.name,
+      this.password,
+      this.phoneNumber,
+      this.role,
+      this.isBlocked,
+      this.isEmailVerified,
+      this.otp,
+      this.otpExpires,
+      this.createdAt,
+      this.updatedAt,
+      this.fcmTokens});
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);

@@ -8,7 +8,7 @@ extension ColorX on String {
 const primary = Colors.pink;
 const primaryDark = Color(0xFF0A1543);
 const secondary = Colors.grey;
-const suvidhaDark = Color(0xFF424242);
+const suvidhaDark = Color(0xFF373737);
 const suvidhaWhite = Color(0xFFF5F5F5);
 const suvidhaDarkScaffold = Color(0xFF424242);
 

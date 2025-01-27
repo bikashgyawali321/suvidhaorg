@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/auth_models/user_model.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
+import 'package:suvidhaorg/services/notification.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
 
 import '../models/backend_response.dart';
@@ -37,6 +38,7 @@ class AuthProvider extends ChangeNotifier {
           return;
         }
         context.go('/home');
+        context.read<NotificationService>().initilize();
         debugPrint("User details: ${user!.name}");
       } else {
         context.go('/login');

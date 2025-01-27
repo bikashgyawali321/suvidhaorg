@@ -8,8 +8,8 @@ part of 'list_model.dart';
 
 ListingSchema _$ListingSchemaFromJson(Map<String, dynamic> json) =>
     ListingSchema(
-      page: (json['page'] as num).toInt(),
-      limit: (json['limit'] as num).toInt(),
+      page: json['page'] as num,
+      limit: json['limit'] as num,
     );
 
 Map<String, dynamic> _$ListingSchemaToJson(ListingSchema instance) =>
