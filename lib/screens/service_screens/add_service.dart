@@ -9,9 +9,9 @@ import 'package:suvidhaorg/widgets/custom_button.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
 import 'package:suvidhaorg/widgets/verification_botttom_sheet.dart';
 
-import '../../../models/service_model/service.dart';
-import '../../../providers/theme_provider.dart';
-import '../../../services/backend_service.dart';
+import '../../models/service_model/service.dart';
+import '../../providers/theme_provider.dart';
+import '../../services/backend_service.dart';
 
 class AddServiceProvider extends ChangeNotifier {
   final BuildContext context;

@@ -175,7 +175,7 @@ class RegisterScreen extends StatelessWidget {
                                   height: 200,
                                 ),
                                 Text(
-                                  'सुविधा सेवा',
+                                  'Suvidha Sewa',
                                   style: Theme.of(context)
                                       .textTheme
                                       .displaySmall
@@ -343,7 +343,7 @@ class RegisterScreen extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    'सुविधा सेवा',
+                                    'Suvidha Sewa',
                                     style: Theme.of(context)
                                         .textTheme
                                         .displaySmall

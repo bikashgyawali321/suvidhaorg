@@ -8,6 +8,7 @@ import 'package:suvidhaorg/models/auth_models/register_request.dart';
 import 'package:suvidhaorg/models/backend_response.dart';
 import 'package:suvidhaorg/services/interceptors/token_interceptor.dart';
 import '../models/organization_model/new_org.dart';
+import '../models/pagination/list_model.dart';
 import '../models/service_model/new_service.dart';
 import 'interceptors/log_interceptor.dart';
 
@@ -345,6 +346,19 @@ class BackendService extends ChangeNotifier {
     return await handleRequest(
       request: _dio.get('/service/org/$orgId'),
       titleOfRequest: 'getting all services',
+    );
+  }
+
+  //get all bookings
+  Future<BackendResponse> getAllBookings(
+      // required ListingSchema listingSchema,
+      ) async {
+    return await handleRequest(
+      request: _dio.get(
+        '/booking/',
+        // queryParameters: listingSchema.toJson(),
+      ),
+      titleOfRequest: 'getting all bookings',
     );
   }
 }

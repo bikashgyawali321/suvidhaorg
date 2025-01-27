@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/screens/bottom_sheets/change_theme_bottom_sheet.dart';
-import 'package:suvidhaorg/screens/home/organization_screens/request_organization_verification.dart';
+import 'package:suvidhaorg/screens/organization_screens/request_organization_verification.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
 import 'package:suvidhaorg/services/custom_hive.dart';
 import 'package:suvidhaorg/widgets/alert_bottom_sheet.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
 
-import '../../providers/organization_provider.dart';
-import '../../providers/theme_provider.dart';
-import '../auth/bottomsheets/change_password.dart';
+import '../providers/organization_provider.dart';
+import '../providers/theme_provider.dart';
+import 'auth/bottomsheets/change_password.dart';
 
 class ProfileContentProvider extends ChangeNotifier {
   final BuildContext context;
@@ -179,7 +179,10 @@ class ProfileContent extends StatelessWidget {
                 leading: Icon(
                   Icons.business_center_outlined,
                 ),
-                onTap: () => context.push('/services'),
+                onTap: () => context.push(
+                  '/service_list',
+                  extra: provider.organizationProvider.services,
+                ),
               ),
             ],
             ListTile(

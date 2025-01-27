@@ -5,8 +5,8 @@ import 'package:suvidhaorg/services/backend_service.dart';
 import 'package:suvidhaorg/widgets/form_bottom_sheet_header.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
 
-import '../../../providers/organization_provider.dart';
-import '../../../widgets/custom_button.dart';
+import '../../providers/organization_provider.dart';
+import '../../widgets/custom_button.dart';
 
 class RequestOrganizationVerificationProvider extends ChangeNotifier {
   final BuildContext context;

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/auth_models/user_model.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
+import 'package:suvidhaorg/widgets/snackbar.dart';
 
 import '../models/backend_response.dart';
 
@@ -17,7 +18,6 @@ class AuthProvider extends ChangeNotifier {
       : service = Provider.of<BackendService>(context, listen: false);
   String? error;
 
- 
   Future<void> fetchUserDetails(BuildContext context) async {
     loading = true;
     notifyListeners();
@@ -27,6 +27,15 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.result != null && response.statusCode == 200) {
         user = UserModel.fromJson(response.result);
+        if (user!.role != 'Organization') {
+          context.go('/login');
+          SnackBarHelper.showSnackbar(
+            context: context,
+            warningMessage:
+                'You are not authorized to access this app, please login with organization account',
+          );
+          return;
+        }
         context.go('/home');
         debugPrint("User details: ${user!.name}");
       } else {

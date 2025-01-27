@@ -32,6 +32,7 @@ dependencies:
   intl: ^0.20.1
   lottie: ^3.3.1
   font_awesome_flutter: ^10.8.0
+  rive: ^0.13.20
 
 dev_dependencies:
   flutter_test:
@@ -54,7 +55,6 @@ flutter:
   # Assets configuration
   assets:
     - assets/icon/
-    - assets/images/
     - assets/animations/
 
   # To add custom fonts to your application, add a fonts section here.

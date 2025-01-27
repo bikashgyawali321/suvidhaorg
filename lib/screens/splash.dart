@@ -34,10 +34,12 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     _authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       backgroundColor: primaryDark,
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.38,
+            ),
             PlayAnimationBuilder(
               tween: Tween<double>(begin: 0, end: 1),
               duration: const Duration(seconds: 1),
@@ -52,14 +54,14 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                         height: 200,
                       ),
                       Text(
-                        'सुविधा सेवा',
+                        'Suvidha Sewa',
                         style:
                             Theme.of(context).textTheme.displayMedium?.copyWith(
                                   color: suvidhaWhite,
                                 ),
                       ),
                       Text(
-                        'घरमै सेवा, तपाइको सेवा हाम्रो प्राथमिकता',
+                        'We offer services at your doorstep',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               color: Colors.amber[600],
                               fontStyle: FontStyle.italic,
@@ -74,7 +76,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                   loading = true;
                 });
                 await context.read<NotificationService>().initilize();
-                await Future.delayed(const Duration(seconds: 1));
+                await Future.delayed(const Duration(seconds: 2));
                 _handleRouting();
               },
             ),

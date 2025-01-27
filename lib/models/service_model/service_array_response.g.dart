@@ -11,42 +11,38 @@ ServiceArrayResponse _$ServiceArrayResponseFromJson(
     ServiceArrayResponse(
       pagination:
           Pagination.fromJson(json['pagination'] as Map<String, dynamic>),
-      docs: (json['docs'] as List<dynamic>)
-          .map((e) => DocsService.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      docs: ServiceArrayResponse._docsFromJson(json['docs'] as List),
     );
 
 Map<String, dynamic> _$ServiceArrayResponseToJson(
         ServiceArrayResponse instance) =>
     <String, dynamic>{
       'pagination': instance.pagination,
-      'docs': instance.docs,
+      'docs': ServiceArrayResponse._docsToJson(instance.docs),
     };
 
 DocsOrganization _$DocsOrganizationFromJson(Map<String, dynamic> json) =>
     DocsOrganization(
       id: json['_id'] as String,
-      organizationSlug: json['slug'] as String,
+      organizationName: json['nameOrg'] as String,
     );
 
 Map<String, dynamic> _$DocsOrganizationToJson(DocsOrganization instance) =>
     <String, dynamic>{
       '_id': instance.id,
-      'slug': instance.organizationSlug,
+      'nameOrg': instance.organizationName,
     };
 
 DocsServiceName _$DocsServiceNameFromJson(Map<String, dynamic> json) =>
     DocsServiceName(
       id: json['_id'] as String,
       name: json['name'] as String,
-      serviceCode: json['servicecode'] as String,
     );
 
 Map<String, dynamic> _$DocsServiceNameToJson(DocsServiceName instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'name': instance.name,
-      'servicecode': instance.serviceCode,
     };
 
 DocsService _$DocsServiceFromJson(Map<String, dynamic> json) => DocsService(

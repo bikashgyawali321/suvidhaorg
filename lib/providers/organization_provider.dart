@@ -36,7 +36,8 @@ class OrganizationProvider extends ChangeNotifier {
   //get all services provided by the organization
   Future<void> getAllOrganizationServices() async {
     final response = await backendService.getAllServices(
-        orgId: organizationId ?? organization!.id);
+      orgId: organizationId ?? organization!.id,
+    );
     print(response.result);
     if (response.result != null &&
         response.statusCode == 200 &&

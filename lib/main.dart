@@ -4,23 +4,23 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/firebase_options.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
-import 'package:suvidhaorg/screens/home/home.dart';
-import 'package:suvidhaorg/screens/home/service_screens/offered_services.dart';
-import 'package:suvidhaorg/screens/home/service_screens/service_names_screen.dart';
+import 'package:suvidhaorg/screens/home.dart';
+import 'package:suvidhaorg/screens/service_screens/offered_services.dart';
+import 'package:suvidhaorg/screens/service_screens/service_names_screen.dart';
 import 'package:suvidhaorg/screens/splash.dart';
 
 import 'models/service_model/service_array_response.dart';
 import 'providers/auth_provider.dart';
 import 'providers/organization_provider.dart';
 import 'providers/theme_provider.dart';
-import 'screens/home/organization_screens/add_organization.dart';
-import 'screens/home/organization_screens/organization_details.dart';
-import 'screens/home/organization_screens/update_organization.dart';
-import 'screens/home/profile_content.dart';
+import 'screens/organization_screens/add_organization.dart';
+import 'screens/organization_screens/organization_details.dart';
+import 'screens/organization_screens/update_organization.dart';
 import 'screens/auth/login.dart';
 import 'screens/auth/register.dart';
-import 'screens/home/service_screens/add_service.dart';
-import 'screens/home/service_screens/service_details.dart';
+import 'screens/profile_content.dart';
+import 'screens/service_screens/add_service.dart';
+import 'screens/service_screens/service_details.dart';
 import 'services/backend_service.dart';
 import 'services/custom_hive.dart';
 import 'services/notification.dart';
@@ -136,7 +136,8 @@ class MyApp extends StatelessWidget {
       themeMode: context.watch<ThemeProvider>().themeMode,
       theme: ThemeData(
         brightness: Brightness.light,
-        colorScheme: const ColorScheme.light(
+        scaffoldBackgroundColor: suvidhaWhite,
+        colorScheme: ColorScheme.light(
           primary: Color(0xFF6200EE),
           secondary: Color(0xFF03DAC6),
           surface: Colors.white,
@@ -145,6 +146,7 @@ class MyApp extends StatelessWidget {
           onSecondary: Colors.black,
           onSurface: Colors.black,
           onError: Colors.white,
+          primaryContainer: Color(0xFF2E4E90),
           brightness: Brightness.light,
         ),
         inputDecorationTheme: InputDecorationTheme(
@@ -155,17 +157,15 @@ class MyApp extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         ),
-        cardTheme: const CardTheme(
-          elevation: 0,
-          margin: EdgeInsets.all(0),
-          shadowColor: suvidhaDark,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(10),
+        cardTheme: CardTheme(
+            elevation: 0,
+            margin: EdgeInsets.all(2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
             ),
-          ),
-          color: suvidhaWhite,
-        ),
+            color: Color(0xFFFFFFFF).withOpacity(0.99)),
         dividerTheme: const DividerThemeData(
           space: 0,
           thickness: 2,
@@ -192,6 +192,12 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        bottomSheetTheme: BottomSheetThemeData(
+          backgroundColor: suvidhaWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.deepOrange,
           foregroundColor: Colors.white,
@@ -207,7 +213,6 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           elevation: 0,
           centerTitle: false,
-          color: suvidhaWhite,
         ),
         iconTheme: IconThemeData(
           color: Colors.black,
@@ -215,13 +220,15 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
+        scaffoldBackgroundColor: suvidhaDarkScaffold,
         fontFamily: 'Euclid',
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFFBB86FC),
+        colorScheme: ColorScheme.dark(
+          primary: Color(0xFFBB46FC),
           secondary: Color(0xFF03DAC6),
           surface: Color(0xFF121212),
           error: Color(0xFFCF6679),
           onPrimary: Colors.black,
+          primaryContainer: Colors.green,
           onSecondary: Colors.black,
           onSurface: Colors.white,
           onError: Colors.black,
@@ -231,6 +238,12 @@ class MyApp extends StatelessWidget {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+          ),
+        ),
+        bottomSheetTheme: BottomSheetThemeData(
+          backgroundColor: suvidhaDarkScaffold,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
         dividerTheme: const DividerThemeData(
@@ -277,7 +290,7 @@ class MyApp extends StatelessWidget {
         ),
         cardTheme: const CardTheme(
           elevation: 0,
-          shadowColor: suvidhaWhite,
+          margin: EdgeInsets.all(2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(10),

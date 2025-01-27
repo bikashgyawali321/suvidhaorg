@@ -4,7 +4,14 @@ part 'service_array_response.g.dart';
 
 @JsonSerializable()
 class ServiceArrayResponse {
+  @JsonKey(name: 'pagination', fromJson: Pagination.fromJson)
   final Pagination pagination;
+
+  @JsonKey(
+    name: 'docs',
+    fromJson: _docsFromJson,
+    toJson: _docsToJson,
+  )
   final List<DocsService> docs;
 
   ServiceArrayResponse({
@@ -12,29 +19,28 @@ class ServiceArrayResponse {
     required this.docs,
   });
 
-  factory ServiceArrayResponse.fromJson(Map<String, dynamic> json) {
-    return ServiceArrayResponse(
-      pagination:
-          Pagination.fromJson(json['pagination'] as Map<String, dynamic>),
-      docs: (json['docs'] as List)
-          .map((doc) => DocsService.fromJson(doc as Map<String, dynamic>))
-          .toList(),
-    );
-  }
+  factory ServiceArrayResponse.fromJson(Map<String, dynamic> json) =>
+      _$ServiceArrayResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$ServiceArrayResponseToJson(this);
+
+  static List<DocsService> _docsFromJson(List<dynamic> json) =>
+      json.map((e) => DocsService.fromJson(e as Map<String, dynamic>)).toList();
+
+  static List<Map<String, dynamic>> _docsToJson(List<DocsService> docs) =>
+      docs.map((e) => e.toJson()).toList();
 }
 
 @JsonSerializable()
 class DocsOrganization {
   @JsonKey(name: '_id')
   final String id;
-  @JsonKey(name: 'slug')
-  final String organizationSlug;
+  @JsonKey(name: 'nameOrg')
+  final String organizationName;
 
   DocsOrganization({
     required this.id,
-    required this.organizationSlug,
+    required this.organizationName,
   });
 
   factory DocsOrganization.fromJson(Map<String, dynamic> json) =>
@@ -49,13 +55,10 @@ class DocsServiceName {
   final String id;
   @JsonKey(name: 'name')
   final String name;
-  @JsonKey(name: 'servicecode')
-  final String serviceCode;
 
   DocsServiceName({
     required this.id,
     required this.name,
-    required this.serviceCode,
   });
 
   factory DocsServiceName.fromJson(Map<String, dynamic> json) =>
