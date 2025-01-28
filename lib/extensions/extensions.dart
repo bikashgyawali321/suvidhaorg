@@ -25,9 +25,6 @@ extension DateX on DateTime {
 
 extension NumX on num {
   String get toCurrency {
-    return NumberFormat.currency(
-      locale: 'en_IN',
-      symbol: 'Rs.',
-    ).format(this);
+    return "Rs. ${toStringAsFixed(0)}";
   }
 }

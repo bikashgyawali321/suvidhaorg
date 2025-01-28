@@ -96,7 +96,6 @@ class DocsBooking {
     required this.service,
     required this.totalPrice,
     required this.user,
-    
     this.bookingTime,
     this.optionalContact,
     this.optionalEmail,
@@ -188,7 +187,7 @@ class DocsUserForBooking {
   @JsonKey(name: 'phoneNumber')
   final String userPhoneNumber;
   @JsonKey(
-    name: 'profile pic',
+    name: 'profilePic',
     defaultValue: null,
   )
   final String? profilePic;

@@ -129,7 +129,7 @@ DocsUserForBooking _$DocsUserForBookingFromJson(Map<String, dynamic> json) =>
       userName: json['name'] as String,
       userEmail: json['email'] as String,
       userPhoneNumber: json['phoneNumber'] as String,
-      profilePic: json['profile pic'] as String?,
+      profilePic: json['profilePic'] as String?,
     );
 
 Map<String, dynamic> _$DocsUserForBookingToJson(DocsUserForBooking instance) =>
@@ -138,5 +138,5 @@ Map<String, dynamic> _$DocsUserForBookingToJson(DocsUserForBooking instance) =>
       'name': instance.userName,
       'email': instance.userEmail,
       'phoneNumber': instance.userPhoneNumber,
-      'profile pic': instance.profilePic,
+      'profilePic': instance.profilePic,
     };

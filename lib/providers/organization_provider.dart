@@ -15,7 +15,9 @@ class OrganizationProvider extends ChangeNotifier {
   bool loading = false;
 
   OrganizationProvider(this.context)
-      : backendService = Provider.of<BackendService>(context, listen: false);
+      : backendService = Provider.of<BackendService>(context, listen: false) {
+    getAllOrganizationServices();
+  }
   String? organizationId;
 
   //get the organization details
@@ -25,7 +27,6 @@ class OrganizationProvider extends ChangeNotifier {
         response.statusCode == 200 &&
         response.errorMessage == null) {
       organization = OrganizationModel.fromJson(response.result!);
-      getAllOrganizationServices();
       notifyListeners();
     } else {
       organization = null;
@@ -35,6 +36,7 @@ class OrganizationProvider extends ChangeNotifier {
 
   //get all services provided by the organization
   Future<void> getAllOrganizationServices() async {
+    await getOrganizationDetails();
     final response = await backendService.getAllServices(
       orgId: organizationId ?? organization!.id,
     );

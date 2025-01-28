@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/offered_service.dart';
-import 'package:suvidhaorg/providers/organization_provider.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
 import 'package:suvidhaorg/screens/ask_permission%20copy.dart';
 import 'package:suvidhaorg/screens/home/bookings.dart';
@@ -28,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen>
       context.read<NotificationService>();
   @override
   void initState() {
-    // Fetch organization details
     _tabController = TabController(length: 3, vsync: this);
 
     if (_notificationService.canAskPermission) {
@@ -36,12 +34,6 @@ class _HomeScreenState extends State<HomeScreen>
         AskPermission.show(context);
       });
     }
-    Provider.of<OrganizationProvider>(context, listen: false)
-        .getOrganizationDetails();
-
-    //fetch all services
-    Provider.of<OrganizationProvider>(context, listen: false)
-        .getAllOrganizationServices();
 
     super.initState();
   }

@@ -216,7 +216,7 @@ class BookingScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              onTap: () => context.push(
+                              onTap: () => context.go(
                                 '/booking_details',
                                 extra: booking,
                               ),
