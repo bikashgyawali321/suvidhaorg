@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:suvidhaorg/extensions/date.dart';
+import 'package:suvidhaorg/extensions/extensions.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 
 class OrganizationDetailsScreen extends StatelessWidget {
