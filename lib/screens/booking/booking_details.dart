@@ -1,74 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:suvidhaorg/widgets/snackbar.dart';
+import 'package:suvidhaorg/extensions/extensions.dart';
 
 import '../../models/bookings/booking_model.dart';
-import '../../services/backend_service.dart';
-
-class ChangeBookingDetailStatusProvider extends ChangeNotifier {
-  final BuildContext context;
-  late BackendService _backendService;
-  final DocsBooking booking;
-
-  ChangeBookingDetailStatusProvider(this.context, this.booking)
-      : _backendService = Provider.of<BackendService>(context);
-
-  String updatedBookingStatus = 'Pending';
-  String rejectionMessage = '';
-  bool acceptedLoading = false;
-  bool rejectedLoading = false;
-
-  Future<void> updateBookingStatusToAccepted() async {
-    updatedBookingStatus = "Accepted";
-    acceptedLoading = true;
-    notifyListeners();
-
-    final response = await _backendService.changeBookingStatus(
-      bid: booking.id,
-      bookingStatus: updatedBookingStatus,
-      rejectionMessage: rejectionMessage,
-    );
-
-    if (response.result != null &&
-        response.statusCode == 200 &&
-        response.errorMessage == null) {
-      context.pop();
-      SnackBarHelper.showSnackbar(
-        context: context,
-        successMessage: response.message,
-      );
-      notifyListeners();
-    }
-    acceptedLoading = false;
-    notifyListeners();
-  }
-
-  Future<void> updateBookingStatusToRejected() async {
-    updatedBookingStatus = "Rejected";
-    rejectedLoading = true;
-    notifyListeners();
-
-    final response = await _backendService.changeBookingStatus(
-      bid: booking.id,
-      bookingStatus: 'Rejected',
-      rejectionMessage: rejectionMessage,
-    );
-
-    if (response.result != null &&
-        response.statusCode == 200 &&
-        response.errorMessage == null) {
-      context.pop();
-      SnackBarHelper.showSnackbar(
-        context: context,
-        successMessage: response.message,
-      );
-      notifyListeners();
-    }
-    rejectedLoading = false;
-    notifyListeners();
-  }
-}
 
 class BookingDetailsScreen extends StatelessWidget {
   const BookingDetailsScreen({
@@ -79,11 +12,150 @@ class BookingDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: implement the UI for the booking details screen
-    //same as in user jasati
-    //yesma organization lai user ko detail ni dekhauna parxa booking bhitra chha
-    //golo golo golo ma photo dekhauni usewr ko chha bhane chha chaina bhane icons.person bhanne dekhaune
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Booking Details',
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  trailing: CircleAvatar(
+                    radius: 40,
+                    backgroundImage: NetworkImage(
+                      booking.user.profilePic?.isNotEmpty == true
+                          ? booking.user.profilePic![0]
+                          : '',
+                    ),
+                  ),
+                  title: Text(
+                    'User Name',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  subtitle: Text(booking.user.userName,
+                      style: Theme.of(context).textTheme.bodyMedium),
+                ),
+                customDivider(),
+                ListTile(
+                  title: Text(
+                    'User Phone',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  subtitle: Text(
+                    booking.user.userPhoneNumber,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                customDivider(),
+                ListTile(
+                  title: Text(
+                    'Service Name',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  subtitle: Text(booking.user.userName,
+                      style: Theme.of(context).textTheme.bodyMedium),
+                ),
+                customDivider(),
+                ListTile(
+                  trailing: CircleAvatar(
+                    radius: 40,
+                    backgroundImage: NetworkImage(
+                      booking.service.images?.isNotEmpty == true
+                          ? booking.service.images![0]
+                          : '',
+                    ),
+                  ),
+                  title: Text(
+                    'Service Provider Name',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  subtitle: Text(
+                    booking.service.serviceProviderName,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                customDivider(),
+                ListTile(
+                  title: Text(
+                    'Service Provider Phone',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  subtitle: Text(
+                    booking.service.serviceProviderPhoneNumber,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                customDivider(),
+                ListTile(
+                  title: Text(
+                    'Service Provider Email',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  subtitle: Text(
+                    booking.service.serviceProviderEmail,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                customDivider(),
+                ListTile(
+                  title: Text(
+                    'Service Price',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  subtitle: Text(
+                    booking.totalPrice.toCurrency,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                customDivider(),
+                ListTile(
+                  title: Text(
+                    'Booking Status',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  subtitle: Text(
+                    booking.bookingStatus,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-    return const Placeholder();
+  Widget customDivider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Divider(
+        thickness: 0,
+        color: Colors.blueGrey[400],
+      ),
+    );
   }
 }

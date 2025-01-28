@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:suvidhaorg/extensions/date.dart';
+import 'package:suvidhaorg/extensions/extensions.dart';
 import 'package:suvidhaorg/models/bookings/booking_model.dart';
 import 'package:suvidhaorg/models/pagination/list_model.dart';
 import 'package:suvidhaorg/widgets/loading_screen.dart';

@@ -22,3 +22,12 @@ extension DateX on DateTime {
     return _verbalTime.format(this);
   }
 }
+
+extension NumX on num {
+  String get toCurrency {
+    return NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: 'Rs.',
+    ).format(this);
+  }
+}

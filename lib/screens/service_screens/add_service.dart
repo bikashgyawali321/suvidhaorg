@@ -73,9 +73,7 @@ class AddServiceProvider extends ChangeNotifier {
     final response = await backendService.addService(service: newServiceModel!);
 
     if (response.result != null && response.statusCode == 200) {
- 
       serviceModel = ServiceModel.fromJson(response.result!);
-
 
       loading = false;
       notifyListeners();
@@ -177,7 +175,8 @@ class AddServiceScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: SingleChildScrollView(
               child: Column(
-                spacing: 15,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 7,
                 children: [
                   Text(
                     "Provide additional details about the service to expand your organization's offerings!",
@@ -189,7 +188,7 @@ class AddServiceScreen extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    'Basic Details',
+                    'Basic Details:',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -321,7 +320,7 @@ class AddServiceScreen extends StatelessWidget {
                                 return null;
                               },
                               keyboardType: TextInputType.multiline,
-                              maxLines: 2,
+                              maxLines: 1,
                               expands: false,
                             ),
                             SizedBox(
@@ -362,7 +361,8 @@ class AddServiceScreen extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    'Service Image',
+                    'Service Image:',
+                    textAlign: TextAlign.left,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
