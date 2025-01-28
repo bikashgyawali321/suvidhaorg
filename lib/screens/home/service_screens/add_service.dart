@@ -175,7 +175,8 @@ class AddServiceScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: SingleChildScrollView(
               child: Column(
-                spacing: 15,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 7,
                 children: [
                   Text(
                     "Provide additional details about the service to expand your organization's offerings!",
@@ -188,7 +189,6 @@ class AddServiceScreen extends StatelessWidget {
                   ),
                   Text(
                     'Basic Details:',
-                    textAlign: TextAlign.left,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),

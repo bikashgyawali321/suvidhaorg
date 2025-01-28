@@ -39,7 +39,7 @@ class OfferedServicesScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Here are the services we offer, feel free to pick whatever works best for you!",
+                      "Here are the services you offer!!",
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -55,17 +55,16 @@ class OfferedServicesScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            customDivider(),
                             SizedBox(
                               height: 10,
                             ),
                             for (final service in services) ...[
                               ListTile(
                                 title: Text(service.serviceName.name),
-                                subtitle: Text(service.serviceName.name),
+                                subtitle: Text("Tap to view details"),
                                 trailing: Icon(Icons.chevron_right),
                                 onTap: () {
-                                  context.go('/service_details',
+                                  context.push('/service_details',
                                       extra: service);
                                 },
                               ),
@@ -78,20 +77,6 @@ class OfferedServicesScreen extends StatelessWidget {
                   ],
                 ),
               ));
-              // children: [
-              //   for (final service in services) ...[
-              //     ListTile(
-              //       title: Text(service.serviceName.name),
-              //       onTap: () {
-              //         context.go('/service_details', extra: service);
-              //       },
-              //     ),
-              //     Divider(),
-              //   ] //TODO: give some description text , see service name screen for demo
-
-              //   //TODO: map each service to a listtile inside a , mathi deko service tyo yeha aauxa aafai  , see service name screen for demo
-              //   //ontap listtile ma gayera service details screen ma janu parxa, create it and add a goroute to it in main.dart, each listtile tap garda teha jana paro
-              // ],
             }
           },
         ),
