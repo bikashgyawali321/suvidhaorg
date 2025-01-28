@@ -361,4 +361,19 @@ class BackendService extends ChangeNotifier {
       titleOfRequest: 'getting all bookings',
     );
   }
+
+  //change staus of booking
+
+  Future<BackendResponse> changeBookingStatus(
+      {required String bid,
+      required String bookingStatus,
+      String? rejectionMessage}) async {
+    return handleRequest(
+      request: _dio.put('/booking/changestatus/$bid', data: {
+        'bookingstatus': bookingStatus,
+        'rejectionMessage': rejectionMessage,
+      }),
+      titleOfRequest: 'changing booking status',
+    );
+  }
 }

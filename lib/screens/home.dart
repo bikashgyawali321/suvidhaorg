@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen>
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.073,
+                height: MediaQuery.of(context).size.height * 0.075,
                 width: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(
                   color: Theme.of(context).brightness == Brightness.dark

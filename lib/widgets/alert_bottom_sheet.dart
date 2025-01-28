@@ -10,12 +10,14 @@ class AlertBottomSheet extends StatelessWidget {
     required this.negativeLabel,
     required this.onTap,
     required this.title,
+    this.onNegativeTap,
     this.message,
     this.loading,
   });
   final String positiveLabel;
   final String negativeLabel;
   final VoidCallback onTap;
+  final VoidCallback? onNegativeTap;
   final String title;
   final String? message;
   bool? loading;
@@ -25,6 +27,7 @@ class AlertBottomSheet extends StatelessWidget {
     required String positiveLabel,
     required String negativeLabel,
     required VoidCallback onTap,
+    VoidCallback? onNegativeTap,
     bool loading = false,
     String? message,
   }) {
@@ -67,7 +70,7 @@ class AlertBottomSheet extends StatelessWidget {
                   Expanded(
                     child: CustomButton(
                       label: positiveLabel,
-                      onPressed: () => context.pop(),
+                      onPressed: () => onNegativeTap ?? context.pop(),
                     ),
                   ),
                   SizedBox(
