@@ -13,28 +13,85 @@ class ServiceDetailsScreen extends StatelessWidget {
         title: const Text('Service Details'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Basic Information',
+              'All the details of the service you offer!!',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(
+              height: 8,
+            ),
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ListTile(
+                      title: Text(
+                        'Service Name',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        service.serviceName.name.toUpperCase(),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Description',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        service.description,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Price',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        service.price.toCurrency,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    customDivider(),
+                    ListTile(
+                      title: Text(
+                        'Status',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      subtitle: Text(
+                        service.status,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    customDivider(),
+                    ListTile(
                       trailing: CircleAvatar(
-                        radius: 50, // Adjust the radius for the size
+                        radius: 30,
                         backgroundImage: NetworkImage(
-                          service.img[0], // Replace with your image URL
+                          service.img[0],
                         ),
                       ),
                       title: Text(
@@ -49,68 +106,15 @@ class ServiceDetailsScreen extends StatelessWidget {
                     customDivider(),
                     ListTile(
                       title: Text(
-                        'Service Name',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      subtitle: Text(service.serviceName.name.toUpperCase(),
-                          style: Theme.of(context).textTheme.bodyMedium),
-                    ),
-                    customDivider(),
-                    ListTile(
-                      title: Text(
-                        'Description',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      subtitle: Text(service.description,
-                          style: Theme.of(context).textTheme.bodyMedium),
-                    ),
-                    customDivider(),
-                    ListTile(
-                      title: Text(
-                        'Price',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      subtitle: Text(service.price.toCurrency,
-                          style: Theme.of(context).textTheme.bodyMedium),
-                    ),
-                    customDivider(),
-                    ListTile(
-                      title: Text(
-                        'Mode',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      subtitle: Text(service.isActive ? 'Active' : 'Inactive',
-                          style: Theme.of(context).textTheme.bodyMedium),
-                    ),
-                    customDivider(),
-                    ListTile(
-                      title: Text(
-                        'Status',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      subtitle: Text(service.status,
-                          style: Theme.of(context).textTheme.bodyMedium),
-                    ),
-                    customDivider(),
-                    ListTile(
-                      title: Text(
                         'Service Provider Phone',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                       ),
-                      subtitle: Text(service.serviceProviderPhone,
-                          style: Theme.of(context).textTheme.bodyMedium),
+                      subtitle: Text(
+                        service.serviceProviderPhone,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
                     customDivider(),
                     ListTile(
@@ -120,10 +124,11 @@ class ServiceDetailsScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                       ),
-                      subtitle: Text(service.serviceProviderEmail,
-                          style: Theme.of(context).textTheme.bodyMedium),
+                      subtitle: Text(
+                        service.serviceProviderEmail,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
-                    customDivider(),
                   ],
                 ),
               ),
@@ -139,7 +144,7 @@ class ServiceDetailsScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Divider(
         thickness: 0,
-        color: Colors.blueGrey[400],
+        height: 0,
       ),
     );
   }
