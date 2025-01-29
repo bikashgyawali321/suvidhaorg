@@ -34,7 +34,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: FirebaseOptionsAndroid.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   await CustomHive().init();
   runApp(const ProviderWrappedApp());
