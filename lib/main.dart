@@ -29,6 +29,8 @@ import 'services/backend_service.dart';
 import 'services/custom_hive.dart';
 import 'services/notification.dart';
 
+//global navigator key
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -63,6 +65,7 @@ class ProviderWrappedApp extends StatelessWidget {
 }
 
 GoRouter _router = GoRouter(
+  navigatorKey: navigatorKey,
   routes: [
     GoRoute(
       path: '/',

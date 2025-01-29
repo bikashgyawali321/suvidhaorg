@@ -38,8 +38,6 @@ class ServiceNamesProvider extends ChangeNotifier {
     loading = false;
     notifyListeners();
   }
-
-  
 }
 
 class ServiceNameScreen extends StatelessWidget {
@@ -64,7 +62,8 @@ class ServiceNameScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Center(
                   child: Text(
-                      'Looks like there is no service category available.Please contact the administrator for more details.'),
+                    'Looks like there is no service category available.Please contact the administrator for more details.',
+                  ),
                 ),
               );
             } else {

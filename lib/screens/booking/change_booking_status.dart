@@ -15,8 +15,10 @@ class ChangeBookingStatusProvider extends ChangeNotifier {
   late BackendService backendService;
   late BookingProvider bookingProvider;
   String? rejectionMessage = '';
+  bool? isCompletedBooking;
 
-  ChangeBookingStatusProvider(this.context, this.bookingId) {
+  ChangeBookingStatusProvider(this.context, this.bookingId,
+      {this.isCompletedBooking}) {
     backendService = Provider.of<BackendService>(context, listen: false);
     bookingProvider = Provider.of<BookingProvider>(context, listen: false);
   }
@@ -61,10 +63,40 @@ class ChangeBookingStatusProvider extends ChangeNotifier {
     loading = false;
     notifyListeners();
     if (response.statusCode == 200) {
-      context.go('/home');
-      bookingProvider.fetchBookings(
+      await bookingProvider.fetchBookings(
         reset: true,
       );
+      context.go('/home');
+
+      SnackBarHelper.showSnackbar(
+        context: context,
+        successMessage: response.message,
+      );
+    } else {
+      context.pop();
+      SnackBarHelper.showSnackbar(
+        context: context,
+        errorMessage: response.errorMessage,
+      );
+    }
+  }
+
+  Future<void> changeBookingStatusToCompleted() async {
+    loading = true;
+    notifyListeners();
+
+    final response = await backendService.changeBookingStatus(
+      bid: bookingId,
+      bookingStatus: 'Completed',
+    );
+
+    loading = false;
+    notifyListeners();
+    if (response.statusCode == 200) {
+      await bookingProvider.fetchBookings(
+        reset: true,
+      );
+      context.go('/home');
       SnackBarHelper.showSnackbar(
         context: context,
         successMessage: response.message,
@@ -81,17 +113,24 @@ class ChangeBookingStatusProvider extends ChangeNotifier {
 
 class ChangeBookingStatusBottomSheet extends StatelessWidget {
   final String bookingId;
+  bool? isCpmpletedBooking;
 
-  const ChangeBookingStatusBottomSheet({super.key, required this.bookingId});
+  ChangeBookingStatusBottomSheet(
+      {super.key, required this.bookingId, this.isCpmpletedBooking});
 
   static void show({
     required BuildContext context,
     required String bid,
+    bool? isCompletedBooking,
   }) {
     showModalBottomSheet(
       context: context,
       builder: (context) => ChangeNotifierProvider(
-        create: (context) => ChangeBookingStatusProvider(context, bid),
+        create: (context) => ChangeBookingStatusProvider(
+          context,
+          bid,
+          isCompletedBooking: isCompletedBooking ?? false,
+        ),
         child: ChangeBookingStatusBottomSheet(bookingId: bid),
       ),
     );
@@ -111,7 +150,7 @@ class ChangeBookingStatusBottomSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Change the status of this booking',
+                  'Change the status of this booking ${provider.isCompletedBooking == true ? 'to completed' : ''}.',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -122,8 +161,15 @@ class ChangeBookingStatusBottomSheet extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomButton(
-                        label: 'Accept',
+                        label: provider.isCompletedBooking == true
+                            ? 'Mark Completed'
+                            : 'Accept',
                         onPressed: () async {
+                          if (provider.isCompletedBooking == true) {
+                            await provider.changeBookingStatusToCompleted();
+
+                            return;
+                          }
                           await provider.changeBookingStatusToAccepted();
                         },
                         loading: provider.loading,
@@ -132,7 +178,9 @@ class ChangeBookingStatusBottomSheet extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(
                       child: CustomButton(
-                        label: 'Reject',
+                        label: provider.isCompletedBooking == true
+                            ? 'Not Now'
+                            : 'Reject',
                         onPressed: () {
                           context.pop();
                           ShowBottomSheetWithRejectionMessage.show(
@@ -140,7 +188,9 @@ class ChangeBookingStatusBottomSheet extends StatelessWidget {
                             bookingId,
                           );
                         },
-                        backgroundColor: Colors.red,
+                        backgroundColor: provider.isCompletedBooking == true
+                            ? null
+                            : Colors.red,
                       ),
                     ),
                   ],

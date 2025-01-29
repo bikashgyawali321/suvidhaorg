@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:suvidhaorg/extensions/extensions.dart';
 import 'package:suvidhaorg/models/offered_service.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
 import 'package:suvidhaorg/screens/ask_permission%20copy.dart';
@@ -23,10 +26,20 @@ class _HomeScreenState extends State<HomeScreen>
   final OfferedServiceList offeredServiceList = OfferedServiceList();
   int index = 1;
   late TabController _tabController;
+  late Timer _timer;
+  String currentDateTime = DateTime.now().toLocal().toVerbalDateTime;
   NotificationService get _notificationService =>
       context.read<NotificationService>();
   @override
   void initState() {
+    _timer = Timer.periodic(
+        const Duration(
+          minutes: 1,
+        ), (timer) {
+      setState(() {
+        currentDateTime = DateTime.now().toLocal().toVerbalDateTime;
+      });
+    });
     _tabController = TabController(length: 3, vsync: this);
 
     if (_notificationService.canAskPermission) {
@@ -49,6 +62,14 @@ class _HomeScreenState extends State<HomeScreen>
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: index == 1
+              ? Text(
+                  DateTime.now().toLocal().toVerbalDateTime,
+                )
+              : SizedBox(),
+        ),
       ),
       drawer: Drawer(
         backgroundColor: Theme.of(context).colorScheme.surfaceContainer,

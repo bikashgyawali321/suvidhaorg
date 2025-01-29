@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:suvidhaorg/extensions/extensions.dart';
 import 'package:suvidhaorg/screens/booking/change_booking_status.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
@@ -18,6 +19,12 @@ class BookingDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Booking Details',
+        ),
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: Icon(
+            Icons.arrow_back,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -163,6 +170,18 @@ class BookingDetailsScreen extends StatelessWidget {
                   ChangeBookingStatusBottomSheet.show(
                     context: context,
                     bid: booking.id,
+                  );
+                },
+              )
+            ],
+            if (booking.bookingStatus == 'Accepted') ...[
+              CustomButton(
+                label: 'Mark as Completed',
+                onPressed: () {
+                  ChangeBookingStatusBottomSheet.show(
+                    context: context,
+                    bid: booking.id,
+                    isCompletedBooking: true,
                   );
                 },
               )

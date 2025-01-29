@@ -38,7 +38,7 @@ class AuthProvider extends ChangeNotifier {
           return;
         }
         context.go('/home');
-        context.read<NotificationService>().initilize();
+        context.read<NotificationService>().initialize();
         debugPrint("User details: ${user!.name}");
       } else {
         context.go('/login');
@@ -55,5 +55,14 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  //function to refresh the auth token
+  String get greetingMessage {
+    var hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good Morning ${user!.name} 😊.';
+    }
+    if (hour < 17) {
+      return 'Good Afternoon ${user!.name} 😊.';
+    }
+    return 'Good Evening ${user!.name} 😊.';
+  }
 }

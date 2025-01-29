@@ -376,4 +376,24 @@ class BackendService extends ChangeNotifier {
       titleOfRequest: 'changing booking status',
     );
   }
+
+  //change order status
+  Future<BackendResponse> acceptOrder({required String oid}) async {
+    return handleRequest(
+      request: _dio.put(
+        '/order/accept/$oid',
+      ),
+      titleOfRequest: 'changing order status',
+    );
+  }
+
+  //complete order
+  Future<BackendResponse> completeOrder({required String oid}) async {
+    return handleRequest(
+      request: _dio.put(
+        '/order/complete/$oid',
+      ),
+      titleOfRequest: 'completing order',
+    );
+  }
 }
