@@ -393,7 +393,9 @@ class AddOrganizationScreen extends StatelessWidget {
                                   labelText: 'Contact Number',
                                   hintText: 'Enter the contact number',
                                   contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 16, horizontal: 16),
+                                    vertical: 16,
+                                    horizontal: 16,
+                                  ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -426,17 +428,19 @@ class AddOrganizationScreen extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                keyboardType: TextInputType.number,
                                 onChanged: (value) =>
                                     provider.org.panNo = value,
-                                maxLength: 10,
+                                maxLength: 20,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter the PAN number';
                                   }
-                                  if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+
+                                  if (!RegExp(r'^[0-9\-_]{5,20}$')
+                                      .hasMatch(value)) {
                                     return 'Please enter a valid PAN number';
                                   }
+
                                   return null;
                                 },
                               ),

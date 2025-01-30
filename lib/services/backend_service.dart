@@ -396,4 +396,28 @@ class BackendService extends ChangeNotifier {
       titleOfRequest: 'completing order',
     );
   }
+
+  //fetch all reviews and ratings
+  Future<BackendResponse> getAllReviewsAndRatingsForService(
+      {required ListingSchema schema}) async {
+    return handleRequest(
+      request: _dio.get(
+        '/review/service',
+        queryParameters: schema.toJson(),
+      ),
+      titleOfRequest: 'getting all reviews and ratings for service',
+    );
+  }
+
+  //fetch the reviews for organization
+  Future<BackendResponse> getAllReviewsAndRatingsForOrganization(
+      {required ListingSchema schema}) async {
+    return handleRequest(
+      request: _dio.get(
+        '/review/org',
+        queryParameters: schema.toJson(),
+      ),
+      titleOfRequest: 'getting all reviews and ratings for organization',
+    );
+  }
 }
