@@ -475,7 +475,9 @@ class AddOrganizationScreen extends StatelessWidget {
                                         hintText: 'Enter PAN number',
                                         contentPadding:
                                             const EdgeInsets.symmetric(
-                                                vertical: 16, horizontal: 16),
+                                          vertical: 16,
+                                          horizontal: 16,
+                                        ),
                                         border: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(8),
