@@ -141,7 +141,6 @@ class ServiceNameScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Divider(
         thickness: 0,
-        color: Colors.blueGrey[400],
       ),
     );
   }

@@ -7,7 +7,7 @@ class ServiceModel {
   @JsonKey(name: '_id')
   final String id;
 
-  @JsonKey(name: 'org')
+  @JsonKey(name: 'nameOrg')
   final String org;
 
   @JsonKey(name: 'service')

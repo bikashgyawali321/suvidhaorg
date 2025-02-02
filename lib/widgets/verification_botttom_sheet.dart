@@ -19,7 +19,7 @@ class VerificationBottomSheet extends StatelessWidget {
   final String title;
   final String? message;
   bool? loading;
-  static void show({
+  static Future<T?> show<T>({
     required BuildContext context,
     required String title,
     required String positiveLabel,
@@ -28,7 +28,7 @@ class VerificationBottomSheet extends StatelessWidget {
     bool loading = false,
     String? message,
   }) {
-    showModalBottomSheet(
+    return showModalBottomSheet<T>(
       context: context,
       builder: (context) => VerificationBottomSheet(
         title: title,

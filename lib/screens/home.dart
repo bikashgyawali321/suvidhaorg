@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:suvidhaorg/extensions/extensions.dart';
 import 'package:suvidhaorg/models/offered_service.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
-import 'package:suvidhaorg/screens/ask_permission%20copy.dart';
+import 'package:suvidhaorg/screens/ask_permission.dart';
 import 'package:suvidhaorg/screens/home/bookings.dart';
 import 'package:suvidhaorg/screens/home/dashboard.dart';
 import 'package:suvidhaorg/screens/home/orders.dart';
@@ -13,6 +13,7 @@ import 'package:suvidhaorg/screens/profile_content.dart';
 import 'package:suvidhaorg/services/notification.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/organization_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,7 +25,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final OfferedServiceList offeredServiceList = OfferedServiceList();
-  int index = 1;
   late TabController _tabController;
   late Timer _timer;
   String currentDateTime = DateTime.now().toLocal().toVerbalDateTime;
@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen>
           minutes: 1,
         ), (timer) {
       setState(() {
-        currentDateTime = DateTime.now().toLocal().toVerbalDateTime;
+        currentDateTime = DateTime.now().toLocal().toVerbalDateTimeWithDay;
       });
     });
     _tabController = TabController(length: 3, vsync: this);
@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
+    final organizationProvider = context.watch<OrganizationProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -64,9 +65,9 @@ class _HomeScreenState extends State<HomeScreen>
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1),
-          child: index == 1
+          child: organizationProvider.index == 1
               ? Text(
-                  DateTime.now().toLocal().toVerbalDateTime,
+                  DateTime.now().toLocal().toVerbalDateTimeWithDay,
                 )
               : SizedBox(),
         ),
@@ -124,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen>
       body: Stack(
         children: [
           IndexedStack(
-            index: index,
+            index: organizationProvider.index,
             children: const [
               BookingScreen(),
               DashboardScreen(),
@@ -150,15 +151,13 @@ class _HomeScreenState extends State<HomeScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       GestureDetector(
-                        onTap: () => setState(() {
-                          index = 0;
-                        }),
+                        onTap: () => organizationProvider.changeIndex(0),
                         child: Column(
                           children: [
                             Icon(
                               Icons.event,
-                              size: index == 0 ? 30 : 25,
-                              color: index == 0
+                              size: organizationProvider.index == 0 ? 30 : 25,
+                              color: organizationProvider.index == 0
                                   ? Theme.of(context)
                                       .colorScheme
                                       .primaryContainer
@@ -167,12 +166,12 @@ class _HomeScreenState extends State<HomeScreen>
                             Text(
                               'Bookings',
                               style: TextStyle(
-                                color: index == 0
+                                color: organizationProvider.index == 0
                                     ? Theme.of(context)
                                         .colorScheme
                                         .primaryContainer
                                     : Theme.of(context).colorScheme.onSurface,
-                                fontWeight: index == 0
+                                fontWeight: organizationProvider.index == 0
                                     ? FontWeight.bold
                                     : FontWeight.normal,
                               ),
@@ -181,15 +180,13 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => setState(() {
-                          index = 1;
-                        }),
+                        onTap: () => organizationProvider.changeIndex(1),
                         child: Column(
                           children: [
                             Icon(
                               Icons.house,
-                              size: index == 1 ? 30 : 25,
-                              color: index == 1
+                              size: organizationProvider.index == 1 ? 30 : 25,
+                              color: organizationProvider.index == 1
                                   ? Theme.of(context)
                                       .colorScheme
                                       .primaryContainer
@@ -198,12 +195,12 @@ class _HomeScreenState extends State<HomeScreen>
                             Text(
                               'Home',
                               style: TextStyle(
-                                color: index == 1
+                                color: organizationProvider.index == 1
                                     ? Theme.of(context)
                                         .colorScheme
                                         .primaryContainer
                                     : Theme.of(context).colorScheme.onSurface,
-                                fontWeight: index == 1
+                                fontWeight: organizationProvider.index == 1
                                     ? FontWeight.bold
                                     : FontWeight.normal,
                               ),
@@ -212,15 +209,13 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => setState(() {
-                          index = 2;
-                        }),
+                        onTap: () => organizationProvider.changeIndex(2),
                         child: Column(
                           children: [
                             Icon(
                               Icons.history,
-                              size: index == 2 ? 30 : 25,
-                              color: index == 2
+                              size: organizationProvider.index == 2 ? 30 : 25,
+                              color: organizationProvider.index == 2
                                   ? Theme.of(context)
                                       .colorScheme
                                       .primaryContainer
@@ -229,12 +224,12 @@ class _HomeScreenState extends State<HomeScreen>
                             Text(
                               'Orders',
                               style: TextStyle(
-                                color: index == 2
+                                color: organizationProvider.index == 2
                                     ? Theme.of(context)
                                         .colorScheme
                                         .primaryContainer
                                     : Theme.of(context).colorScheme.onSurface,
-                                fontWeight: index == 2
+                                fontWeight: organizationProvider.index == 2
                                     ? FontWeight.bold
                                     : FontWeight.normal,
                               ),

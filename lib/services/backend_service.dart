@@ -420,4 +420,13 @@ class BackendService extends ChangeNotifier {
       titleOfRequest: 'getting all reviews and ratings for organization',
     );
   }
+
+  //data for the organization
+
+  Future<BackendResponse> getOrganizationData() async {
+    return handleRequest(
+      request: _dio.get('/auth/data-org'),
+      titleOfRequest: 'getting organization data',
+    );
+  }
 }

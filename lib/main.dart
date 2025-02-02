@@ -6,6 +6,7 @@ import 'package:suvidhaorg/firebase_options.dart';
 import 'package:suvidhaorg/models/bookings/booking_model.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/providers/location_provider.dart';
+import 'package:suvidhaorg/screens/booking/bookings_on_status.dart';
 import 'package:suvidhaorg/screens/home.dart';
 import 'package:suvidhaorg/screens/home/bookings.dart';
 import 'package:suvidhaorg/screens/service_screens/offered_services.dart';
@@ -135,10 +136,19 @@ GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-        path: '/booking_details',
+      path: '/booking_details',
+      builder: (context, state) {
+        final booking = state.extra as DocsBooking;
+        return BookingDetailsScreen(booking: booking);
+      },
+    ),
+
+    //pending bookings
+    GoRoute(
+        path: '/bookings_on_status',
         builder: (context, state) {
-          final booking = state.extra as DocsBooking;
-          return BookingDetailsScreen(booking: booking);
+          final status = state.extra as String;
+          return BookingsOnStatusScreen(status: status);
         }),
   ],
 );

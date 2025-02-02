@@ -54,7 +54,11 @@ class BookingProvider extends ChangeNotifier {
 
     loading = true;
     notifyListeners();
-    if (organizationProvider.organization == null) return;
+    if (organizationProvider.organization == null) {
+      loading = false;
+      notifyListeners();
+      return;
+    }
     final response =
         await _backendService.getAllBookings(listingSchema: listingSchema);
 
@@ -154,7 +158,7 @@ class BookingScreen extends StatelessWidget {
               children: [
                 Center(
                   child: Icon(
-                    Icons.error_outline,
+                    Icons.inbox_outlined,
                     size: 80,
                   ),
                 ),
