@@ -1,25 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
 import 'package:suvidhaorg/screens/organization_screens/request_organization_verification.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
+import 'package:suvidhaorg/widgets/loading_screen.dart';
 import 'package:suvidhaorg/widgets/snackbar.dart';
 import 'dart:io';
 
 import '../../models/organization_model/coordinates.dart';
 import '../../models/organization_model/new_org.dart';
+import '../../providers/location_provider.dart';
 import '../../services/backend_service.dart';
 
 class AddOrganizationProvider extends ChangeNotifier {
   final BuildContext context;
+  late LocationProvider locationProvider;
   AddOrganizationProvider(this.context) {
+    initialize();
+  }
+
+  void initialize() {
     backendService = Provider.of<BackendService>(context);
-    getCurrentLocation();
+    locationProvider = Provider.of<LocationProvider>(context);
+    org = NewOrganization(
+      nameOrg: '',
+      intro: '',
+      address: locationProvider.currentAddress ?? '',
+      longLat: LongitudeLatitudeModel(type: 'Point', coordinates: [
+        locationProvider.currentPosition?.latitude != null
+            ? locationProvider.currentPosition!.longitude
+            : 0.0,
+        locationProvider.currentPosition?.latitude != null
+            ? locationProvider.currentPosition!.longitude
+            : 0.0
+      ]),
+      contactPerson: '',
+      contactNumber: '',
+      panNo: '',
+      citzImg: [],
+      orgImg: [],
+      panImg: [],
+    );
   }
 
   late BackendService backendService;
@@ -34,44 +58,7 @@ class AddOrganizationProvider extends ChangeNotifier {
   String? orgImageError;
   String? citizenImageError;
 
-  NewOrganization org = NewOrganization(
-    nameOrg: '',
-    intro: '',
-    address: '',
-    longLat: LongitudeLatitudeModel(type: 'Point', coordinates: [0, 0]),
-    contactPerson: '',
-    contactNumber: '',
-    panNo: '',
-    citzImg: [],
-    orgImg: [],
-    panImg: [],
-  );
-
-  // Function to get the current user location
-  Future<void> getCurrentLocation() async {
-    var status = await Permission.location.request();
-
-    if (status.isGranted) {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      org.longLat = LongitudeLatitudeModel(
-        type: 'Point',
-        coordinates: [position.longitude, position.latitude],
-      );
-      notifyListeners();
-    } else if (status.isDenied) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'Location permission denied, please grant the permission for creating an organization.'),
-          duration: const Duration(seconds: 5),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-    } else if (status.isPermanentlyDenied) {
-      openAppSettings();
-    }
-  }
+  NewOrganization? org;
 
   // Function to add PAN image
   Future<void> addPanImage() async {
@@ -81,7 +68,7 @@ class AddOrganizationProvider extends ChangeNotifier {
       if (response.statusCode == 200 && response.result != null) {
         panImageError = null;
 
-        org.panImg.add(response.result!);
+        org!.panImg.add(response.result!);
         notifyListeners();
       } else {
         panImageError = response.message;
@@ -103,7 +90,7 @@ class AddOrganizationProvider extends ChangeNotifier {
 
       if (response.statusCode == 200 && response.result != null) {
         orgImageError = null;
-        org.orgImg.add(response.result!);
+        org!.orgImg.add(response.result!);
         await Future.delayed(const Duration(seconds: 2));
         notifyListeners();
       } else {
@@ -126,7 +113,7 @@ class AddOrganizationProvider extends ChangeNotifier {
 
       if (response.statusCode == 200 && response.result != null) {
         citizenImageError = null;
-        org.citzImg?.add(response.result!);
+        org!.citzImg?.add(response.result!);
         notifyListeners();
       } else {
         citizenImageError = response.message;
@@ -215,8 +202,8 @@ class AddOrganizationProvider extends ChangeNotifier {
       notifyListeners();
 
       if (!_formKey.currentState!.validate() ||
-          org.panImg.isEmpty ||
-          org.orgImg.isEmpty) {
+          org!.panImg.isEmpty ||
+          org!.orgImg.isEmpty) {
         loading = false;
         orgImageError = 'Please select an image to upload';
         panImageError = 'Please select an image to upload';
@@ -224,7 +211,7 @@ class AddOrganizationProvider extends ChangeNotifier {
         return;
       }
 
-      final response = await backendService.createOrganization(newOrg: org);
+      final response = await backendService.createOrganization(newOrg: org!);
 
       if (response.statusCode == 200 && response.result != null) {
         loading = false;
@@ -275,256 +262,333 @@ class AddOrganizationScreen extends StatelessWidget {
           ),
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 16,
+              ),
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Let's get your organization started by filling out the details below.",
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
+                child: provider.locationProvider.currentPosition == null
+                    ? Column(
+                        children: [
+                          provider.loading
+                              ? Center(
+                                  child: LoadingScreen(),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.35,
+                                      ),
+                                      Icon(
+                                        Icons.location_disabled,
+                                        size: 70,
+                                      ),
+                                      Text(
+                                        "Please enable location services to continue.",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      CustomButton(
+                                        label: "Enable now",
+                                        onPressed: () => provider
+                                            .locationProvider
+                                            .getCurrentLocation(),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Let's get your organization started by filling out the details below.",
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
                           ),
-                    ),
-                    const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                    Text(
-                      "Basic Organization Details",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                          Text(
+                            "Basic Organization Details",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 15,
-                        ),
-                        child: Form(
-                          key: provider._formKey,
-                          child: Column(
-                            children: [
-                              // Organization Name Field
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Organization Name',
-                                  hintText: 'Enter the organization name',
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 16, horizontal: 16),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                onChanged: (value) =>
-                                    provider.org.nameOrg = value,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter the organization name';
-                                  }
-                                  if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
-                                    return 'Organization name should contain at least one alphabet';
-                                  }
-                                  //org name should be 5 characters long
-                                  if (value.length < 5) {
-                                    return 'Organization name should be at least 5 characters long';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 16),
-
-                              // Address Field
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Organization Address',
-                                  hintText: 'Enter the organization address',
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 16, horizontal: 16),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                onChanged: (value) =>
-                                    provider.org.address = value,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter the address of the organization';
-                                  }
-                                  if (!RegExp(r"^[a-zA-Z0-9\s,.'-]{3,}$")
-                                      .hasMatch(value)) {
-                                    return 'Please enter a valid address';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 16),
-
-                              // Contact Person Field
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Contact Person',
-                                  hintText: 'Name of the contact person',
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 16, horizontal: 16),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                onChanged: (value) =>
-                                    provider.org.contactPerson = value,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter the contact person\'s name';
-                                  }
-                                  if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
-                                    return 'Contact person\'s name should contain at least one alphabet';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 16),
-
-                              // Contact Number Field
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Contact Number',
-                                  hintText: 'Enter the contact number',
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 16, horizontal: 16),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  suffixIcon: Icon(Icons.phone),
-                                ),
-                                maxLength: 10,
-                                onChanged: (value) =>
-                                    provider.org.contactNumber = value,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter the contact number';
-                                  }
-                                  if (!RegExp(r'^\d{10}$').hasMatch(value)) {
-                                    return 'Please enter a valid contact number';
-                                  }
-                                  return null;
-                                },
-                                keyboardType: TextInputType.phone,
-                              ),
-                              const SizedBox(height: 16),
-
-                              // PAN Number Field
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'PAN Number',
-                                  hintText: 'Enter PAN number',
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 16, horizontal: 16),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) =>
-                                    provider.org.panNo = value,
-                                maxLength: 10,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter the PAN number';
-                                  }
-                                  if (!RegExp(r'^\d{10}$').hasMatch(value)) {
-                                    return 'Please enter a valid PAN number';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 16),
-
-                              // Brief Introduction Field
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Brief Introduction',
-                                  hintText:
-                                      'Enter a brief introduction to the organization',
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 16, horizontal: 16),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                onChanged: (value) =>
-                                    provider.org.intro = value,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a brief introduction to the organization';
-                                  }
-                                  if (value.length < 10) {
-                                    return 'Introduction should be at least 10 characters long';
-                                  }
-                                  return null;
-                                },
-                                keyboardType: TextInputType.multiline,
-                              ),
-                              const SizedBox(height: 16),
-
-                              // Message Field (Optional)
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Message',
-                                  hintText: 'Message for the admin (optional)',
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 16, horizontal: 16),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                onChanged: (value) =>
-                                    provider.org.message = value,
-                                keyboardType: TextInputType.multiline,
-                              ),
-                            ],
+                          SizedBox(
+                            height: 10,
                           ),
-                        ),
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 15,
+                              ),
+                              child: Form(
+                                key: provider._formKey,
+                                child: Column(
+                                  children: [
+                                    // Organization Name Field
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Organization Name',
+                                        hintText: 'Enter the organization name',
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 16, horizontal: 16),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      onChanged: (value) =>
+                                          provider.org!.nameOrg = value,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter the organization name';
+                                        }
+                                        if (!RegExp(r'[a-zA-Z]')
+                                            .hasMatch(value)) {
+                                          return 'Organization name should contain at least one alphabet';
+                                        }
+                                        //org name should be 5 characters long
+                                        if (value.length < 5) {
+                                          return 'Organization name should be at least 5 characters long';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 16),
+
+                                    // Address Field
+                                    TextFormField(
+                                      initialValue: provider.locationProvider
+                                              .currentAddress ??
+                                          '',
+                                      decoration: InputDecoration(
+                                        labelText: 'Organization Address',
+                                        hintText:
+                                            'Enter the organization address',
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 16, horizontal: 16),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      onChanged: (value) =>
+                                          provider.org!.address = value,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter the address of the organization';
+                                        }
+                                        if (!RegExp(r"^[a-zA-Z0-9\s,.'-]{3,}$")
+                                            .hasMatch(value)) {
+                                          return 'Please enter a valid address';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 16),
+
+                                    // Contact Person Field
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Contact Person',
+                                        hintText: 'Name of the contact person',
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 16, horizontal: 16),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      onChanged: (value) =>
+                                          provider.org!.contactPerson = value,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter the contact person\'s name';
+                                        }
+                                        if (!RegExp(r'[a-zA-Z]')
+                                            .hasMatch(value)) {
+                                          return 'Contact person\'s name should contain at least one alphabet';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 16),
+
+                                    // Contact Number Field
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Contact Number',
+                                        hintText: 'Enter the contact number',
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                          horizontal: 16,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        suffixIcon: Icon(Icons.phone),
+                                      ),
+                                      maxLength: 10,
+                                      onChanged: (value) =>
+                                          provider.org!.contactNumber = value,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter the contact number';
+                                        }
+                                        if (!RegExp(r'^\d{10}$')
+                                            .hasMatch(value)) {
+                                          return 'Please enter a valid contact number';
+                                        }
+                                        return null;
+                                      },
+                                      keyboardType: TextInputType.phone,
+                                    ),
+                                    const SizedBox(height: 5),
+                                    // PAN Number Field
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'PAN Number',
+                                        hintText: 'Enter PAN number',
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                          horizontal: 16,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      onChanged: (value) =>
+                                          provider.org!.panNo = value,
+                                      maxLength: 20,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter the PAN number';
+                                        }
+
+                                        if (!RegExp(r'^[0-9\-_]{5,20}$')
+                                            .hasMatch(value)) {
+                                          return 'Please enter a valid PAN number';
+                                        }
+
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 5),
+
+                                    // Brief Introduction Field
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Brief Introduction',
+                                        hintText:
+                                            'Enter a brief introduction to the organization',
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 16, horizontal: 16),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      onChanged: (value) =>
+                                          provider.org!.intro = value,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter a brief introduction to the organization';
+                                        }
+                                        if (value.length < 10) {
+                                          return 'Introduction should be at least 10 characters long';
+                                        }
+                                        return null;
+                                      },
+                                      keyboardType: TextInputType.multiline,
+                                    ),
+                                    const SizedBox(height: 16),
+
+                                    // Message Field (Optional)
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Message',
+                                        hintText:
+                                            'Message for the admin (optional)',
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 16, horizontal: 16),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      onChanged: (value) =>
+                                          provider.org!.message = value,
+                                      keyboardType: TextInputType.multiline,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Image Containers with error message
+                          _imageContainer(
+                            context,
+                            imageUrls: provider.org!.panImg,
+                            label: 'PAN Card Photo',
+                            onTap: () => provider.pickImage('pan'),
+                            errorMessage: provider.panImageError,
+                          ),
+                          const SizedBox(height: 20),
+                          _imageContainer(
+                            context,
+                            imageUrls: provider.org!.orgImg,
+                            label: 'Organization Photo',
+                            onTap: () => provider.pickImage('orgimage'),
+                            errorMessage: provider.orgImageError,
+                          ),
+                          const SizedBox(height: 20),
+                          _imageContainer(
+                            context,
+                            imageUrls: provider.org!.citzImg,
+                            label: 'Citizenship Photo',
+                            onTap: () => provider.pickImage('citizen'),
+                            errorMessage: provider.citizenImageError,
+                          ),
+                          const SizedBox(height: 30),
+
+                          // Submit Button
+                          CustomButton(
+                            label: 'Add Organization',
+                            onPressed: () => provider.addOrganization(),
+                            loading: provider.loading,
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Image Containers with error message
-                    _imageContainer(
-                      context,
-                      imageUrls: provider.org.panImg,
-                      label: 'PAN Card Photo',
-                      onTap: () => provider.pickImage('pan'),
-                      errorMessage: provider.panImageError,
-                    ),
-                    const SizedBox(height: 20),
-                    _imageContainer(
-                      context,
-                      imageUrls: provider.org.orgImg,
-                      label: 'Organization Photo',
-                      onTap: () => provider.pickImage('orgimage'),
-                      errorMessage: provider.orgImageError,
-                    ),
-                    const SizedBox(height: 20),
-                    _imageContainer(
-                      context,
-                      imageUrls: provider.org.citzImg,
-                      label: 'Citizenship Photo',
-                      onTap: () => provider.pickImage('citizen'),
-                      errorMessage: provider.citizenImageError,
-                    ),
-                    const SizedBox(height: 30),
-
-                    // Submit Button
-                    CustomButton(
-                      label: 'Add Organization',
-                      onPressed: () => provider.addOrganization(),
-                      loading: provider.loading,
-                    ),
-                  ],
-                ),
               ),
             ),
           ),

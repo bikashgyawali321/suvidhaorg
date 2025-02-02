@@ -376,4 +376,57 @@ class BackendService extends ChangeNotifier {
       titleOfRequest: 'changing booking status',
     );
   }
+
+  //change order status
+  Future<BackendResponse> acceptOrder({required String oid}) async {
+    return handleRequest(
+      request: _dio.put(
+        '/order/accept/$oid',
+      ),
+      titleOfRequest: 'changing order status',
+    );
+  }
+
+  //complete order
+  Future<BackendResponse> completeOrder({required String oid}) async {
+    return handleRequest(
+      request: _dio.put(
+        '/order/complete/$oid',
+      ),
+      titleOfRequest: 'completing order',
+    );
+  }
+
+  //fetch all reviews and ratings
+  Future<BackendResponse> getAllReviewsAndRatingsForService(
+      {required ListingSchema schema}) async {
+    return handleRequest(
+      request: _dio.get(
+        '/review/service',
+        queryParameters: schema.toJson(),
+      ),
+      titleOfRequest: 'getting all reviews and ratings for service',
+    );
+  }
+
+  //fetch the reviews for organization
+  Future<BackendResponse> getAllReviewsAndRatingsForOrganization(
+      {required ListingSchema schema}) async {
+    return handleRequest(
+      request: _dio.get(
+        '/review/org',
+        queryParameters: schema.toJson(),
+      ),
+      titleOfRequest: 'getting all reviews and ratings for organization',
+    );
+  }
+
+  //data for the organization
+
+  Future<BackendResponse> getOrganizationData() async {
+    return handleRequest(
+      request: _dio.get('/auth/data-org'),
+      titleOfRequest: 'getting organization data',
+    );
+  }
 }

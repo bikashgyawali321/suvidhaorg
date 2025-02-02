@@ -10,14 +10,14 @@ class AlertBottomSheet extends StatelessWidget {
     required this.negativeLabel,
     required this.onTap,
     required this.title,
-    this.onNegativeTap,
+    required this.onNegativeTap,
     this.message,
     this.loading,
   });
   final String positiveLabel;
   final String negativeLabel;
-  final VoidCallback onTap;
-  final VoidCallback? onNegativeTap;
+  final VoidCallback? onTap;
+  final VoidCallback onNegativeTap;
   final String title;
   final String? message;
   bool? loading;
@@ -26,8 +26,8 @@ class AlertBottomSheet extends StatelessWidget {
     required String title,
     required String positiveLabel,
     required String negativeLabel,
-    required VoidCallback onTap,
-    VoidCallback? onNegativeTap,
+    required VoidCallback onPositiveTap,
+    required VoidCallback onNegativeTap,
     bool loading = false,
     String? message,
   }) {
@@ -37,9 +37,10 @@ class AlertBottomSheet extends StatelessWidget {
         title: title,
         positiveLabel: positiveLabel,
         negativeLabel: negativeLabel,
-        onTap: onTap,
+        onTap: onPositiveTap,
         message: message,
         loading: loading,
+        onNegativeTap: onNegativeTap,
       ),
     );
   }
@@ -70,7 +71,8 @@ class AlertBottomSheet extends StatelessWidget {
                   Expanded(
                     child: CustomButton(
                       label: positiveLabel,
-                      onPressed: () => onNegativeTap ?? context.pop(),
+                      onPressed: () => onTap ?? context.pop(),
+                      loading: loading!,
                     ),
                   ),
                   SizedBox(
@@ -79,7 +81,7 @@ class AlertBottomSheet extends StatelessWidget {
                   Expanded(
                     child: CustomButton(
                       label: negativeLabel,
-                      onPressed: onTap,
+                      onPressed: onNegativeTap,
                       loading: loading!,
                       backgroundColor: Colors.red,
                     ),

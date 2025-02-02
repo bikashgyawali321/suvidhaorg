@@ -10,6 +10,7 @@ import 'package:suvidhaorg/widgets/snackbar.dart';
 import 'package:suvidhaorg/widgets/verification_botttom_sheet.dart';
 
 import '../../models/service_model/service.dart';
+import '../../providers/organization_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/backend_service.dart';
 
@@ -17,6 +18,7 @@ class AddServiceProvider extends ChangeNotifier {
   final BuildContext context;
   late BackendService backendService;
   final String serviceNameId;
+  late OrganizationProvider organizationProvider;
 
   AddServiceProvider(this.context, this.serviceNameId) {
     initialize();
@@ -24,6 +26,7 @@ class AddServiceProvider extends ChangeNotifier {
 
   void initialize() {
     backendService = Provider.of<BackendService>(context);
+    organizationProvider = Provider.of<OrganizationProvider>(context);
     newServiceModel = NewServiceModel(
       service: serviceNameId,
       serviceProviderName: '',
@@ -77,7 +80,7 @@ class AddServiceProvider extends ChangeNotifier {
 
       loading = false;
       notifyListeners();
-      VerificationBottomSheet.show(
+      await VerificationBottomSheet.show(
         context: context,
         title: "Request Service Verification",
         positiveLabel: "Request Now",
@@ -87,6 +90,7 @@ class AddServiceProvider extends ChangeNotifier {
         message:
             'Your service has been added successfully, request for verification now!',
       );
+      await organizationProvider.getAllOrganizationServices();
     } else {
       SnackBarHelper.showSnackbar(
         context: context,
@@ -292,7 +296,7 @@ class AddServiceScreen extends StatelessWidget {
                               keyboardType: TextInputType.phone,
                             ),
                             SizedBox(
-                              height: 8,
+                              height: 5,
                             ),
 
                             //description

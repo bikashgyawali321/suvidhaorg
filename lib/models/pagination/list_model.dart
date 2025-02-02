@@ -10,9 +10,13 @@ class ListingSchema {
   @JsonKey(name: 'limit')
   num limit;
 
+  @JsonKey(name: 'status')
+  String? status;
+
   ListingSchema({
     required this.page,
     required this.limit,
+    this.status,
   });
 
   factory ListingSchema.fromJson(Map<String, dynamic> json) =>

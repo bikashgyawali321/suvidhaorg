@@ -75,7 +75,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 setState(() {
                   loading = true;
                 });
-                await context.read<NotificationService>().initilize();
+                await context.read<NotificationService>().initialize();
                 await Future.delayed(const Duration(seconds: 2));
                 _handleRouting();
               },

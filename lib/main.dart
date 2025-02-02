@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/firebase_options.dart';
+import 'package:suvidhaorg/models/bookings/booking_model.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/providers/location_provider.dart';
+import 'package:suvidhaorg/screens/booking/bookings_on_status.dart';
 import 'package:suvidhaorg/screens/home.dart';
+import 'package:suvidhaorg/screens/home/bookings.dart';
 import 'package:suvidhaorg/screens/service_screens/offered_services.dart';
 import 'package:suvidhaorg/screens/service_screens/service_names_screen.dart';
 import 'package:suvidhaorg/screens/splash.dart';
@@ -14,6 +17,7 @@ import 'models/service_model/service_array_response.dart';
 import 'providers/auth_provider.dart';
 import 'providers/organization_provider.dart';
 import 'providers/theme_provider.dart';
+import 'screens/booking/booking_details.dart';
 import 'screens/organization_screens/add_organization.dart';
 import 'screens/organization_screens/organization_details.dart';
 import 'screens/organization_screens/update_organization.dart';
@@ -26,10 +30,12 @@ import 'services/backend_service.dart';
 import 'services/custom_hive.dart';
 import 'services/notification.dart';
 
+//global navigator key
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: FirebaseOptionsAndroid.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   await CustomHive().init();
   runApp(const ProviderWrappedApp());
@@ -49,6 +55,9 @@ class ProviderWrappedApp extends StatelessWidget {
           create: (_) => NotificationService(_.read<BackendService>()),
         ),
         ChangeNotifierProvider(create: (_) => OrganizationProvider(_)),
+        ChangeNotifierProvider(
+          create: (_) => BookingProvider(_),
+        ),
         ChangeNotifierProvider(create: (_) => LocationProvider())
       ],
       child: MyApp(),
@@ -57,6 +66,7 @@ class ProviderWrappedApp extends StatelessWidget {
 }
 
 GoRouter _router = GoRouter(
+  navigatorKey: navigatorKey,
   routes: [
     GoRoute(
       path: '/',
@@ -124,7 +134,22 @@ GoRouter _router = GoRouter(
         final services = state.extra as DocsService;
         return ServiceDetailsScreen(service: services);
       },
-    )
+    ),
+    GoRoute(
+      path: '/booking_details',
+      builder: (context, state) {
+        final booking = state.extra as DocsBooking;
+        return BookingDetailsScreen(booking: booking);
+      },
+    ),
+
+    //pending bookings
+    GoRoute(
+        path: '/bookings_on_status',
+        builder: (context, state) {
+          final status = state.extra as String;
+          return BookingsOnStatusScreen(status: status);
+        }),
   ],
 );
 
@@ -134,7 +159,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'सुविधा',
+      title: 'Suvidha Sewa',
       themeMode: context.watch<ThemeProvider>().themeMode,
       theme: ThemeData(
         brightness: Brightness.light,

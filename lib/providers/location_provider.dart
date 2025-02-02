@@ -12,7 +12,13 @@ class LocationProvider extends ChangeNotifier {
   LocationProvider() {
     getCurrentLocation();
   }
+
+  //enable location  service if current position is null
+
+
+
   //get the current address of the user
+
   Future<void> getCurrentLocation() async {
     loading = true;
 

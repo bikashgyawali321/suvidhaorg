@@ -90,9 +90,11 @@ class ServiceDetailsScreen extends StatelessWidget {
                     ListTile(
                       trailing: CircleAvatar(
                         radius: 30,
-                        backgroundImage: NetworkImage(
-                          service.img[0],
-                        ),
+                        backgroundImage: service.img.isNotEmpty
+                            ? NetworkImage(
+                                service.img[0],
+                              )
+                            : null,
                       ),
                       title: Text(
                         'Service Provider Name',
