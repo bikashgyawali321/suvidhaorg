@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:suvidhaorg/extensions/extensions.dart';
 import 'package:suvidhaorg/models/bookings/booking_model.dart';
 import 'package:suvidhaorg/models/pagination/list_model.dart';
+import 'package:suvidhaorg/providers/organization_provider.dart';
 import 'package:suvidhaorg/widgets/loading_screen.dart';
 
 import '../../services/backend_service.dart';
@@ -23,6 +24,7 @@ class BookingProvider extends ChangeNotifier {
 
   final BuildContext context;
   late BackendService _backendService;
+  late OrganizationProvider organizationProvider;
 
   ListingSchema listingSchema = ListingSchema(
     limit: 50,
@@ -35,6 +37,8 @@ class BookingProvider extends ChangeNotifier {
 
   void initialize() {
     _backendService = Provider.of<BackendService>(context, listen: false);
+    organizationProvider =
+        Provider.of<OrganizationProvider>(context, listen: false);
     fetchBookings();
   }
 
@@ -50,7 +54,7 @@ class BookingProvider extends ChangeNotifier {
 
     loading = true;
     notifyListeners();
-
+    if (organizationProvider.organization == null) return;
     final response =
         await _backendService.getAllBookings(listingSchema: listingSchema);
 

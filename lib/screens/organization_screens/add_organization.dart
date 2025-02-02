@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
@@ -13,13 +11,34 @@ import 'dart:io';
 
 import '../../models/organization_model/coordinates.dart';
 import '../../models/organization_model/new_org.dart';
+import '../../providers/location_provider.dart';
 import '../../services/backend_service.dart';
 
 class AddOrganizationProvider extends ChangeNotifier {
   final BuildContext context;
+  late LocationProvider locationProvider;
   AddOrganizationProvider(this.context) {
+    initialize();
+  }
+
+  void initialize() {
     backendService = Provider.of<BackendService>(context);
-    getCurrentLocation();
+    locationProvider = Provider.of<LocationProvider>(context);
+    org = NewOrganization(
+      nameOrg: '',
+      intro: '',
+      address: '',
+      longLat: LongitudeLatitudeModel(type: 'Point', coordinates: [
+        locationProvider.currentPosition!.longitude,
+        locationProvider.currentPosition!.latitude
+      ]),
+      contactPerson: '',
+      contactNumber: '',
+      panNo: '',
+      citzImg: [],
+      orgImg: [],
+      panImg: [],
+    );
   }
 
   late BackendService backendService;
@@ -34,44 +53,7 @@ class AddOrganizationProvider extends ChangeNotifier {
   String? orgImageError;
   String? citizenImageError;
 
-  NewOrganization org = NewOrganization(
-    nameOrg: '',
-    intro: '',
-    address: '',
-    longLat: LongitudeLatitudeModel(type: 'Point', coordinates: [0, 0]),
-    contactPerson: '',
-    contactNumber: '',
-    panNo: '',
-    citzImg: [],
-    orgImg: [],
-    panImg: [],
-  );
-
-  // Function to get the current user location
-  Future<void> getCurrentLocation() async {
-    var status = await Permission.location.request();
-
-    if (status.isGranted) {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      org.longLat = LongitudeLatitudeModel(
-        type: 'Point',
-        coordinates: [position.longitude, position.latitude],
-      );
-      notifyListeners();
-    } else if (status.isDenied) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'Location permission denied, please grant the permission for creating an organization.'),
-          duration: const Duration(seconds: 5),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-    } else if (status.isPermanentlyDenied) {
-      openAppSettings();
-    }
-  }
+  NewOrganization? org;
 
   // Function to add PAN image
   Future<void> addPanImage() async {
@@ -81,7 +63,7 @@ class AddOrganizationProvider extends ChangeNotifier {
       if (response.statusCode == 200 && response.result != null) {
         panImageError = null;
 
-        org.panImg.add(response.result!);
+        org!.panImg.add(response.result!);
         notifyListeners();
       } else {
         panImageError = response.message;
@@ -103,7 +85,7 @@ class AddOrganizationProvider extends ChangeNotifier {
 
       if (response.statusCode == 200 && response.result != null) {
         orgImageError = null;
-        org.orgImg.add(response.result!);
+        org!.orgImg.add(response.result!);
         await Future.delayed(const Duration(seconds: 2));
         notifyListeners();
       } else {
@@ -126,7 +108,7 @@ class AddOrganizationProvider extends ChangeNotifier {
 
       if (response.statusCode == 200 && response.result != null) {
         citizenImageError = null;
-        org.citzImg?.add(response.result!);
+        org!.citzImg?.add(response.result!);
         notifyListeners();
       } else {
         citizenImageError = response.message;
@@ -215,8 +197,8 @@ class AddOrganizationProvider extends ChangeNotifier {
       notifyListeners();
 
       if (!_formKey.currentState!.validate() ||
-          org.panImg.isEmpty ||
-          org.orgImg.isEmpty) {
+          org!.panImg.isEmpty ||
+          org!.orgImg.isEmpty) {
         loading = false;
         orgImageError = 'Please select an image to upload';
         panImageError = 'Please select an image to upload';
@@ -224,7 +206,7 @@ class AddOrganizationProvider extends ChangeNotifier {
         return;
       }
 
-      final response = await backendService.createOrganization(newOrg: org);
+      final response = await backendService.createOrganization(newOrg: org!);
 
       if (response.statusCode == 200 && response.result != null) {
         loading = false;
@@ -319,7 +301,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onChanged: (value) =>
-                                    provider.org.nameOrg = value,
+                                    provider.org!.nameOrg = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter the organization name';
@@ -338,6 +320,9 @@ class AddOrganizationScreen extends StatelessWidget {
 
                               // Address Field
                               TextFormField(
+                                initialValue:
+                                    provider.locationProvider.currentAddress ??
+                                        '',
                                 decoration: InputDecoration(
                                   labelText: 'Organization Address',
                                   hintText: 'Enter the organization address',
@@ -348,7 +333,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onChanged: (value) =>
-                                    provider.org.address = value,
+                                    provider.org!.address = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter the address of the organization';
@@ -374,7 +359,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onChanged: (value) =>
-                                    provider.org.contactPerson = value,
+                                    provider.org!.contactPerson = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter the contact person\'s name';
@@ -403,7 +388,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                 ),
                                 maxLength: 10,
                                 onChanged: (value) =>
-                                    provider.org.contactNumber = value,
+                                    provider.org!.contactNumber = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter the contact number';
@@ -429,7 +414,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onChanged: (value) =>
-                                    provider.org.panNo = value,
+                                    provider.org!.panNo = value,
                                 maxLength: 20,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -459,7 +444,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onChanged: (value) =>
-                                    provider.org.intro = value,
+                                    provider.org!.intro = value,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter a brief introduction to the organization';
@@ -485,7 +470,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onChanged: (value) =>
-                                    provider.org.message = value,
+                                    provider.org!.message = value,
                                 keyboardType: TextInputType.multiline,
                               ),
                             ],
@@ -498,7 +483,7 @@ class AddOrganizationScreen extends StatelessWidget {
                     // Image Containers with error message
                     _imageContainer(
                       context,
-                      imageUrls: provider.org.panImg,
+                      imageUrls: provider.org!.panImg,
                       label: 'PAN Card Photo',
                       onTap: () => provider.pickImage('pan'),
                       errorMessage: provider.panImageError,
@@ -506,7 +491,7 @@ class AddOrganizationScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     _imageContainer(
                       context,
-                      imageUrls: provider.org.orgImg,
+                      imageUrls: provider.org!.orgImg,
                       label: 'Organization Photo',
                       onTap: () => provider.pickImage('orgimage'),
                       errorMessage: provider.orgImageError,
@@ -514,7 +499,7 @@ class AddOrganizationScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     _imageContainer(
                       context,
-                      imageUrls: provider.org.citzImg,
+                      imageUrls: provider.org!.citzImg,
                       label: 'Citizenship Photo',
                       onTap: () => provider.pickImage('citizen'),
                       errorMessage: provider.citizenImageError,

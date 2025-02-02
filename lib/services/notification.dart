@@ -11,7 +11,7 @@ FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
 class NotificationService extends ChangeNotifier {
   late NotificationSettings? _settings;
-  final BackendService backendService;
+  BackendService backendService;
   final CustomHive _customHive = CustomHive();
 
   NotificationService(this.backendService);
@@ -30,6 +30,7 @@ class NotificationService extends ChangeNotifier {
     if (!isSupported) return;
 
     _settings = await _messaging.getNotificationSettings();
+
     FirebaseMessaging.onMessage.listen(_handleForegroundNotifications);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundNotifications);
 
