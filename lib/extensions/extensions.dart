@@ -33,3 +33,12 @@ extension NumX on num {
     return "Rs. ${toStringAsFixed(0)}";
   }
 }
+
+extension NumX on num {
+  String get toCurrency {
+    return NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: 'Rs.',
+    ).format(this);
+  }
+}

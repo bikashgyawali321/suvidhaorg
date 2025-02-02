@@ -364,6 +364,16 @@ class AddServiceScreen extends StatelessWidget {
                   SizedBox(
                     height: 5,
                   ),
+                  Text(
+                    'Service Image:',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
                   _imageContainer(
                     context,
                     imageUrls: provider.newServiceModel!.img,
