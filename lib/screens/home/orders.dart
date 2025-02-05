@@ -88,7 +88,7 @@ class OrderProvider extends ChangeNotifier {
 
     if (searchTerm.isNotEmpty) {
       filtered = orders.where((order) {
-        return order.serviceName.first.name
+        return order.serviceName.name
             .toLowerCase()
             .contains(searchTerm.toLowerCase());
       }).toList();
@@ -186,7 +186,7 @@ class OrdersScreen extends StatelessWidget {
                             ),
                             child: ListTile(
                               title: Text(
-                                orders.serviceName.first.name.toUpperCase(),
+                                orders.serviceName.name.toUpperCase(),
                                 style: Theme.of(context).textTheme.labelLarge,
                               ),
                               subtitle: Text('Status: ${orders.status}'),

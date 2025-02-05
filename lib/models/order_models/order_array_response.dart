@@ -110,8 +110,8 @@ class DocsOrder {
   @JsonKey(name: "serviceName")
   final String serviceNameId;
 
-  @JsonKey(name: 'servicenames', fromJson: _docsServiceNameForOrderFromJson)
-  final List<DocsServiceNameForOrder> serviceName;
+  @JsonKey(name: 'servicenames', fromJson: DocsServiceNameForOrder.fromJson)
+  final DocsServiceNameForOrder serviceName;
   @JsonKey(name: 'status')
   final String status;
   @JsonKey(name: 'location')
@@ -147,13 +147,6 @@ class DocsOrder {
       _$DocsOrderFromJson(json);
 
   Map<String, dynamic> toJson() => _$DocsOrderToJson(this);
-
-  static List<DocsServiceNameForOrder> _docsServiceNameForOrderFromJson(
-          List<dynamic> json) =>
-      json
-          .map((e) =>
-              DocsServiceNameForOrder.fromJson(e as Map<String, dynamic>))
-          .toList();
 }
 
 @JsonSerializable()

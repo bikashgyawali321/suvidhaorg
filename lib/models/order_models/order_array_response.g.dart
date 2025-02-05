@@ -77,8 +77,8 @@ Map<String, dynamic> _$DocsServiceForOrderToJson(
 DocsOrder _$DocsOrderFromJson(Map<String, dynamic> json) => DocsOrder(
       id: json['_id'] as String,
       user: DocsUserForOrder.fromJson(json['user'] as Map<String, dynamic>),
-      serviceName: DocsOrder._docsServiceNameForOrderFromJson(
-          json['servicenames'] as List),
+      serviceName: DocsServiceNameForOrder.fromJson(
+          json['servicenames'] as Map<String, dynamic>),
       serviceNameId: json['serviceName'] as String,
       service:
           DocsServiceForOrder.fromJson(json['service'] as Map<String, dynamic>),

@@ -84,7 +84,7 @@ class OrderDetailScreen extends StatelessWidget {
                                     ),
                               ),
                               subtitle: Text(
-                                provider.order?.serviceName.first.name
+                                provider.order?.serviceName.name
                                         .toUpperCase() ??
                                     '',
                                 style: Theme.of(context).textTheme.bodyMedium,
@@ -104,7 +104,7 @@ class OrderDetailScreen extends StatelessWidget {
                               subtitle: Text(
                                 provider.order?.status ?? 'Not Determined',
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
