@@ -8,8 +8,8 @@ part of 'service.dart';
 
 ServiceModel _$ServiceModelFromJson(Map<String, dynamic> json) => ServiceModel(
       id: json['_id'] as String,
-      org: json['nameOrg'] as String,
-      service: json['service'] as String,
+      orgName: json['nameOrg'] as String?,
+      service: json['serviceName'] as String,
       serviceProviderName: json['serviceprovidername'] as String,
       serviceProviderEmail: json['serviceprovideremail'] as String,
       serviceProviderPhone: json['serviceproviderphone'] as String,
@@ -23,6 +23,7 @@ ServiceModel _$ServiceModelFromJson(Map<String, dynamic> json) => ServiceModel(
       totalRatedBy: (json['totalRatedBy'] as num?)?.toInt(),
       totalRating: (json['totalRating'] as num?)?.toDouble(),
       rating: (json['rating'] as num?)?.toDouble(),
+      orgId: json['org'] as String?,
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
@@ -34,8 +35,9 @@ ServiceModel _$ServiceModelFromJson(Map<String, dynamic> json) => ServiceModel(
 Map<String, dynamic> _$ServiceModelToJson(ServiceModel instance) =>
     <String, dynamic>{
       '_id': instance.id,
-      'nameOrg': instance.org,
-      'service': instance.service,
+      'org': instance.orgId,
+      'nameOrg': instance.orgName,
+      'serviceName': instance.service,
       'serviceprovidername': instance.serviceProviderName,
       'serviceprovideremail': instance.serviceProviderEmail,
       'serviceproviderphone': instance.serviceProviderPhone,

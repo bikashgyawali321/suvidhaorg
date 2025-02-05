@@ -48,7 +48,7 @@ Map<String, dynamic> _$DocsServiceNameToJson(DocsServiceName instance) =>
 DocsService _$DocsServiceFromJson(Map<String, dynamic> json) => DocsService(
       org: DocsOrganization.fromJson(json['org'] as Map<String, dynamic>),
       serviceName:
-          DocsServiceName.fromJson(json['service'] as Map<String, dynamic>),
+          DocsServiceName.fromJson(json['serviceName'] as Map<String, dynamic>),
       id: json['_id'] as String,
       serviceProviderName: json['serviceprovidername'] as String,
       serviceProviderEmail: json['serviceprovideremail'] as String,
@@ -64,7 +64,7 @@ DocsService _$DocsServiceFromJson(Map<String, dynamic> json) => DocsService(
 Map<String, dynamic> _$DocsServiceToJson(DocsService instance) =>
     <String, dynamic>{
       'org': instance.org,
-      'service': instance.serviceName,
+      'serviceName': instance.serviceName,
       '_id': instance.id,
       'serviceprovidername': instance.serviceProviderName,
       'serviceprovideremail': instance.serviceProviderEmail,

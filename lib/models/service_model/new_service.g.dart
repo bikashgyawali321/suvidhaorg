@@ -8,7 +8,7 @@ part of 'new_service.dart';
 
 NewServiceModel _$NewServiceModelFromJson(Map<String, dynamic> json) =>
     NewServiceModel(
-      service: json['service'] as String,
+      serviceName: json['serviceName'] as String,
       serviceProviderName: json['serviceprovidername'] as String,
       serviceProviderEmail: json['serviceprovideremail'] as String,
       serviceProviderPhone: json['serviceproviderphone'] as String,
@@ -19,7 +19,7 @@ NewServiceModel _$NewServiceModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$NewServiceModelToJson(NewServiceModel instance) =>
     <String, dynamic>{
-      'service': instance.service,
+      'serviceName': instance.serviceName,
       'serviceprovidername': instance.serviceProviderName,
       'serviceprovideremail': instance.serviceProviderEmail,
       'serviceproviderphone': instance.serviceProviderPhone,

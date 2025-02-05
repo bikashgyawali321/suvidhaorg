@@ -71,7 +71,7 @@ class DocsServiceName {
 class DocsService {
   @JsonKey(name: 'org', fromJson: DocsOrganization.fromJson)
   final DocsOrganization org;
-  @JsonKey(name: 'service', fromJson: DocsServiceName.fromJson)
+  @JsonKey(name: 'serviceName', fromJson: DocsServiceName.fromJson)
   final DocsServiceName serviceName;
   @JsonKey(name: '_id')
   final String id;

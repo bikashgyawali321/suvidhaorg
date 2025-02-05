@@ -42,7 +42,7 @@ class BookingProvider extends ChangeNotifier {
     fetchBookings();
   }
 
-  Future<void> fetchBookings({bool reset = false}) async {
+  Future<void> fetchBookings({bool reset = true}) async {
     if (reset) {
       listingSchema.page = 1;
       bookings.clear();
@@ -148,133 +148,138 @@ class BookingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<BookingProvider>();
     return SafeArea(
-      child: Stack(
-        children: [
-          if (provider.loading)
-            const Center(child: LoadingScreen())
-          else if (provider.filteredBookings.isEmpty)
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Icon(
-                    Icons.inbox_outlined,
-                    size: 80,
+      child: RefreshIndicator(
+        onRefresh: () => provider.fetchBookings(reset: true),
+        child: Stack(
+          children: [
+            if (provider.loading)
+              const Center(child: LoadingScreen())
+            else if (provider.filteredBookings.isEmpty)
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Icon(
+                      Icons.inbox_outlined,
+                      size: 80,
+                    ),
                   ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'No bookings found!',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  SizedBox(height: 10),
+                  Text(
+                    'No bookings found!',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  Text(
+                    'Looks like there are no bookings available.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              )
+            else
+              NotificationListener<ScrollNotification>(
+                onNotification: (scrollInfo) {
+                  if (scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent &&
+                      provider.hasMore) {
+                    provider.fetchMoreBookings();
+                  }
+                  return false;
+                },
+                child: RefreshIndicator(
+                  onRefresh: () => provider.fetchBookings(
+                    reset: true,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 35),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 0,
+                        vertical: 20,
                       ),
+                      itemCount: provider.filteredBookings.length +
+                          (provider.hasMore ? 1 : 0) +
+                          1,
+                      itemBuilder: (context, index) {
+                        if (index == provider.filteredBookings.length) {
+                          return const SizedBox(
+                            height: 70,
+                          );
+                        } else if (index ==
+                            provider.filteredBookings.length + 1) {
+                          return const SizedBox(
+                            height: 100,
+                          );
+                        }
+                        final booking = provider.filteredBookings[index];
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              booking.serviceName.name.toUpperCase(),
+                              style: Theme.of(context).textTheme.labelLarge,
+                            ),
+                            subtitle: Text(
+                              booking.user.userName,
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                            trailing: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  ' ${booking.bookingDate.toLocal().toVerbalDate}',
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                                Text(
+                                  'Status: ${booking.bookingStatus}',
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                              ],
+                            ),
+                            onTap: () => context.push(
+                              '/booking_details',
+                              extra: booking,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
-                Text(
-                  'Looks like there are no bookings available.',
-                  style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            Positioned(
+              top: -2,
+              left: 00,
+              right: 0,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
                 ),
-              ],
-            )
-          else
-            NotificationListener<ScrollNotification>(
-              onNotification: (scrollInfo) {
-                if (scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent &&
-                    provider.hasMore) {
-                  provider.fetchMoreBookings();
-                }
-                return false;
-              },
-              child: RefreshIndicator(
-                onRefresh: () => provider.fetchBookings(
-                  reset: true,
-                ),
+                color: Theme.of(context).appBarTheme.foregroundColor,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 35),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 0,
-                      vertical: 20,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextField(
+                    onChanged: (value) => provider.updateSearchTerm(value),
+                    decoration: const InputDecoration(
+                      hintText: 'Search bookings...',
+                      prefixIcon: Icon(
+                        Icons.search,
+                        size: 30,
+                      ),
+                      contentPadding: EdgeInsets.all(10),
+                      border: InputBorder.none,
                     ),
-                    itemCount: provider.filteredBookings.length +
-                        (provider.hasMore ? 1 : 0) +
-                        1,
-                    itemBuilder: (context, index) {
-                      if (index == provider.filteredBookings.length) {
-                        return const SizedBox(
-                          height: 70,
-                        );
-                      } else if (index ==
-                          provider.filteredBookings.length + 1) {
-                        return const SizedBox(
-                          height: 100,
-                        );
-                      }
-                      final booking = provider.filteredBookings[index];
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            booking.serviceName.name.toUpperCase(),
-                            style: Theme.of(context).textTheme.labelLarge,
-                          ),
-                          subtitle: Text(
-                            booking.user.userName,
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          trailing: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                ' ${booking.bookingDate.toLocal().toVerbalDate}',
-                                style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                              Text(
-                                'Status: ${booking.bookingStatus}',
-                                style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            ],
-                          ),
-                          onTap: () => context.push(
-                            '/booking_details',
-                            extra: booking,
-                          ),
-                        ),
-                      );
-                    },
                   ),
                 ),
               ),
             ),
-          Positioned(
-            top: -2,
-            left: 00,
-            right: 0,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
-              ),
-              color: Theme.of(context).appBarTheme.foregroundColor,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextField(
-                  onChanged: (value) => provider.updateSearchTerm(value),
-                  decoration: const InputDecoration(
-                    hintText: 'Search bookings...',
-                    prefixIcon: Icon(
-                      Icons.search,
-                      size: 30,
-                    ),
-                    contentPadding: EdgeInsets.all(10),
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

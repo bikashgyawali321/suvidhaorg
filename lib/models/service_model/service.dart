@@ -6,11 +6,12 @@ part 'service.g.dart';
 class ServiceModel {
   @JsonKey(name: '_id')
   final String id;
+  @JsonKey(name: "org", defaultValue: null)
+  final String? orgId;
+  @JsonKey(name: 'nameOrg', defaultValue: null)
+  final String? orgName;
 
-  @JsonKey(name: 'nameOrg')
-  final String org;
-
-  @JsonKey(name: 'service')
+  @JsonKey(name: 'serviceName')
   final String service;
 
   @JsonKey(name: 'serviceprovidername')
@@ -60,7 +61,7 @@ class ServiceModel {
 
   ServiceModel({
     required this.id,
-    required this.org,
+    required this.orgName,
     required this.service,
     required this.serviceProviderName,
     required this.serviceProviderEmail,
@@ -75,6 +76,7 @@ class ServiceModel {
     this.totalRatedBy,
     this.totalRating,
     this.rating,
+    this.orgId,
     this.createdAt,
     this.updatedAt,
   });

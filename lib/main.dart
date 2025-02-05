@@ -9,6 +9,7 @@ import 'package:suvidhaorg/providers/location_provider.dart';
 import 'package:suvidhaorg/screens/booking/bookings_on_status.dart';
 import 'package:suvidhaorg/screens/home.dart';
 import 'package:suvidhaorg/screens/home/bookings.dart';
+import 'package:suvidhaorg/screens/orders/order_details.dart';
 import 'package:suvidhaorg/screens/service_screens/offered_services.dart';
 import 'package:suvidhaorg/screens/service_screens/service_names_screen.dart';
 import 'package:suvidhaorg/screens/splash.dart';
@@ -145,11 +146,20 @@ GoRouter _router = GoRouter(
 
     //pending bookings
     GoRoute(
-        path: '/bookings_on_status',
-        builder: (context, state) {
-          final status = state.extra as String;
-          return BookingsOnStatusScreen(status: status);
-        }),
+      path: '/bookings_on_status',
+      builder: (context, state) {
+        final status = state.extra as String;
+        return BookingsOnStatusScreen(status: status);
+      },
+    ),
+    //order by id
+    GoRoute(
+      path: '/order/:id',
+      builder: (context, state) {
+        final oid = state.pathParameters['id']!;
+        return OrderDetailScreen(orderId: oid);
+      },
+    ),
   ],
 );
 

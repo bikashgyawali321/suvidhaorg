@@ -4,8 +4,8 @@ part 'new_service.g.dart';
 
 @JsonSerializable()
 class NewServiceModel {
-  @JsonKey(name: 'service')
-  String service;
+  @JsonKey(name: 'serviceName')
+  String serviceName;
 
   @JsonKey(name: 'serviceprovidername')
   String serviceProviderName;
@@ -26,7 +26,7 @@ class NewServiceModel {
   List<String>? img;
 
   NewServiceModel({
-    required this.service,
+    required this.serviceName,
     required this.serviceProviderName,
     required this.serviceProviderEmail,
     required this.serviceProviderPhone,

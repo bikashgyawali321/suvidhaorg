@@ -118,8 +118,11 @@ class NotificationService extends ChangeNotifier {
                   FormBottomSheetHeader(
                     title: message.notification?.title ?? 'Notification',
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Text(
-                    message.data['message'] ?? 'New Order Received',
+                    message.notification?.body ?? 'New Order Received',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -128,21 +131,29 @@ class NotificationService extends ChangeNotifier {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      CustomButton(
-                        label: 'Accept',
-                        onPressed: () {
-                          if (orderId != null && orderId.isNotEmpty) {
-                            acceptOrder(orderId);
-                          } else {
-                            debugPrint('⚠️ No valid order ID to accept');
-                          }
-                        },
+                      Expanded(
+                        child: CustomButton(
+                          label: 'Reject',
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          backgroundColor: Colors.redAccent,
+                        ),
                       ),
-                      CustomButton(
-                        label: 'Reject',
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: CustomButton(
+                          label: 'Accept',
+                          onPressed: () {
+                            if (orderId != null && orderId.isNotEmpty) {
+                              acceptOrder(orderId);
+                            } else {
+                              debugPrint('⚠️ No valid order ID to accept');
+                            }
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -160,6 +171,7 @@ class NotificationService extends ChangeNotifier {
 
     final resp = await backendService.acceptOrder(oid: orderId);
     if (resp.statusCode == 200) {
+      print('Order accepted');
       GoRouter.of(navigatorKey.currentContext!).go('/order/$orderId');
     }
 

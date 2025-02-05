@@ -28,7 +28,7 @@ class AddServiceProvider extends ChangeNotifier {
     backendService = Provider.of<BackendService>(context);
     organizationProvider = Provider.of<OrganizationProvider>(context);
     newServiceModel = NewServiceModel(
-      service: serviceNameId,
+      serviceName: serviceNameId,
       serviceProviderName: '',
       serviceProviderEmail: '',
       serviceProviderPhone: '',
