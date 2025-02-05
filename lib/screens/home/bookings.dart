@@ -42,7 +42,7 @@ class BookingProvider extends ChangeNotifier {
     fetchBookings();
   }
 
-  Future<void> fetchBookings({bool reset = true}) async {
+  Future<void> fetchBookings({bool reset = false}) async {
     if (reset) {
       listingSchema.page = 1;
       bookings.clear();
@@ -54,6 +54,7 @@ class BookingProvider extends ChangeNotifier {
 
     loading = true;
     notifyListeners();
+    await Future.delayed(Duration(seconds: 3));
     if (organizationProvider.organization == null) {
       loading = false;
       notifyListeners();
@@ -65,8 +66,10 @@ class BookingProvider extends ChangeNotifier {
     if (response.result != null &&
         response.statusCode == 200 &&
         response.errorMessage == null) {
+      BookingArrayResponse bookingArrayResponse =
+          BookingArrayResponse.fromJson(response.result);
       List<DocsBooking> fetchedBookings =
-          BookingArrayResponse.fromJson(response.result).docs;
+          bookingArrayResponse.docs.isNotEmpty ? bookingArrayResponse.docs : [];
 
       if (fetchedBookings.isEmpty ||
           fetchedBookings.length < listingSchema.limit) {
@@ -128,16 +131,6 @@ class BookingProvider extends ChangeNotifier {
     });
 
     return filtered;
-  }
-
-  void calculateBookingsStats() {
-    totalBookings = bookings.length;
-    totalAcceptedBookings =
-        bookings.where((booking) => booking.bookingStatus == 'Accepted').length;
-    totalPendingBookings =
-        bookings.where((booking) => booking.bookingStatus == 'Pending').length;
-    totalRejectedBookings =
-        bookings.where((booking) => booking.bookingStatus == 'Rejected').length;
   }
 }
 

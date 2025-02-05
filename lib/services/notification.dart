@@ -7,6 +7,8 @@ import 'package:suvidhaorg/services/custom_hive.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
 import 'package:suvidhaorg/widgets/form_bottom_sheet_header.dart';
 
+import '../models/notification_model.dart';
+
 FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
 class NotificationService extends ChangeNotifier {
@@ -76,8 +78,18 @@ class NotificationService extends ChangeNotifier {
     }
   }
 
-  void _handleForegroundNotifications(RemoteMessage message) {
+  void _handleForegroundNotifications(RemoteMessage message) async {
     if (message.data.isNotEmpty) {
+      await _customHive.saveNotifications(
+        NotificationModel(
+          orderId: message.data['orderId'],
+          data:
+              message.notification?.body ?? 'You have an update on your order',
+          date: DateTime.now(),
+          title: message.notification?.title ?? 'Order Update',
+          isRead: true,
+        ),
+      );
       debugPrint('📩 Foreground notification received: ${message.data}');
       _handleShowNotificationBottomSheet(message);
     }
@@ -85,6 +97,14 @@ class NotificationService extends ChangeNotifier {
 
   void _handleBackgroundNotifications(RemoteMessage message) {
     debugPrint('📩 Background notification received: ${message.data}');
+    final notification = NotificationModel(
+      orderId: message.data['orderId'],
+      data: message.notification?.body ?? 'You have a new order update',
+      date: DateTime.now(),
+      title: message.notification?.title ?? 'Order Update',
+      isRead: false,
+    );
+    _customHive.saveNotifications(notification);
     _handleNotifications(message);
   }
 
@@ -172,7 +192,7 @@ class NotificationService extends ChangeNotifier {
     final resp = await backendService.acceptOrder(oid: orderId);
     if (resp.statusCode == 200) {
       print('Order accepted');
-      GoRouter.of(navigatorKey.currentContext!).go('/order/$orderId');
+      GoRouter.of(navigatorKey.currentContext!).push('/order/$orderId');
     }
 
     notifyListeners();

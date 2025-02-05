@@ -12,6 +12,8 @@ class OrganizationDataResponse {
   final num totalBookings;
   @JsonKey(name: 'bookingPending')
   final num pendingBookings;
+  @JsonKey(name: 'bookingAccepted')
+  final num acceptedBookings;
   @JsonKey(name: 'bookingCompleted')
   final num completedBookings;
   @JsonKey(name: 'orderAll')
@@ -22,9 +24,6 @@ class OrganizationDataResponse {
   @JsonKey(name: 'orderCompleted')
   final num completedOrders;
 
-  @JsonKey(name: 'orderRejected')
-  final num rejectedOrders;
-
   @JsonKey(name: 'bookingRejected')
   final num rejectedBookings;
 
@@ -33,11 +32,11 @@ class OrganizationDataResponse {
     required this.totalOrg,
     required this.totalBookings,
     required this.pendingBookings,
+    required this.acceptedBookings,
     required this.completedBookings,
     required this.totalOrders,
     required this.acceptedOrders,
     required this.completedOrders,
-    required this.rejectedOrders,
     required this.rejectedBookings,
   });
 

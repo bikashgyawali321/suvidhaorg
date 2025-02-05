@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:suvidhaorg/models/auth_models/auth_token.dart';
 
+import '../models/notification_model.dart';
+
 class CustomHive {
   CustomHive._internal();
 
@@ -60,5 +62,70 @@ class CustomHive {
     if (encodedToken == null) return null;
     String decodedToken = jsonDecode(encodedToken);
     return decodedToken;
+  }
+
+//add notifications
+  Future<void> saveNotifications(NotificationModel notification) async {
+    List<dynamic> encodedNotifications =
+        _box.get('notifications', defaultValue: []);
+
+    List<NotificationModel> notifications = encodedNotifications
+        .map((encoded) => NotificationModel.fromJson(jsonDecode(encoded)))
+        .toList();
+
+    notifications.add(notification);
+    List<String> updatedNotifications =
+        notifications.map((notif) => jsonEncode(notif.toJson())).toList();
+
+    await _box.put('notifications', updatedNotifications);
+  }
+
+  List<NotificationModel> getNotifications() {
+    List<dynamic> encodedNotifications =
+        _box.get('notifications', defaultValue: []);
+
+    List<NotificationModel> notifications = encodedNotifications
+        .map((encoded) => NotificationModel.fromJson(jsonDecode(encoded)))
+        .toList();
+
+    DateTime now = DateTime.now();
+
+    notifications.removeWhere((notif) {
+      if (now.difference(notif.date).inDays > 30) {
+        _box.delete('notifications');
+        return true;
+      }
+      return false;
+    });
+
+    _box.put('notifications',
+        notifications.map((notif) => jsonEncode(notif.toJson())).toList());
+
+    return notifications;
+  }
+
+  Future<void> deleteAllNotifications() async {
+    await _box.delete('notifications');
+  }
+
+  Future<void> markNotificationAsRead(String orderId) async {
+    List<String> encodedNotifications =
+        _box.get('notifications', defaultValue: []);
+
+    List<NotificationModel> notifications = encodedNotifications
+        .map((encoded) => NotificationModel.fromJson(jsonDecode(encoded)))
+        .toList();
+
+    for (var notif in notifications) {
+      if (notif.orderId == orderId) {
+        notif.isRead = true;
+        break;
+      }
+    }
+
+    List<String> updatedNotifications =
+        notifications.map((notif) => jsonEncode(notif.toJson())).toList();
+
+    await _box.put('notifications', updatedNotifications);
   }
 }

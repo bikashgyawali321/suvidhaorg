@@ -37,12 +37,18 @@ class DocsUserForOrder {
   final String email;
   @JsonKey(name: 'phoneNumber')
   final String phoneNumber;
+  @JsonKey(
+    name: 'profilePic',
+    defaultValue: null,
+  )
+  final String? profilePic;
 
   DocsUserForOrder({
     required this.id,
     required this.name,
     required this.email,
     required this.phoneNumber,
+     this.profilePic,
   });
 
   factory DocsUserForOrder.fromJson(Map<String, dynamic> json) =>

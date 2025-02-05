@@ -3,28 +3,28 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:suvidhaorg/models/bookings/booking_model.dart';
 import 'package:suvidhaorg/models/pagination/list_model.dart';
 import 'package:suvidhaorg/providers/organization_provider.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
 import 'package:suvidhaorg/widgets/loading_screen.dart';
 
+import '../../models/order_models/order_array_response.dart';
 import '../../services/backend_service.dart';
 
-class BookingOnStatusProvider extends ChangeNotifier {
-  List<DocsBooking> bookings = [];
+class OrderOnStatusProvider extends ChangeNotifier {
+  List<DocsOrder> orders = [];
   bool loading = false;
   bool hasMore = true;
   bool loadingMore = false;
   String searchTerm = '';
-  final String bookingStatus;
+  final String orderStatus;
   final BuildContext context;
   late BackendService _backendService;
   late OrganizationProvider organizationProvider;
 
   ListingSchema? listingSchema;
 
-  BookingOnStatusProvider(this.context, {required this.bookingStatus}) {
+  OrderOnStatusProvider(this.context, {required this.orderStatus}) {
     initialize();
   }
 
@@ -35,15 +35,15 @@ class BookingOnStatusProvider extends ChangeNotifier {
     listingSchema = ListingSchema(
       limit: 50,
       page: 1,
-      status: bookingStatus,
+      status: orderStatus,
     );
-    fetchBookings();
+    fetchOrders();
   }
 
-  Future<void> fetchBookings({bool reset = false}) async {
+  Future<void> fetchOrders({bool reset = false}) async {
     if (reset) {
       listingSchema!.page = 1;
-      bookings.clear();
+      orders.clear();
       hasMore = true;
       notifyListeners();
     }
@@ -58,22 +58,22 @@ class BookingOnStatusProvider extends ChangeNotifier {
       return;
     }
     final response =
-        await _backendService.getAllBookings(listingSchema: listingSchema!);
+        await _backendService.getAlOrders(listingSchema: listingSchema!);
 
     if (response.result != null &&
         response.statusCode == 200 &&
         response.errorMessage == null) {
-      BookingArrayResponse bookingArrayResponse =
-          BookingArrayResponse.fromJson(response.result);
-      List<DocsBooking> fetchedBookings =
-          bookingArrayResponse.docs.isNotEmpty ? bookingArrayResponse.docs : [];
+      OrderArrayResponse orderArrayResponse =
+          OrderArrayResponse.fromJson(response.result);
+      List<DocsOrder> fetchedOrders =
+          orderArrayResponse.docs.isNotEmpty ? orderArrayResponse.docs : [];
 
-      if (fetchedBookings.isEmpty ||
-          fetchedBookings.length < listingSchema!.limit) {
+      if (fetchedOrders.isEmpty ||
+          fetchedOrders.length < listingSchema!.limit) {
         hasMore = false;
       }
 
-      bookings.addAll(fetchedBookings);
+      orders.addAll(fetchedOrders);
     } else {
       hasMore = false;
     }
@@ -82,14 +82,14 @@ class BookingOnStatusProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void fetchMoreBookings() async {
+  void fetchMoreOrders() async {
     if (loadingMore || !hasMore) return;
 
     loadingMore = true;
     listingSchema!.page += 1;
     notifyListeners();
 
-    await fetchBookings();
+    await fetchOrders();
 
     loadingMore = false;
     notifyListeners();
@@ -101,19 +101,19 @@ class BookingOnStatusProvider extends ChangeNotifier {
   }
 }
 
-class BookingsOnStatusScreen extends StatelessWidget {
-  const BookingsOnStatusScreen({super.key, required this.status});
+class OrdersOnStatusScreen extends StatelessWidget {
+  const OrdersOnStatusScreen({super.key, required this.status});
   final String status;
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => BookingOnStatusProvider(context, bookingStatus: status),
+      create: (_) => OrderOnStatusProvider(context, orderStatus: status),
       builder: (context, child) {
-        return Consumer<BookingOnStatusProvider>(
+        return Consumer<OrderOnStatusProvider>(
           builder: (context, provider, child) {
             return Scaffold(
               appBar: AppBar(
-                title: Text('$status Bookings'),
+                title: Text('$status Orders'),
                 centerTitle: false,
               ),
               body: SafeArea(
@@ -121,19 +121,19 @@ class BookingsOnStatusScreen extends StatelessWidget {
                   children: [
                     if (provider.loading)
                       const Center(child: LoadingScreen())
-                    else if (provider.bookings.isEmpty)
+                    else if (provider.orders.isEmpty)
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Center(
                             child: Icon(
-                              Icons.inbox_outlined,
+                              Icons.shopping_cart_outlined,
                               size: 80,
                             ),
                           ),
                           SizedBox(height: 10),
                           Text(
-                            'No ${status.toLowerCase()} bookings found!',
+                            'No ${status.toLowerCase()} orders found!',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -142,7 +142,7 @@ class BookingsOnStatusScreen extends StatelessWidget {
                                 ),
                           ),
                           Text(
-                            'Looks like there are no ${status.toLowerCase()} bookings available.',
+                            'Looks like there are no ${status.toLowerCase()} orders available.',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
@@ -153,12 +153,12 @@ class BookingsOnStatusScreen extends StatelessWidget {
                           if (scrollInfo.metrics.pixels ==
                                   scrollInfo.metrics.maxScrollExtent &&
                               provider.hasMore) {
-                            provider.fetchMoreBookings();
+                            provider.fetchMoreOrders();
                           }
                           return false;
                         },
                         child: RefreshIndicator(
-                          onRefresh: () => provider.fetchBookings(
+                          onRefresh: () => provider.fetchOrders(
                             reset: true,
                           ),
                           child: Padding(
@@ -169,19 +169,19 @@ class BookingsOnStatusScreen extends StatelessWidget {
                                   height: 0,
                                   thickness: 0,
                                 ),
-                                for (final booking in provider.bookings) ...[
+                                for (final order in provider.orders) ...[
                                   Card(
                                     child: ListTile(
                                       leading: CircleAvatar(
                                         backgroundColor:
-                                            booking.user.userName.toColor,
+                                            order.user.name.toColor,
                                         child: Text(
-                                          booking.user.userName[0],
+                                          order.user.name[0],
                                         ),
                                       ),
-                                      title: Text(booking.serviceName.name),
+                                      title: Text(order.serviceName.name),
                                       subtitle: Text(
-                                        booking.user.userName,
+                                        order.user.name,
                                       ),
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -195,8 +195,7 @@ class BookingsOnStatusScreen extends StatelessWidget {
                                       ),
                                       onTap: () {
                                         context.push(
-                                          '/booking_details',
-                                          extra: booking,
+                                          '/order/${order.id}',
                                         );
                                       },
                                     ),
@@ -222,7 +221,7 @@ class BookingsOnStatusScreen extends StatelessWidget {
                             onChanged: (value) =>
                                 provider.updateSearchTerm(value),
                             decoration: const InputDecoration(
-                              hintText: 'Search bookings...',
+                              hintText: 'Search orders...',
                               prefixIcon: Icon(
                                 Icons.search,
                                 size: 30,

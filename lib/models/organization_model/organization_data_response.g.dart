@@ -13,11 +13,11 @@ OrganizationDataResponse _$OrganizationDataResponseFromJson(
       totalOrg: json['service'] as num,
       totalBookings: json['bookingAll'] as num,
       pendingBookings: json['bookingPending'] as num,
+      acceptedBookings: json['bookingAccepted'] as num,
       completedBookings: json['bookingCompleted'] as num,
       totalOrders: json['orderAll'] as num,
       acceptedOrders: json['orderAccepted'] as num,
       completedOrders: json['orderCompleted'] as num,
-      rejectedOrders: json['orderRejected'] as num,
       rejectedBookings: json['bookingRejected'] as num,
     );
 
@@ -28,10 +28,10 @@ Map<String, dynamic> _$OrganizationDataResponseToJson(
       'service': instance.totalOrg,
       'bookingAll': instance.totalBookings,
       'bookingPending': instance.pendingBookings,
+      'bookingAccepted': instance.acceptedBookings,
       'bookingCompleted': instance.completedBookings,
       'orderAll': instance.totalOrders,
       'orderAccepted': instance.acceptedOrders,
       'orderCompleted': instance.completedOrders,
-      'orderRejected': instance.rejectedOrders,
       'bookingRejected': instance.rejectedBookings,
     };

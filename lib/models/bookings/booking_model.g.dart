@@ -42,7 +42,6 @@ DocsBooking _$DocsBookingFromJson(Map<String, dynamic> json) => DocsBooking(
       id: json['_id'] as String,
       bookingDate: DateTime.parse(json['bookingdate'] as String),
       bookingStatus: json['bookingstatus'] as String? ?? 'Pending',
-      org: DocsOrganization.fromJson(json['org'] as Map<String, dynamic>),
       isActive: json['isActive'] as bool,
       location: json['location'] as String,
       isPublished: json['isPublished'] as bool,
@@ -63,7 +62,6 @@ Map<String, dynamic> _$DocsBookingToJson(DocsBooking instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'user': instance.user,
-      'org': instance.org,
       'servicename': instance.serviceName,
       'service': instance.service,
       'bookingdate': instance.bookingDate.toIso8601String(),

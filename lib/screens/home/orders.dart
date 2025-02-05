@@ -48,8 +48,10 @@ class OrderProvider extends ChangeNotifier {
     if (response.result != null &&
         response.statusCode == 200 &&
         response.errorMessage == null) {
+      OrderArrayResponse orderArrayResponse =
+          OrderArrayResponse.fromJson(response.result);
       List<DocsOrder> fetchedOrders =
-          OrderArrayResponse.fromJson(response.result).docs;
+          orderArrayResponse.docs.isNotEmpty ? orderArrayResponse.docs : [];
 
       if (fetchedOrders.isEmpty ||
           fetchedOrders.length < listingSchema.limit.toInt()) {
@@ -95,7 +97,7 @@ class OrderProvider extends ChangeNotifier {
     }
 
     filtered.sort((a, b) {
-      const statusOrder = {'Requested': 1, 'Accepted': 2};
+      const statusOrder = {'Pending': 1, 'Accepted': 2};
       int statusComparison =
           (statusOrder[a.status] ?? 3).compareTo(statusOrder[b.status] ?? 3);
 

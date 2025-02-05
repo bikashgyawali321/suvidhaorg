@@ -58,8 +58,7 @@ class DocsBooking {
   final String id;
   @JsonKey(name: 'user', fromJson: DocsUserForBooking.fromJson)
   final DocsUserForBooking user;
-  @JsonKey(name: 'org', fromJson: DocsOrganization.fromJson)
-  final DocsOrganization org;
+
   @JsonKey(name: 'servicename', fromJson: DocsServiceName.fromJson)
   final DocsServiceName serviceName;
 
@@ -88,7 +87,6 @@ class DocsBooking {
     required this.id,
     required this.bookingDate,
     required this.bookingStatus,
-    required this.org,
     required this.isActive,
     required this.location,
     required this.isPublished,

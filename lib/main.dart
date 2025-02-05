@@ -9,10 +9,13 @@ import 'package:suvidhaorg/providers/location_provider.dart';
 import 'package:suvidhaorg/screens/booking/bookings_on_status.dart';
 import 'package:suvidhaorg/screens/home.dart';
 import 'package:suvidhaorg/screens/home/bookings.dart';
+import 'package:suvidhaorg/screens/notification_screen.dart';
 import 'package:suvidhaorg/screens/orders/order_details.dart';
+import 'package:suvidhaorg/screens/orders/orders_on_status.dart';
 import 'package:suvidhaorg/screens/service_screens/offered_services.dart';
 import 'package:suvidhaorg/screens/service_screens/service_names_screen.dart';
 import 'package:suvidhaorg/screens/splash.dart';
+import 'package:suvidhaorg/services/notification.dart';
 
 import 'models/service_model/service_array_response.dart';
 import 'providers/auth_provider.dart';
@@ -29,7 +32,6 @@ import 'screens/service_screens/add_service.dart';
 import 'screens/service_screens/service_details.dart';
 import 'services/backend_service.dart';
 import 'services/custom_hive.dart';
-import 'services/notification.dart';
 
 //global navigator key
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -152,6 +154,15 @@ GoRouter _router = GoRouter(
         return BookingsOnStatusScreen(status: status);
       },
     ),
+
+    //order on status
+    GoRoute(
+      path: '/orders_on_status',
+      builder: (context, state) {
+        final status = state.extra as String;
+        return OrdersOnStatusScreen(status: status);
+      },
+    ),
     //order by id
     GoRoute(
       path: '/order/:id',
@@ -159,6 +170,12 @@ GoRouter _router = GoRouter(
         final oid = state.pathParameters['id']!;
         return OrderDetailScreen(orderId: oid);
       },
+    ),
+
+    //goroute
+    GoRoute(
+      path: '/notifications',
+      builder: (context, state) => NotificationScreen(),
     ),
   ],
 );

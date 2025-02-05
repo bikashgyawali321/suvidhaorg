@@ -184,15 +184,11 @@ class ProfileContent extends StatelessWidget {
                     extra: provider.organizationProvider.services),
               ),
             ],
+            const Divider(),
             ListTile(
-              title: const Text('Orders History'),
-              leading: const Icon(Icons.history),
-              onTap: () {},
-            ),
-            ListTile(
-              title: const Text('Ongoing Orders'),
-              leading: const Icon(Icons.delivery_dining),
-              onTap: () {},
+              title: const Text('Notifications'),
+              leading: const Icon(Icons.notifications),
+              onTap: () => context.push('/notifications'),
             ),
             const Divider(),
             ListTile(

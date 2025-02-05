@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:suvidhaorg/providers/organization_provider.dart';
 import 'package:suvidhaorg/screens/home/bookings.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
@@ -14,6 +15,7 @@ class ChangeBookingStatusProvider extends ChangeNotifier {
   bool loading = false;
   late BackendService backendService;
   late BookingProvider bookingProvider;
+  late OrganizationProvider organizationProvider;
   String? rejectionMessage = '';
   bool? isCompletedBooking;
 
@@ -21,6 +23,8 @@ class ChangeBookingStatusProvider extends ChangeNotifier {
       {this.isCompletedBooking}) {
     backendService = Provider.of<BackendService>(context, listen: false);
     bookingProvider = Provider.of<BookingProvider>(context, listen: false);
+    organizationProvider =
+        Provider.of<OrganizationProvider>(context, listen: false);
   }
 
   Future<void> changeBookingStatusToAccepted() async {
@@ -96,6 +100,7 @@ class ChangeBookingStatusProvider extends ChangeNotifier {
       await bookingProvider.fetchBookings(
         reset: true,
       );
+      await organizationProvider.getOrganizationData();
       context.go('/home');
       SnackBarHelper.showSnackbar(
         context: context,
@@ -189,7 +194,7 @@ class ChangeBookingStatusBottomSheet extends StatelessWidget {
                           );
                         },
                         backgroundColor: provider.isCompletedBooking == true
-                            ? null
+                            ? Colors.blue
                             : Colors.red,
                       ),
                     ),

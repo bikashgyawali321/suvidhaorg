@@ -29,6 +29,7 @@ DocsUserForOrder _$DocsUserForOrderFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       email: json['email'] as String,
       phoneNumber: json['phoneNumber'] as String,
+      profilePic: json['profilePic'] as String?,
     );
 
 Map<String, dynamic> _$DocsUserForOrderToJson(DocsUserForOrder instance) =>
@@ -37,6 +38,7 @@ Map<String, dynamic> _$DocsUserForOrderToJson(DocsUserForOrder instance) =>
       'name': instance.name,
       'email': instance.email,
       'phoneNumber': instance.phoneNumber,
+      'profilePic': instance.profilePic,
     };
 
 DocsServiceNameForOrder _$DocsServiceNameForOrderFromJson(
