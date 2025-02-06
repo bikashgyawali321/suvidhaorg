@@ -30,14 +30,14 @@ extension DateX on DateTime {
 
   String get toMarkerDate {
     final now = DateTime.now();
-    final difference = now.difference(this);
-
-    if (difference.inDays == 0) {
-      return 'Today at ${_verbalTime.format(this)}';
-    } else if (difference.inDays == 1) {
-      return 'Yesterday at ${_verbalTime.format(this)}';
+    if (year == now.year && month == now.month && day == now.day) {
+      return 'Today at $toVerbalTime';
+    }
+    //yesterday
+    else if (year == now.year && month == now.month && day == now.day - 1) {
+      return 'Yesterday at $toVerbalTime';
     } else {
-      return '${_markerDate.format(this)} at ${_verbalTime.format(this)}';
+      return toLocal().toVerbalDateTime;
     }
   }
 }
