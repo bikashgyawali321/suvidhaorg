@@ -45,8 +45,16 @@ class OrganizationProvider extends ChangeNotifier {
 
   //get all services provided by the organization
   Future<void> getAllOrganizationServices() async {
+    loading = true;
+    notifyListeners();
+
     await getOrganizationDetails();
-    if (organization == null) return;
+    if (organization == null) {
+      loading = false;
+      notifyListeners();
+      return;
+    }
+
     final response = await backendService.getAllServices(
       orgId: organizationId ?? organization!.id,
     );
@@ -56,9 +64,11 @@ class OrganizationProvider extends ChangeNotifier {
       serviceArrayResponse = ServiceArrayResponse.fromJson(response.result);
       services = serviceArrayResponse!.docs;
       await getOrganizationData();
+      loading = false;
       notifyListeners();
     } else {
       services = [];
+      loading = false;
       notifyListeners();
     }
   }

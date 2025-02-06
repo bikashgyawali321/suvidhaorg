@@ -12,6 +12,7 @@ import 'package:suvidhaorg/screens/home/bookings.dart';
 import 'package:suvidhaorg/screens/notification_screen.dart';
 import 'package:suvidhaorg/screens/orders/order_details.dart';
 import 'package:suvidhaorg/screens/orders/orders_on_status.dart';
+import 'package:suvidhaorg/screens/reviews&ratings/all_review_rating.dart';
 import 'package:suvidhaorg/screens/service_screens/offered_services.dart';
 import 'package:suvidhaorg/screens/service_screens/service_names_screen.dart';
 import 'package:suvidhaorg/screens/splash.dart';
@@ -176,6 +177,12 @@ GoRouter _router = GoRouter(
     GoRoute(
       path: '/notifications',
       builder: (context, state) => NotificationScreen(),
+    ),
+
+    //goroute
+    GoRoute(
+      path: '/reviews',
+      builder: (context, state) => const ReviewRatingScreen(),
     ),
   ],
 );

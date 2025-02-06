@@ -288,7 +288,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                         size: 70,
                                       ),
                                       Text(
-                                        "Please enable location services to continue.",
+                                        "Please enable location service to continue.",
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium

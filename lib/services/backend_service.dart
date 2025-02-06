@@ -381,6 +381,7 @@ class BackendService extends ChangeNotifier {
 
   Future<BackendResponse> getAlOrders(
       {required ListingSchema listingSchema}) async {
+    print('Listing shema ar order service: ${listingSchema.toJson()}');
     return await handleRequest(
       request: _dio.get(
         '/order/',
@@ -433,6 +434,7 @@ class BackendService extends ChangeNotifier {
   //fetch the reviews for organization
   Future<BackendResponse> getAllReviewsAndRatingsForOrganization(
       {required ListingSchema schema}) async {
+    debugPrint('listing schema: ${schema.toJson()}');
     return handleRequest(
       request: _dio.get(
         '/review/org',

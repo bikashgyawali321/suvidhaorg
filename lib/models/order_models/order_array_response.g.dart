@@ -64,6 +64,7 @@ DocsServiceForOrder _$DocsServiceForOrderFromJson(Map<String, dynamic> json) =>
       serviceProviderEmail: json['serviceprovideremail'] as String,
       serviceProviderPhone: json['serviceproviderphone'] as String,
       img: (json['img'] as List<dynamic>).map((e) => e as String).toList(),
+      rating: (json['rating'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$DocsServiceForOrderToJson(
@@ -74,6 +75,7 @@ Map<String, dynamic> _$DocsServiceForOrderToJson(
       'serviceprovideremail': instance.serviceProviderEmail,
       'serviceproviderphone': instance.serviceProviderPhone,
       'img': instance.img,
+      'rating': instance.rating,
     };
 
 DocsOrder _$DocsOrderFromJson(Map<String, dynamic> json) => DocsOrder(

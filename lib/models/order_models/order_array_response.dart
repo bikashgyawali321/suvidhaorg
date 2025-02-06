@@ -48,7 +48,7 @@ class DocsUserForOrder {
     required this.name,
     required this.email,
     required this.phoneNumber,
-     this.profilePic,
+    this.profilePic,
   });
 
   factory DocsUserForOrder.fromJson(Map<String, dynamic> json) =>
@@ -90,6 +90,8 @@ class DocsServiceForOrder {
   final String serviceProviderPhone;
   @JsonKey(name: 'img')
   final List<String> img;
+  @JsonKey(name: 'rating')
+  final double rating;
 
   DocsServiceForOrder({
     required this.id,
@@ -97,6 +99,7 @@ class DocsServiceForOrder {
     required this.serviceProviderEmail,
     required this.serviceProviderPhone,
     required this.img,
+    required this.rating,
   });
 
   factory DocsServiceForOrder.fromJson(Map<String, dynamic> json) =>

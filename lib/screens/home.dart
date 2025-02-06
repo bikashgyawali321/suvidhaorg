@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/extensions/extensions.dart';
 import 'package:suvidhaorg/models/offered_service.dart';
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
-                      radius: 40,
+                      radius: 35,
                       backgroundColor: suvidhaWhite,
                       child: Icon(
                         Icons.business,
@@ -112,6 +113,40 @@ class _HomeScreenState extends State<HomeScreen>
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
                               color: suvidhaWhite,
                             ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 3,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          RatingBarIndicator(
+                            itemBuilder: (context, index) {
+                              return Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              );
+                            },
+                            rating: organizationProvider.organization?.rating
+                                    ?.toDouble() ??
+                                0,
+                            itemCount: 5,
+                            itemSize: 20,
+                            unratedColor: Colors.grey,
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Text(
+                            '(${organizationProvider.organization?.rating?.toStringAsFixed(2) ?? '0.0'}/5)',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
+                                  color: suvidhaWhite,
+                                ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

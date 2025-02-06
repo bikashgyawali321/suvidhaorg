@@ -77,11 +77,6 @@ class ProfileContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ListTile(
-              title: const Text('Edit Profile'),
-              leading: const Icon(Icons.manage_accounts_outlined),
-              onTap: () {},
-            ),
-            ListTile(
               title: const Text('Change Password'),
               leading: const Icon(Icons.password),
               onTap: () {
@@ -131,22 +126,10 @@ class ProfileContent extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: const Text('Delete Organization'),
-                leading: const Icon(Icons.delete),
-                onTap: () {
-                  AlertBottomSheet.show(
-                    context: context,
-                    title: 'Delete Organization',
-                    positiveLabel: "Cancel",
-                    negativeLabel: 'Delete',
-                    onNegativeTap: provider.deleteOrganization,
-                    onPositiveTap: () => context.pop(),
-                    message:
-                        'Are you sure you want to delete your organization?',
-                    loading: provider.loading,
-                  );
-                },
-              ),
+                title: Text("Reviews&Ratings"),
+                leading: Icon(Icons.reviews),
+                onTap: () => context.push('/reviews'),
+              )
             ],
             if (provider.organizationProvider.organization != null &&
                 provider.organizationProvider.organization?.status ==
