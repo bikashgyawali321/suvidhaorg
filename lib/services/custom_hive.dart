@@ -64,6 +64,11 @@ class CustomHive {
     return decodedToken;
   }
 
+  //delete fcm token
+  Future<void> deleteFCMToken() async {
+    return await _box.delete('fcmToken');
+  }
+
 //add notifications
   Future<void> saveNotifications(NotificationModel notification) async {
     List<dynamic> encodedNotifications =

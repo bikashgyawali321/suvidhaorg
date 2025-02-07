@@ -11,7 +11,7 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final organizationProvider = Provider.of<OrganizationProvider>(context);
+    final organizationProvider = context.watch<OrganizationProvider>();
     return SafeArea(
       child: SingleChildScrollView(
         child: SafeArea(
@@ -37,52 +37,114 @@ class DashboardScreen extends StatelessWidget {
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            SizedBox(
-                              width: double.infinity,
-                              height: 120,
-                              child: GestureDetector(
-                                onTap: () => context.push(
-                                  '/service_list',
-                                  extra: organizationProvider.services,
-                                ),
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 30,
-                                        ),
-                                        Text(
-                                          'Total Services Offered',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 120,
+                                    child: GestureDetector(
+                                      onTap: () => context.push(
+                                        '/service_list',
+                                        extra: organizationProvider.services,
+                                      ),
+                                      child: Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 30,
                                               ),
-                                        ),
-                                        // SizedBox(
-                                        //   height: 5,
-                                        // ),
-                                        Text(
-                                          organizationProvider
-                                                  .organizationDataResponse
-                                                  ?.totalOrg
-                                                  .toString() ??
-                                              '0',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
+                                              Text(
+                                                'Total Services Offered',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                               ),
+                                              // SizedBox(
+                                              //   height: 5,
+                                              // ),
+                                              Text(
+                                                organizationProvider
+                                                        .organizationDataResponse
+                                                        ?.totalServices
+                                                        .toString() ??
+                                                    '0',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
+                                if (organizationProvider.requested > 0) ...[
+                                  SizedBox(
+                                    width: 3,
+                                  ),
+                                  Expanded(
+                                    child: SizedBox(
+                                      height: 120,
+                                      child: GestureDetector(
+                                        onTap: () => context.push(
+                                          '/orders_on_status',
+                                          extra: 'Requested',
+                                        ),
+                                        child: Card(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Column(
+                                              children: [
+                                                SizedBox(
+                                                  height: 30,
+                                                ),
+                                                Text(
+                                                  'Pending Orders',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                ),
+                                                // SizedBox(
+                                                //   height: 5,
+                                                // ),
+                                                Text(
+                                                  organizationProvider
+                                                          .organizationDataResponse
+                                                          ?.pendingOrders
+                                                          .toString() ??
+                                                      '0',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium
+                                                      ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ]
+                              ],
                             ),
                             SizedBox(
                               height: 3,

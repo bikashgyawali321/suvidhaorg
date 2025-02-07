@@ -4,10 +4,8 @@ part 'organization_data_response.g.dart';
 
 @JsonSerializable()
 class OrganizationDataResponse {
-  @JsonKey(name: 'org')
-  final num org;
   @JsonKey(name: 'service')
-  final num totalOrg;
+  final num totalServices;
   @JsonKey(name: 'bookingAll')
   final num totalBookings;
   @JsonKey(name: 'bookingPending')
@@ -26,10 +24,11 @@ class OrganizationDataResponse {
 
   @JsonKey(name: 'bookingRejected')
   final num rejectedBookings;
+  @JsonKey(name: "pendingOrders")
+  final num pendingOrders;
 
   OrganizationDataResponse({
-    required this.org,
-    required this.totalOrg,
+    required this.totalServices,
     required this.totalBookings,
     required this.pendingBookings,
     required this.acceptedBookings,
@@ -38,6 +37,7 @@ class OrganizationDataResponse {
     required this.acceptedOrders,
     required this.completedOrders,
     required this.rejectedBookings,
+    required this.pendingOrders,
   });
 
   factory OrganizationDataResponse.fromJson(Map<String, dynamic> json) =>

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/organization_model/organization_data_response.dart';
@@ -13,6 +15,8 @@ class OrganizationProvider extends ChangeNotifier {
   List<DocsService> services = [];
   ServiceArrayResponse? serviceArrayResponse;
   OrganizationDataResponse? organizationDataResponse;
+
+  int get requested => organizationDataResponse!.pendingOrders.toInt();
 
   bool loading = false;
 
@@ -83,6 +87,8 @@ class OrganizationProvider extends ChangeNotifier {
           response.errorMessage == null) {
         organizationDataResponse =
             OrganizationDataResponse.fromJson(response.result);
+
+        notifyListeners();
         notifyListeners();
       } else {
         organizationDataResponse = null;

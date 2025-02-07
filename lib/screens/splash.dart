@@ -25,6 +25,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     if (token == null) {
       if (mounted) context.go("/login");
     } else {
+      
       await _authProvider.fetchUserDetails(context);
     }
   }
@@ -75,7 +76,6 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 setState(() {
                   loading = true;
                 });
-                await context.read<NotificationService>().initialize();
                 await Future.delayed(const Duration(seconds: 2));
                 _handleRouting();
               },

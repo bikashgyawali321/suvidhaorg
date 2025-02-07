@@ -9,8 +9,7 @@ part of 'organization_data_response.dart';
 OrganizationDataResponse _$OrganizationDataResponseFromJson(
         Map<String, dynamic> json) =>
     OrganizationDataResponse(
-      org: json['org'] as num,
-      totalOrg: json['service'] as num,
+      totalServices: json['service'] as num,
       totalBookings: json['bookingAll'] as num,
       pendingBookings: json['bookingPending'] as num,
       acceptedBookings: json['bookingAccepted'] as num,
@@ -19,13 +18,13 @@ OrganizationDataResponse _$OrganizationDataResponseFromJson(
       acceptedOrders: json['orderAccepted'] as num,
       completedOrders: json['orderCompleted'] as num,
       rejectedBookings: json['bookingRejected'] as num,
+      pendingOrders: json['pendingOrders'] as num,
     );
 
 Map<String, dynamic> _$OrganizationDataResponseToJson(
         OrganizationDataResponse instance) =>
     <String, dynamic>{
-      'org': instance.org,
-      'service': instance.totalOrg,
+      'service': instance.totalServices,
       'bookingAll': instance.totalBookings,
       'bookingPending': instance.pendingBookings,
       'bookingAccepted': instance.acceptedBookings,
@@ -34,4 +33,5 @@ Map<String, dynamic> _$OrganizationDataResponseToJson(
       'orderAccepted': instance.acceptedOrders,
       'orderCompleted': instance.completedOrders,
       'bookingRejected': instance.rejectedBookings,
+      'pendingOrders': instance.pendingOrders,
     };

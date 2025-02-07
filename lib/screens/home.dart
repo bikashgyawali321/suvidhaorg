@@ -28,16 +28,19 @@ class _HomeScreenState extends State<HomeScreen>
   final OfferedServiceList offeredServiceList = OfferedServiceList();
   late TabController _tabController;
   late Timer _timer;
+  late OrganizationProvider organizationProvider;
   String currentDateTime = DateTime.now().toLocal().toVerbalDateTime;
   NotificationService get _notificationService =>
       context.read<NotificationService>();
   @override
   void initState() {
+    organizationProvider = context.read<OrganizationProvider>();
     _timer = Timer.periodic(
         const Duration(
-          minutes: 1,
+          seconds: 5,
         ), (timer) {
       setState(() {
+        organizationProvider.getOrganizationData();
         currentDateTime = DateTime.now().toLocal().toVerbalDateTimeWithDay;
       });
     });
@@ -55,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final organizationProvider = context.watch<OrganizationProvider>();
 
     return Scaffold(
       appBar: AppBar(

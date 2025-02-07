@@ -67,7 +67,9 @@ class DocsServiceName {
   Map<String, dynamic> toJson() => _$DocsServiceNameToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(
+  includeIfNull: false,
+)
 class DocsService {
   @JsonKey(name: 'org', fromJson: DocsOrganization.fromJson)
   final DocsOrganization org;

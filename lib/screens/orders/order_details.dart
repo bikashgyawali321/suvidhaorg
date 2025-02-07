@@ -16,7 +16,6 @@ class OrderDetailProvider extends ChangeNotifier {
   final BuildContext context;
   final String orderId;
   late BackendService _backendService;
-  late OrganizationProvider organizationProvider;
 
   OrderDetailProvider(this.context, this.orderId) {
     initialize();
@@ -24,8 +23,6 @@ class OrderDetailProvider extends ChangeNotifier {
 
   void initialize() {
     _backendService = Provider.of<BackendService>(context, listen: false);
-    organizationProvider =
-        Provider.of<OrganizationProvider>(context, listen: false);
     fetchOrderDetails();
   }
 
@@ -42,62 +39,6 @@ class OrderDetailProvider extends ChangeNotifier {
       loading = false;
       notifyListeners();
     } else {
-      loading = false;
-      notifyListeners();
-    }
-  }
-
-//accept order
-  Future<void> acceptOrder() async {
-    loading = true;
-    notifyListeners();
-    final response = await _backendService.acceptOrder(oid: orderId);
-    if (response.result != null &&
-        response.statusCode == 200 &&
-        response.errorMessage == null) {
-      order = DocsOrder.fromJson(response.result);
-      SnackBarHelper.showSnackbar(
-        context: context,
-        successMessage: response.message,
-      );
-      organizationProvider.getOrganizationData();
-      fetchOrderDetails();
-      loading = false;
-      notifyListeners();
-    } else {
-      SnackBarHelper.showSnackbar(
-        context: context,
-        errorMessage: response.errorMessage,
-      );
-      loading = false;
-      notifyListeners();
-    }
-  }
-
-  //mark order as completed
-
-  Future<void> markOrderAsCompleted() async {
-    loading = true;
-    notifyListeners();
-    final response = await _backendService.completeOrder(oid: orderId);
-    if (response.result != null &&
-        response.statusCode == 200 &&
-        response.errorMessage == null) {
-      order = DocsOrder.fromJson(response.result);
-      SnackBarHelper.showSnackbar(
-        context: context,
-        successMessage: response.message,
-      );
-      organizationProvider.getOrganizationData();
-      fetchOrderDetails();
-
-      loading = false;
-      notifyListeners();
-    } else {
-      SnackBarHelper.showSnackbar(
-        context: context,
-        errorMessage: response.errorMessage,
-      );
       loading = false;
       notifyListeners();
     }
@@ -253,49 +194,52 @@ class OrderDetailScreen extends StatelessWidget {
                                     ),
                                   ),
                                   customDivider(),
-                                  ListTile(
-                                    title: Text(
-                                      'Service Provider Name',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    subtitle: Text(
-                                      provider.order?.service
-                                              .serviceProviderName ??
-                                          'Not Available',
-                                    ),
-                                    trailing: provider.order != null &&
-                                            provider
-                                                .order!.service.img.isNotEmpty
-                                        ? CircleAvatar(
-                                            radius: 25,
-                                            backgroundImage: NetworkImage(
-                                              provider.order!.service.img.first,
+                                  if (provider.order?.service != null) ...[
+                                    ListTile(
+                                      title: Text(
+                                        'Service Provider Name',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                          )
-                                        : null,
-                                  ),
-                                  customDivider(),
-                                  ListTile(
-                                    title: Text(
-                                      'Service Provider Phone',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                      ),
+                                      subtitle: Text(
+                                        provider.order?.service!
+                                                .serviceProviderName ??
+                                            'Not Available',
+                                      ),
+                                      trailing: provider.order != null &&
+                                              provider.order!.service!.img
+                                                  .isNotEmpty
+                                          ? CircleAvatar(
+                                              radius: 25,
+                                              backgroundImage: NetworkImage(
+                                                provider
+                                                    .order!.service!.img.first,
+                                              ),
+                                            )
+                                          : null,
                                     ),
-                                    subtitle: Text(
-                                      provider.order?.service
-                                              .serviceProviderPhone ??
-                                          'Not Available',
+                                    customDivider(),
+                                    ListTile(
+                                      title: Text(
+                                        'Service Provider Phone',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                      subtitle: Text(
+                                        provider.order?.service!
+                                                .serviceProviderPhone ??
+                                            'Not Available',
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -304,56 +248,60 @@ class OrderDetailScreen extends StatelessWidget {
                             height: 20,
                           ),
                           Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 10,
-                              ),
-                              child: provider.order?.status == "Pending"
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Expanded(
-                                          child: CustomButton(
-                                            label: 'Accept Order',
-                                            onPressed: () {
-                                              MarkOrderAsCompletedBottomSheet
-                                                  .show(
-                                                context: context,
-                                                loading: provider.loading,
-                                                onTap: provider
-                                                    .markOrderAsCompleted,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: CustomButton(
-                                            label: 'Reject Order',
-                                            onPressed: () {
-                                              context.pop();
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : provider.order?.status == "Accepted"
-                                      ? CustomButton(
-                                          label: 'Mark as Completed',
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 10,
+                            ),
+                            child: provider.order?.status == "Requested"
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: CustomButton(
+                                          label: 'Reject Order',
+                                          backgroundColor: Colors.deepOrange,
                                           onPressed: () {
-                                            MarkOrderAsCompletedBottomSheet
-                                                .show(
+                                            context.pop();
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(
+                                        child: CustomButton(
+                                          label: 'Accept Order',
+                                          disabled: provider.loading == true
+                                              ? true
+                                              : false,
+                                          onPressed: () {
+                                            AcceptOrderBottomSheet.show(
                                               context: context,
-                                              loading: provider.loading,
-                                              onTap:
-                                                  provider.markOrderAsCompleted,
+                                              orderId: orderId,
+                                              provider: provider,
                                             );
                                           },
-                                        )
-                                      : null),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : provider.order?.status == "Accepted"
+                                    ? CustomButton(
+                                        label: 'Mark as Completed',
+                                        disabled: provider.loading == true
+                                            ? true
+                                            : false,
+                                        onPressed: () {
+                                          MarkOrderAsCompletedBottomSheet.show(
+                                            context: context,
+                                            orderId: provider.orderId,
+                                            provider: provider,
+                                          );
+                                        },
+                                      )
+                                    : null,
+                          ),
                         ],
                       ),
                     ),
@@ -374,158 +322,257 @@ class OrderDetailScreen extends StatelessWidget {
   }
 }
 
+class AcceptOrderProvider extends ChangeNotifier {
+  final BuildContext context;
+  final String orderId;
+  bool loading = false;
+  late BackendService _backendService;
+  late OrganizationProvider organizationProvider;
+  final OrderDetailProvider provider;
+
+  AcceptOrderProvider(this.context, this.orderId, this.provider) {
+    initialize();
+  }
+
+  void initialize() {
+    _backendService = Provider.of<BackendService>(context, listen: false);
+    organizationProvider =
+        Provider.of<OrganizationProvider>(context, listen: false);
+  }
+
+  Future<void> acceptOrder() async {
+    loading = true;
+    notifyListeners();
+    final response = await _backendService.acceptOrder(oid: orderId);
+    if (response.result != null &&
+        response.statusCode == 200 &&
+        response.errorMessage == null) {
+      SnackBarHelper.showSnackbar(
+        context: context,
+        successMessage: response.message,
+      );
+      provider.fetchOrderDetails();
+      context.pop();
+      loading = false;
+      notifyListeners();
+    } else {
+      SnackBarHelper.showSnackbar(
+        context: context,
+        errorMessage: response.errorMessage,
+      );
+      loading = false;
+      notifyListeners();
+    }
+  }
+}
+
 class AcceptOrderBottomSheet extends StatelessWidget {
   AcceptOrderBottomSheet(
-      {super.key, required this.loading, required this.onTap});
-  bool loading = false;
-  final VoidCallback onTap;
+      {super.key, required this.orderId, required this.provider});
+  OrderDetailProvider provider;
+  final String orderId;
   static void show({
     required BuildContext context,
-    required bool loading,
-    required VoidCallback onTap,
+    required String orderId,
+    required OrderDetailProvider provider,
   }) {
     showModalBottomSheet(
       context: context,
       builder: (context) => AcceptOrderBottomSheet(
-        loading: loading,
-        onTap: onTap,
+        orderId: orderId,
+        provider: provider,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        FormBottomSheetHeader(
-          title: 'Accept Order',
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Are you sure you want to accept this order?',
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return ChangeNotifierProvider(
+      create: (_) => AcceptOrderProvider(context, orderId, provider),
+      builder: (context, child) => Consumer<AcceptOrderProvider>(
+        builder: (context, value, child) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FormBottomSheetHeader(
+              title: 'Accept Order',
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: CustomButton(
-                      label: 'Cancel',
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      backgroundColor: Colors.redAccent,
-                    ),
+                  Text(
+                    'Are you sure you want to accept this order?',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(
-                    width: 10,
+                    height: 10,
                   ),
-                  Expanded(
-                    child: CustomButton(
-                      label: 'Accept',
-                      onPressed: onTap,
-                      loading: loading,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          label: 'Cancel',
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: CustomButton(
+                          label: 'Accept',
+                          onPressed: value.acceptOrder,
+                          loading: value.loading,
+                          disabled: value.loading == true ? true : false,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
                   ),
                 ],
               ),
-              SizedBox(
-                height: 20,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
+  }
+}
+
+class MarkOrderAsCompletedProvider extends ChangeNotifier {
+  final BuildContext context;
+  final String orderId;
+  final OrderDetailProvider provider;
+  bool loading = false;
+  late BackendService _backendService;
+  late OrganizationProvider organizationProvider;
+
+  MarkOrderAsCompletedProvider(this.context, this.orderId, this.provider) {
+    initialize();
+  }
+
+  void initialize() {
+    _backendService = Provider.of<BackendService>(context, listen: false);
+    organizationProvider =
+        Provider.of<OrganizationProvider>(context, listen: false);
+  }
+
+  Future<void> markOrderAsCompleted() async {
+    loading = true;
+    notifyListeners();
+    final response = await _backendService.completeOrder(oid: orderId);
+    if (response.result != null &&
+        response.statusCode == 200 &&
+        response.errorMessage == null) {
+      provider.fetchOrderDetails();
+      SnackBarHelper.showSnackbar(
+        context: context,
+        successMessage: response.message,
+      );
+      context.pop();
+      loading = false;
+      notifyListeners();
+    } else {
+      context.pop();
+      SnackBarHelper.showSnackbar(
+        context: context,
+        errorMessage: response.errorMessage,
+      );
+      loading = false;
+      notifyListeners();
+    }
   }
 }
 
 class MarkOrderAsCompletedBottomSheet extends StatelessWidget {
   MarkOrderAsCompletedBottomSheet(
-      {super.key, required this.loading, required this.onTap});
-  bool loading = false;
-  final VoidCallback onTap;
+      {super.key, required this.orderId, required this.provider});
+  final String orderId;
+  final OrderDetailProvider provider;
   static void show({
     required BuildContext context,
-    required bool loading,
-    required VoidCallback onTap,
+    required String orderId,
+    required OrderDetailProvider provider,
   }) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => MarkOrderAsCompletedBottomSheet(
-        loading: loading,
-        onTap: onTap,
-      ),
+      builder: (context) =>
+          MarkOrderAsCompletedBottomSheet(orderId: orderId, provider: provider),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        FormBottomSheetHeader(
-          title: 'Mark Order as Completed',
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Are you sure you want to mark this order as completed?',
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return ChangeNotifierProvider(
+      create: (_) => MarkOrderAsCompletedProvider(context, orderId, provider),
+      builder: (context, child) => Consumer<MarkOrderAsCompletedProvider>(
+        builder: (context, value, child) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FormBottomSheetHeader(
+              title: 'Mark Order as Completed',
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: CustomButton(
-                      label: 'Cancel',
-                      onPressed: () {
-                        context.pop();
-                      },
-                      backgroundColor: Colors.blue,
-                    ),
+                  Text(
+                    'Are you sure you want to mark this order as completed?',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(
-                    width: 10,
+                    height: 20,
                   ),
-                  Expanded(
-                    child: CustomButton(
-                      label: 'Yes',
-                      onPressed: onTap,
-                      loading: loading,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          label: 'Cancel',
+                          onPressed: () {
+                            context.pop();
+                          },
+                          backgroundColor: Colors.blue,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: CustomButton(
+                          label: 'Yes',
+                          onPressed: value.markOrderAsCompleted,
+                          loading: value.loading,
+                          disabled: value.loading == true ? true : false,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
                   ),
                 ],
               ),
-              SizedBox(
-                height: 10,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

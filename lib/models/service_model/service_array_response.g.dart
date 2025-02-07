@@ -73,7 +73,7 @@ Map<String, dynamic> _$DocsServiceToJson(DocsService instance) =>
       'price': instance.price,
       'isActive': instance.isActive,
       'status': instance.status,
-      'message': instance.message,
+      if (instance.message case final value?) 'message': value,
       'img': instance.img,
     };
 

@@ -108,43 +108,53 @@ class DocsServiceForOrder {
   Map<String, dynamic> toJson() => _$DocsServiceForOrderToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class DocsOrder {
   @JsonKey(name: '_id')
   final String id;
-  @JsonKey(name: 'user', fromJson: DocsUserForOrder.fromJson)
-  final DocsUserForOrder user;
-  @JsonKey(name: 'service', fromJson: DocsServiceForOrder.fromJson)
-  final DocsServiceForOrder service;
+
+  @JsonKey(name: 'service', defaultValue: null)
+  final DocsServiceForOrder? service;
+
   @JsonKey(name: "serviceName")
   final String serviceNameId;
 
-  @JsonKey(name: 'servicenames', fromJson: DocsServiceNameForOrder.fromJson)
+  @JsonKey(name: 'servicenames')
   final DocsServiceNameForOrder serviceName;
+
+  @JsonKey(name: 'user')
+  final DocsUserForOrder user;
+
   @JsonKey(name: 'status')
   final String status;
+
   @JsonKey(name: 'location')
   final String location;
+
   @JsonKey(name: 'price')
-  final num price;
+  final num? price;
+
   @JsonKey(name: 'isActive')
   final bool isActive;
+
   @JsonKey(name: 'isBlocked')
   final bool isBlocked;
-  @JsonKey(name: 'longLat', fromJson: LongitudeLatitudeModel.fromJson)
+
+  @JsonKey(name: 'longLat')
   final LongitudeLatitudeModel longLat;
+
   final DateTime createdAt;
   final DateTime updatedAt;
 
   DocsOrder({
     required this.id,
-    required this.user,
     required this.serviceName,
     required this.serviceNameId,
-    required this.service,
+    this.service,
+    required this.user,
     required this.status,
     required this.location,
-    required this.price,
+    this.price,
     required this.isActive,
     required this.isBlocked,
     required this.longLat,

@@ -37,6 +37,7 @@ class ProfileContentProvider extends ChangeNotifier {
       await backendService.removeFcmToken(fcmToken: fcmToken!);
     }
     await _customHive.deleteToken();
+    await _customHive.deleteFCMToken();
     loading = false;
     context.go('/');
     notifyListeners();

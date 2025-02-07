@@ -391,6 +391,18 @@ class BackendService extends ChangeNotifier {
     );
   }
 
+  //get all requested orders
+  Future<BackendResponse> getAllRequestedOrders(
+      {required ListingSchema listingSchema}) async {
+    return await handleRequest(
+      request: _dio.get(
+        '/order/requestedOrders',
+        queryParameters: listingSchema.toJson(),
+      ),
+      titleOfRequest: 'getting all requested orders',
+    );
+  }
+
 //get order by id
   Future<BackendResponse> getOrderById({required String oid}) async {
     return await handleRequest(
@@ -416,18 +428,6 @@ class BackendService extends ChangeNotifier {
         '/order/complete/$oid',
       ),
       titleOfRequest: 'completing order',
-    );
-  }
-
-  //fetch all reviews and ratings
-  Future<BackendResponse> getAllReviewsAndRatingsForService(
-      {required ListingSchema schema}) async {
-    return handleRequest(
-      request: _dio.get(
-        '/review/service',
-        queryParameters: schema.toJson(),
-      ),
-      titleOfRequest: 'getting all reviews and ratings for service',
     );
   }
 

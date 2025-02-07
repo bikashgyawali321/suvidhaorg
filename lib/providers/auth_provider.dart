@@ -38,9 +38,13 @@ class AuthProvider extends ChangeNotifier {
           return;
         }
         context.read<NotificationService>().sendFCMToken();
-        context.go('/home');
+        if (orderId != null) {
+          context.go('/order/$orderId');
+        } else {
+          context.go('/home');
 
-        debugPrint("User details: ${user!.name}");
+          debugPrint("User details: ${user!.name}");
+        }
       } else {
         context.go('/login');
         throw Exception(response.errorMessage);

@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -35,18 +36,27 @@ import 'services/backend_service.dart';
 import 'services/custom_hive.dart';
 
 //global navigator key
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await CustomHive().init();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await CustomHive().init();
-  runApp(const ProviderWrappedApp());
+  final backendService = BackendService();
+  final notificationService = NotificationService(backendService);
+  await notificationService.initialize();
+
+  runApp(ProviderWrappedApp(
+    notificationService: notificationService,
+  ));
 }
 
 class ProviderWrappedApp extends StatelessWidget {
-  const ProviderWrappedApp({super.key});
+  const ProviderWrappedApp({super.key, required this.notificationService});
+  final NotificationService notificationService;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +66,7 @@ class ProviderWrappedApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BackendService()),
         ChangeNotifierProvider(create: (_) => AuthProvider(_)),
         ChangeNotifierProvider(
-          create: (_) => NotificationService(_.read<BackendService>()),
+          create: (_) => notificationService,
         ),
         ChangeNotifierProvider(create: (_) => OrganizationProvider(_)),
         ChangeNotifierProvider(

@@ -105,7 +105,7 @@ class ReviewRatingsDetailBottomSheet extends StatelessWidget {
                             width: 3,
                           ),
                           Text(
-                            reviewRating.rating.toStringAsFixed(2),
+                            '(${reviewRating.rating.toStringAsFixed(1)}/5)',
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],

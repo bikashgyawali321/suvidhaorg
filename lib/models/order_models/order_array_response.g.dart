@@ -80,15 +80,17 @@ Map<String, dynamic> _$DocsServiceForOrderToJson(
 
 DocsOrder _$DocsOrderFromJson(Map<String, dynamic> json) => DocsOrder(
       id: json['_id'] as String,
-      user: DocsUserForOrder.fromJson(json['user'] as Map<String, dynamic>),
       serviceName: DocsServiceNameForOrder.fromJson(
           json['servicenames'] as Map<String, dynamic>),
       serviceNameId: json['serviceName'] as String,
-      service:
-          DocsServiceForOrder.fromJson(json['service'] as Map<String, dynamic>),
+      service: json['service'] == null
+          ? null
+          : DocsServiceForOrder.fromJson(
+              json['service'] as Map<String, dynamic>),
+      user: DocsUserForOrder.fromJson(json['user'] as Map<String, dynamic>),
       status: json['status'] as String,
       location: json['location'] as String,
-      price: json['price'] as num,
+      price: json['price'] as num?,
       isActive: json['isActive'] as bool,
       isBlocked: json['isBlocked'] as bool,
       longLat: LongitudeLatitudeModel.fromJson(
@@ -99,16 +101,16 @@ DocsOrder _$DocsOrderFromJson(Map<String, dynamic> json) => DocsOrder(
 
 Map<String, dynamic> _$DocsOrderToJson(DocsOrder instance) => <String, dynamic>{
       '_id': instance.id,
-      'user': instance.user,
-      'service': instance.service,
+      if (instance.service?.toJson() case final value?) 'service': value,
       'serviceName': instance.serviceNameId,
-      'servicenames': instance.serviceName,
+      'servicenames': instance.serviceName.toJson(),
+      'user': instance.user.toJson(),
       'status': instance.status,
       'location': instance.location,
-      'price': instance.price,
+      if (instance.price case final value?) 'price': value,
       'isActive': instance.isActive,
       'isBlocked': instance.isBlocked,
-      'longLat': instance.longLat,
+      'longLat': instance.longLat.toJson(),
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

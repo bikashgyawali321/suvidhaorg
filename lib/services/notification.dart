@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:suvidhaorg/main.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
@@ -10,6 +11,9 @@ import 'package:suvidhaorg/widgets/form_bottom_sheet_header.dart';
 import '../models/notification_model.dart';
 
 FirebaseMessaging _messaging = FirebaseMessaging.instance;
+String? orderId;
+final localNotification = FlutterLocalNotificationsPlugin();
+bool isFlutterLocalNotificatioInitialized = false;
 
 class NotificationService extends ChangeNotifier {
   late NotificationSettings? _settings;
@@ -33,31 +37,130 @@ class NotificationService extends ChangeNotifier {
 
     _settings = await _messaging.getNotificationSettings();
 
-    FirebaseMessaging.onMessage.listen(_handleForegroundNotifications);
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundNotifications);
-
-    RemoteMessage? initialMessage = await _messaging.getInitialMessage();
-    if (initialMessage != null) {
-      _handleNotifications(initialMessage);
-    }
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      _handleForegroundNotifications(message);
+    });
 
     notifyListeners();
+  }
+
+  // Initialize Flutter Local Notification
+  Future<void> setupFlutterNotifications() async {
+    if (isFlutterLocalNotificatioInitialized) return;
+
+    const channel = AndroidNotificationChannel(
+      'suvidhaorg',
+      'Suvidha Org',
+      description: 'Suvidha Organization Notification Channel',
+      importance: Importance.high,
+    );
+
+    await localNotification
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    const initializationSettingAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    final initializationSettings = InitializationSettings(
+      android: initializationSettingAndroid,
+    );
+    //flutter notification setup
+    await localNotification.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+    );
+
+    isFlutterLocalNotificatioInitialized = true;
+  }
+
+  Future<void> showNotifications(RemoteMessage message) async {
+    RemoteNotification? notification = message.notification;
+    AndroidNotification? android = message.notification?.android;
+    if (notification != null && android != null) {
+      await localNotification.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            'suvidhaorg',
+            'Suvidha Org',
+            channelDescription: 'Suvidha Organization Notification Channel',
+            importance: Importance.high,
+            priority: Priority.high,
+            ticker: 'ticker',
+            icon: '@mipmap/ic_launcher',
+          ),
+        ),
+        payload: message.data['orderId'],
+      );
+    }
+  }
+
+  Future<void> _setupMessageHandlers() async {
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        showNotifications(message);
+        _handleBackgroundMessage(message);
+      }
+    });
+    //foreground message
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      _handleForegroundNotifications(message);
+      // showNotifications(message);
+    });
+
+    //opened app
+    final initialMessage = await _messaging.getInitialMessage();
+    if (initialMessage != null) {
+      showNotifications(initialMessage);
+      _handleBackgroundMessage(initialMessage);
+    }
+
+    //background message
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      _handleBackgroundNotifications(message);
+    });
+  }
+
+  void onDidReceiveNotificationResponse(NotificationResponse response) {
+    final orderId = response.payload;
+    if (orderId != null && orderId.isNotEmpty) {
+      debugPrint('🔗 Navigating to order: $orderId');
+      GoRouter.of(navigatorKey.currentContext!).go('/order/$orderId');
+    } else {
+      debugPrint(' No valid order ID found in notification');
+    }
+  }
+
+  void _handleBackgroundMessage(RemoteMessage message) {
+    final orderId = message.data['orderId'];
+    if (orderId != null && orderId.isNotEmpty) {
+      debugPrint('🔗 Navigating to order: $orderId');
+      GoRouter.of(navigatorKey.currentContext!).go('/order/$orderId');
+    } else {
+      debugPrint(' No valid order ID found in notification');
+    }
   }
 
   Future<void> requestPermission() async {
     _settings = await _messaging.requestPermission(
       alert: true,
-      announcement: true,
+      announcement: false,
       badge: true,
       carPlay: false,
       criticalAlert: false,
-      provisional: true,
+      provisional: false,
       sound: true,
     );
 
     if (_settings?.authorizationStatus == AuthorizationStatus.authorized) {
       await sendFCMToken();
     }
+    await _setupMessageHandlers();
 
     notifyListeners();
   }
@@ -104,8 +207,9 @@ class NotificationService extends ChangeNotifier {
       title: message.notification?.title ?? 'Order Update',
       isRead: false,
     );
-    _customHive.saveNotifications(notification);
+
     _handleNotifications(message);
+    _customHive.saveNotifications(notification);
   }
 
   void _handleNotifications(RemoteMessage message) {
@@ -116,7 +220,7 @@ class NotificationService extends ChangeNotifier {
       debugPrint('🔗 Navigating to order: $orderId');
       GoRouter.of(navigatorKey.currentContext!).go('/order/$orderId');
     } else {
-      debugPrint('⚠️ No valid order ID found in notification');
+      debugPrint(' No valid order ID found in notification');
     }
   }
 
@@ -197,4 +301,23 @@ class NotificationService extends ChangeNotifier {
 
     notifyListeners();
   }
+}
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  orderId = message.data['orderId'];
+  final backendService = BackendService();
+  final notificationService = NotificationService(backendService);
+
+  await notificationService.setupFlutterNotifications();
+  await notificationService.showNotifications(message);
+  await CustomHive().saveNotifications(
+    NotificationModel(
+      orderId: message.data['orderId'],
+      data: message.notification?.body ?? 'You have an update on your order',
+      date: DateTime.now(),
+      title: message.notification?.title ?? 'Order Update',
+      isRead: true,
+    ),
+  );
 }
