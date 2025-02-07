@@ -7,7 +7,6 @@ import 'package:suvidhaorg/providers/theme_provider.dart';
 
 import '../models/auth_models/auth_token.dart';
 import '../services/custom_hive.dart';
-import '../services/notification.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});

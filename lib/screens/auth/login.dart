@@ -37,16 +37,19 @@ class LoginProvider extends ChangeNotifier {
         response.statusCode == 200 &&
         response.errorMessage == null) {
       loading = false;
+      notifyListeners();
       AuthToken token = AuthToken.fromJson(response.result!);
       await CustomHive().saveAuthToken(token);
       context.go('/');
     } else {
       loading = false;
+      notifyListeners();
       SnackBarHelper.showSnackbar(
         context: context,
         errorMessage: response.errorMessage,
       );
     }
+    notifyListeners();
   }
 }
 

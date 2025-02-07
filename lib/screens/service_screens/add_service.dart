@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -177,211 +178,264 @@ class AddServiceScreen extends StatelessWidget {
           ),
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 7,
-                children: [
-                  Text(
-                    "Provide additional details about the service to expand your organization's offerings!",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
+            child: provider.organizationProvider.organization == null
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Card(
+                        child: Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Icon(
+                            FontAwesomeIcons.buildingCircleExclamation,
+                            size: 100,
+                            color: Colors.redAccent,
+                          ),
                         ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Basic Details:',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 15,
                       ),
-                      child: Form(
-                        key: provider._formKey,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Service Provider Name',
-                                hintText:
-                                    "Name of the person who provide the service",
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 16, horizontal: 16),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onChanged: (value) => provider
-                                  .newServiceModel?.serviceProviderName = value,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter service provider name';
-                                }
-                                if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
-                                  return 'Service provider name should contain only alphabets';
-                                }
-                                if (value.length < 5) {
-                                  return 'Service provider name should be atleast 5 characters long';
-                                }
-                                return null;
-                              },
-                              keyboardType: TextInputType.name,
+                      const SizedBox(height: 20),
+                      Text(
+                        'No organization found!',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
                             ),
-                            SizedBox(
-                              height: 16,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Create your organization today and unlock all the features.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 30),
+                      CustomButton(
+                        label: 'Create One Now',
+                        onPressed: () => context.push('/add_organization'),
+                      ),
+                    ],
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 7,
+                      children: [
+                        Text(
+                          "Provide additional details about the service to expand your organization's offerings!",
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Basic Details:',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 15,
                             ),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Service Provider Email',
-                                hintText:
-                                    "Email of the person who provide the service",
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 16,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onChanged: (value) => provider.newServiceModel
-                                  ?.serviceProviderEmail = value,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter service provider email';
-                                }
-                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                    .hasMatch(value)) {
-                                  return 'Please enter a valid email address';
-                                }
-                                return null;
-                              },
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                suffixIcon: Icon(Icons.phone),
-                                labelText: 'Phone Number',
-                                hintText:
-                                    "Phone number of the person who provide the service",
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 16,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onChanged: (value) => provider.newServiceModel
-                                  ?.serviceProviderPhone = value,
-                              maxLength: 10,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter service provider phone number';
-                                }
-                                if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                                  return 'Please enter a valid phone number';
-                                }
-                                return null;
-                              },
-                              keyboardType: TextInputType.phone,
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
+                            child: Form(
+                              key: provider._formKey,
+                              child: Column(
+                                children: [
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      labelText: 'Service Provider Name',
+                                      hintText:
+                                          "Name of the person who provide the service",
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 16, horizontal: 16),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onChanged: (value) => provider
+                                        .newServiceModel
+                                        ?.serviceProviderName = value,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter service provider name';
+                                      }
+                                      if (!RegExp(r'[a-zA-Z]')
+                                          .hasMatch(value)) {
+                                        return 'Service provider name should contain only alphabets';
+                                      }
+                                      if (value.length < 5) {
+                                        return 'Service provider name should be atleast 5 characters long';
+                                      }
+                                      return null;
+                                    },
+                                    keyboardType: TextInputType.name,
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      labelText: 'Service Provider Email',
+                                      hintText:
+                                          "Email of the person who provide the service",
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                        horizontal: 16,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onChanged: (value) => provider
+                                        .newServiceModel
+                                        ?.serviceProviderEmail = value,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter service provider email';
+                                      }
+                                      if (!RegExp(
+                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                          .hasMatch(value)) {
+                                        return 'Please enter a valid email address';
+                                      }
+                                      return null;
+                                    },
+                                    keyboardType: TextInputType.emailAddress,
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      suffixIcon: Icon(Icons.phone),
+                                      labelText: 'Phone Number',
+                                      hintText:
+                                          "Phone number of the person who provide the service",
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                        horizontal: 16,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onChanged: (value) => provider
+                                        .newServiceModel
+                                        ?.serviceProviderPhone = value,
+                                    maxLength: 10,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter service provider phone number';
+                                      }
+                                      if (!RegExp(r'^[0-9]{10}$')
+                                          .hasMatch(value)) {
+                                        return 'Please enter a valid phone number';
+                                      }
+                                      return null;
+                                    },
+                                    keyboardType: TextInputType.phone,
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
 
-                            //description
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Description',
-                                hintText: "Description of the service",
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 16,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
+                                  //description
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      labelText: 'Description',
+                                      hintText: "Description of the service",
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                        horizontal: 16,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onChanged: (value) => provider
+                                        .newServiceModel?.description = value,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter service description';
+                                      }
+                                      if (value.length < 20) {
+                                        return 'Service description should be atleast 20 characters long';
+                                      }
+                                      return null;
+                                    },
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: 1,
+                                    expands: false,
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      labelText: 'Price',
+                                      hintText: "Price of the service",
+                                      prefix: Text('Rs.'),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                        horizontal: 16,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onChanged: (value) => provider
+                                        .newServiceModel
+                                        ?.price = double.parse(value),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter service price';
+                                      }
+                                      if (!RegExp(r'^[0-9]*$')
+                                          .hasMatch(value)) {
+                                        return 'Please enter a valid price';
+                                      }
+                                      return null;
+                                    },
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                ],
                               ),
-                              onChanged: (value) =>
-                                  provider.newServiceModel?.description = value,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter service description';
-                                }
-                                if (value.length < 20) {
-                                  return 'Service description should be atleast 20 characters long';
-                                }
-                                return null;
-                              },
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 1,
-                              expands: false,
                             ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Price',
-                                hintText: "Price of the service",
-                                prefix: Text('Rs.'),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 16,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onChanged: (value) => provider
-                                  .newServiceModel?.price = double.parse(value),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter service price';
-                                }
-                                if (!RegExp(r'^[0-9]*$').hasMatch(value)) {
-                                  return 'Please enter a valid price';
-                                }
-                                return null;
-                              },
-                              keyboardType: TextInputType.number,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        _imageContainer(
+                          context,
+                          imageUrls: provider.newServiceModel!.img,
+                          label: 'Service Provider Photo',
+                          onTap: provider.pickImage,
+                          errorMessage: provider.errorMessage,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        CustomButton(
+                          label: 'Add service',
+                          onPressed: provider.addService,
+                          loading: provider.loading,
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  _imageContainer(
-                    context,
-                    imageUrls: provider.newServiceModel!.img,
-                    label: 'Service Provider Photo',
-                    onTap: provider.pickImage,
-                    errorMessage: provider.errorMessage,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  CustomButton(
-                    label: 'Add service',
-                    onPressed: provider.addService,
-                    loading: provider.loading,
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
       ),

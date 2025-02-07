@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/pagination/list_model.dart';
+import 'package:suvidhaorg/providers/organization_provider.dart';
 
 import '../../models/order_models/order_array_response.dart';
 import '../../services/backend_service.dart';
@@ -16,7 +17,7 @@ class OrderProvider extends ChangeNotifier {
 
   final BuildContext context;
   late BackendService _backendService;
-
+  late OrganizationProvider organizationProvider;
   ListingSchema listingSchema = ListingSchema(page: 1, limit: 50);
 
   OrderProvider(this.context) {
@@ -25,10 +26,17 @@ class OrderProvider extends ChangeNotifier {
 
   void initialize() {
     _backendService = Provider.of<BackendService>(context, listen: false);
+    organizationProvider =
+        Provider.of<OrganizationProvider>(context, listen: false);
     fetchOrders();
   }
 
   Future<void> fetchOrders({bool reset = false}) async {
+    if (organizationProvider.organization == null) {
+      loading = false;
+      notifyListeners();
+      return;
+    }
     if (reset) {
       listingSchema.page = 1;
       orders.clear();
@@ -122,119 +130,123 @@ class OrdersScreen extends StatelessWidget {
       builder: (context, child) => Consumer<OrderProvider>(
         builder: (context, provider, child) {
           return SafeArea(
-            child: Stack(
-              children: [
-                if (provider.loading)
-                  const Center(child: LoadingScreen())
-                else if (provider.filteredOrders.isEmpty)
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Icon(
-                          Icons.shopping_cart_checkout_outlined,
-                          size: 60,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'No orders found!',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                      ),
-                      Text(
-                        'Looks like there are no orders available.',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  )
-                else
-                  NotificationListener<ScrollNotification>(
-                    onNotification: (scrollInfo) {
-                      if (scrollInfo.metrics.pixels ==
-                              scrollInfo.metrics.maxScrollExtent &&
-                          provider.hasMore) {
-                        provider.fetchMoreOrders();
-                      }
-                      return false;
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 35),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 0,
-                          vertical: 20,
-                        ),
-                        itemCount: provider.filteredOrders.length +
-                            (provider.hasMore ? 1 : 0) +
-                            1,
-                        itemBuilder: (context, index) {
-                          if (index == provider.filteredOrders.length) {
-                            return SizedBox(
-                              height: 70,
-                            );
-                          } else if (index ==
-                              provider.filteredOrders.length + 1) {
-                            return const SizedBox(
-                              height: 100,
-                            );
-                          }
-                          final orders = provider.filteredOrders[index];
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0),
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                orders.serviceName.name.toUpperCase(),
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                              subtitle: Text('Status: ${orders.status}'),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: const [
-                                  Text('View Details'),
-                                  Icon(Icons.chevron_right)
-                                ],
-                              ),
-                              onTap: () => context.push(
-                                '/order/${orders.id}',
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                Positioned(
-                  top: -2,
-                  left: 00,
-                  right: 0,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                    color: Theme.of(context).appBarTheme.foregroundColor,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: TextField(
-                        onChanged: (value) => provider.updateSearchTerm(value),
-                        decoration: const InputDecoration(
-                          hintText: 'Search Orders...',
-                          prefixIcon: Icon(
-                            Icons.search,
-                            size: 30,
+            child: RefreshIndicator(
+              onRefresh: () => provider.fetchOrders(reset: true),
+              child: Stack(
+                children: [
+                  if (provider.loading)
+                    const Center(child: LoadingScreen())
+                  else if (provider.filteredOrders.isEmpty)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Icon(
+                            Icons.shopping_cart_checkout_outlined,
+                            size: 60,
                           ),
-                          contentPadding: EdgeInsets.all(10),
-                          border: InputBorder.none,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'No orders found!',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        Text(
+                          'Looks like there are no orders available.',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    )
+                  else
+                    NotificationListener<ScrollNotification>(
+                      onNotification: (scrollInfo) {
+                        if (scrollInfo.metrics.pixels ==
+                                scrollInfo.metrics.maxScrollExtent &&
+                            provider.hasMore) {
+                          provider.fetchMoreOrders();
+                        }
+                        return false;
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 35),
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 0,
+                            vertical: 20,
+                          ),
+                          itemCount: provider.filteredOrders.length +
+                              (provider.hasMore ? 1 : 0) +
+                              1,
+                          itemBuilder: (context, index) {
+                            if (index == provider.filteredOrders.length) {
+                              return SizedBox(
+                                height: 70,
+                              );
+                            } else if (index ==
+                                provider.filteredOrders.length + 1) {
+                              return const SizedBox(
+                                height: 100,
+                              );
+                            }
+                            final orders = provider.filteredOrders[index];
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  orders.serviceName.name.toUpperCase(),
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                                subtitle: Text('Status: ${orders.status}'),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: const [
+                                    Text('View Details'),
+                                    Icon(Icons.chevron_right)
+                                  ],
+                                ),
+                                onTap: () => context.push(
+                                  '/order/${orders.id}',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  Positioned(
+                    top: -2,
+                    left: 00,
+                    right: 0,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      color: Theme.of(context).appBarTheme.foregroundColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: TextField(
+                          onChanged: (value) =>
+                              provider.updateSearchTerm(value),
+                          decoration: const InputDecoration(
+                            hintText: 'Search Orders...',
+                            prefixIcon: Icon(
+                              Icons.search,
+                              size: 30,
+                            ),
+                            contentPadding: EdgeInsets.all(10),
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

@@ -109,6 +109,7 @@ class NotificationService extends ChangeNotifier {
     });
     //foreground message
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      showNotifications(message);
       _handleForegroundNotifications(message);
       // showNotifications(message);
     });

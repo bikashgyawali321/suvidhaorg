@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/organization_model/org.dart';
+import 'package:suvidhaorg/providers/organization_provider.dart';
 import 'package:suvidhaorg/providers/theme_provider.dart';
 import 'package:suvidhaorg/screens/organization_screens/request_organization_verification.dart';
 import 'package:suvidhaorg/widgets/custom_button.dart';
@@ -35,7 +36,7 @@ class AddOrganizationProvider extends ChangeNotifier {
             : 0.0,
         locationProvider.currentPosition?.latitude != null
             ? locationProvider.currentPosition!.longitude
-            : 0.0
+            : 0.0,
       ]),
       contactPerson: '',
       contactNumber: '',
@@ -47,6 +48,7 @@ class AddOrganizationProvider extends ChangeNotifier {
   }
 
   late BackendService backendService;
+  late OrganizationProvider organizationProvider;
   bool loading = false;
   File? panImg;
   File? orgImg;
@@ -217,6 +219,8 @@ class AddOrganizationProvider extends ChangeNotifier {
         loading = false;
         organizationModel = OrganizationModel.fromJson(response.result!);
         RequestOrganizationVerification.show(context, organizationModel!.id);
+        context.go('/home');
+        organizationProvider.getAllOrganizationServices();
         notifyListeners();
       } else {
         loading = false;

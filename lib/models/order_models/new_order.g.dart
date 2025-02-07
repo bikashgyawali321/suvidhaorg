@@ -14,7 +14,7 @@ NewOrder _$NewOrderFromJson(Map<String, dynamic> json) => NewOrder(
     );
 
 Map<String, dynamic> _$NewOrderToJson(NewOrder instance) => <String, dynamic>{
-      'service': instance.service,
+      'service': instance.service,      
       'price': instance.price,
       'long': instance.long,
       'lat': instance.lat,

@@ -32,8 +32,6 @@ class RequestOrganizationVerificationProvider extends ChangeNotifier {
     if (response.result != null && response.statusCode == 200) {
       _organizationProvider.getOrganizationDetails();
       context.pop();
-      context.go('/home');
-
       SnackBarHelper.showSnackbar(
         context: context,
         successMessage: response.message,

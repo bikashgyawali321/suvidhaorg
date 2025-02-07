@@ -15,7 +15,8 @@ import 'interceptors/log_interceptor.dart';
 class BackendService extends ChangeNotifier {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: "http://127.0.0.1:4040/api",
+      baseUrl:
+          "https://suvidha-3.onrender.com/api", //https://suvidha-3.onrender.com/api
     ),
   )
     ..interceptors.add(TokenInterceptor())
@@ -342,9 +343,13 @@ class BackendService extends ChangeNotifier {
   }
 
   //get all services
-  Future<BackendResponse> getAllServices({required String orgId}) async {
+  Future<BackendResponse> getAllServices(
+      {required String orgId, required ListingSchema listingSchema}) async {
     return await handleRequest(
-      request: _dio.get('/service/org/$orgId'),
+      request: _dio.get(
+        '/service/org/$orgId',
+        queryParameters: listingSchema.toJson(),
+      ),
       titleOfRequest: 'getting all services',
     );
   }

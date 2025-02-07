@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/service_model/service_name.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
+import 'package:suvidhaorg/widgets/loading_screen.dart';
 
 class ServiceNamesProvider extends ChangeNotifier {
   final BuildContext context;
@@ -26,12 +27,15 @@ class ServiceNamesProvider extends ChangeNotifier {
     final response = await _backendService.getAllServiceNames();
 
     if (response.result != null &&
+        response.result.isNotEmpty &&
         response.statusCode == 200 &&
         response.errorMessage == null) {
       for (final service in response.result) {
         serviceNames.add(ServiceNameModel.fromJson(service));
       }
     } else {
+      loading = false;
+      notifyListeners();
       serviceNames = [];
     }
 
@@ -55,7 +59,7 @@ class ServiceNameScreen extends StatelessWidget {
           builder: (context, provider, child) {
             if (provider.loading) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: LoadingScreen(),
               );
             } else if (provider.serviceNames.isEmpty) {
               return Padding(

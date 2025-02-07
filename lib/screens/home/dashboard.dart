@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:suvidhaorg/screens/home.dart';
 
 import '../../providers/organization_provider.dart';
 import '../../widgets/custom_button.dart';
@@ -12,6 +13,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final organizationProvider = context.watch<OrganizationProvider>();
+    final IndexProvider indexProvider = context.watch<IndexProvider>();
     return SafeArea(
       child: SingleChildScrollView(
         child: SafeArea(
@@ -70,10 +72,8 @@ class DashboardScreen extends StatelessWidget {
                                               // ),
                                               Text(
                                                 organizationProvider
-                                                        .organizationDataResponse
-                                                        ?.totalServices
-                                                        .toString() ??
-                                                    '0',
+                                                    .totalServices
+                                                    .toString(),
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .titleMedium
@@ -89,7 +89,8 @@ class DashboardScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                if (organizationProvider.requested > 0) ...[
+                                if (organizationProvider.requestedOrders >
+                                    0) ...[
                                   SizedBox(
                                     width: 3,
                                   ),
@@ -110,7 +111,7 @@ class DashboardScreen extends StatelessWidget {
                                                   height: 30,
                                                 ),
                                                 Text(
-                                                  'Pending Orders',
+                                                  'Requested Orders',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyMedium
@@ -124,10 +125,8 @@ class DashboardScreen extends StatelessWidget {
                                                 // ),
                                                 Text(
                                                   organizationProvider
-                                                          .organizationDataResponse
-                                                          ?.pendingOrders
-                                                          .toString() ??
-                                                      '0',
+                                                      .requestedOrders
+                                                      .toString(),
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .titleMedium
@@ -154,21 +153,20 @@ class DashboardScreen extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Expanded(
-                                  child: Card(
-                                    child: SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.15,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () => organizationProvider
-                                                .changeIndex(2),
-                                            child: Text(
+                                  child: GestureDetector(
+                                    onTap: () => indexProvider.changeIndex(2),
+                                    child: Card(
+                                      child: SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.15,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
                                               'Total Orders',
                                               style: Theme.of(context)
                                                   .textTheme
@@ -177,21 +175,18 @@ class DashboardScreen extends StatelessWidget {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                             ),
-                                          ),
-                                          Text(
-                                            organizationProvider
-                                                    .organizationDataResponse
-                                                    ?.totalOrders
-                                                    .toString() ??
-                                                '0',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          ),
-                                        ],
+                                            Text(
+                                              organizationProvider.totalOrders
+                                                  .toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -224,10 +219,8 @@ class DashboardScreen extends StatelessWidget {
                                             ),
                                             Text(
                                               organizationProvider
-                                                      .organizationDataResponse
-                                                      ?.acceptedOrders
-                                                      .toString() ??
-                                                  '0',
+                                                  .acceptedOrders
+                                                  .toString(),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium
@@ -275,10 +268,8 @@ class DashboardScreen extends StatelessWidget {
                                             ),
                                             Text(
                                               organizationProvider
-                                                      .organizationDataResponse
-                                                      ?.completedOrders
-                                                      .toString() ??
-                                                  '0',
+                                                  .completedOrders
+                                                  .toString(),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium
@@ -294,8 +285,7 @@ class DashboardScreen extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: GestureDetector(
-                                    onTap: () =>
-                                        organizationProvider.changeIndex(0),
+                                    onTap: () => indexProvider.changeIndex(0),
                                     child: Card(
                                       child: SizedBox(
                                         height:
@@ -317,11 +307,8 @@ class DashboardScreen extends StatelessWidget {
                                                   ),
                                             ),
                                             Text(
-                                              organizationProvider
-                                                      .organizationDataResponse
-                                                      ?.totalBookings
-                                                      .toString() ??
-                                                  '0',
+                                              organizationProvider.totalBookings
+                                                  .toString(),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium
@@ -369,10 +356,8 @@ class DashboardScreen extends StatelessWidget {
                                             ),
                                             Text(
                                               organizationProvider
-                                                      .organizationDataResponse
-                                                      ?.pendingBookings
-                                                      .toString() ??
-                                                  '0',
+                                                  .pendingBookings
+                                                  .toString(),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium
@@ -414,10 +399,8 @@ class DashboardScreen extends StatelessWidget {
                                             ),
                                             Text(
                                               organizationProvider
-                                                      .organizationDataResponse
-                                                      ?.acceptedBookings
-                                                      .toString() ??
-                                                  '0',
+                                                  .acceptedBookings
+                                                  .toString(),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium
@@ -438,23 +421,23 @@ class DashboardScreen extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Expanded(
-                                  child: Card(
-                                    child: SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.15,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () => context.push(
-                                              '/bookings_on_status',
-                                              extra: 'Completed',
-                                            ),
-                                            child: Text(
+                                  child: GestureDetector(
+                                    onTap: () => context.push(
+                                      '/bookings_on_status',
+                                      extra: 'Completed',
+                                    ),
+                                    child: Card(
+                                      child: SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.15,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
                                               'Completed Bookings',
                                               style: Theme.of(context)
                                                   .textTheme
@@ -463,43 +446,41 @@ class DashboardScreen extends StatelessWidget {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                             ),
-                                          ),
-                                          Text(
-                                            organizationProvider
-                                                    .organizationDataResponse
-                                                    ?.completedBookings
-                                                    .toString() ??
-                                                '0',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          ),
-                                        ],
+                                            Text(
+                                              organizationProvider
+                                                  .completedBookings
+                                                  .toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                                 Expanded(
-                                  child: Card(
-                                    child: SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.15,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () => context.push(
-                                              '/bookings_on_status',
-                                              extra: 'Rejected',
-                                            ),
-                                            child: Text(
+                                  child: GestureDetector(
+                                    onTap: () => context.push(
+                                      '/bookings_on_status',
+                                      extra: 'Rejected',
+                                    ),
+                                    child: Card(
+                                      child: SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.15,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
                                               'Rejected Bookings',
                                               style: Theme.of(context)
                                                   .textTheme
@@ -508,21 +489,19 @@ class DashboardScreen extends StatelessWidget {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                             ),
-                                          ),
-                                          Text(
-                                            organizationProvider
-                                                    .organizationDataResponse
-                                                    ?.rejectedBookings
-                                                    .toString() ??
-                                                '0',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          ),
-                                        ],
+                                            Text(
+                                              organizationProvider
+                                                  .rejectedBookings
+                                                  .toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -534,7 +513,8 @@ class DashboardScreen extends StatelessWidget {
                             ),
                           ],
                         )
-                      : organizationProvider.services.isEmpty
+                      : organizationProvider.organization != null &&
+                              organizationProvider.services.isEmpty
                           ? Column(
                               children: [
                                 SizedBox(

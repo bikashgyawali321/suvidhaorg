@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:suvidhaorg/models/organization_model/organization_data_response.dart';
+import 'package:suvidhaorg/models/pagination/list_model.dart';
 import 'package:suvidhaorg/models/service_model/service_array_response.dart';
 import 'package:suvidhaorg/services/backend_service.dart';
 
@@ -16,7 +17,24 @@ class OrganizationProvider extends ChangeNotifier {
   ServiceArrayResponse? serviceArrayResponse;
   OrganizationDataResponse? organizationDataResponse;
 
-  int get requested => organizationDataResponse!.pendingOrders.toInt();
+  int get requestedOrders =>
+      organizationDataResponse?.pendingOrders.toInt() ?? 0;
+  int get totalServices => organizationDataResponse?.totalServices.toInt() ?? 0;
+  int get totalBookings => organizationDataResponse?.totalBookings.toInt() ?? 0;
+  int get pendingBookings =>
+      organizationDataResponse?.pendingBookings.toInt() ?? 0;
+  int get acceptedBookings =>
+      organizationDataResponse?.acceptedBookings.toInt() ?? 0;
+  int get completedBookings =>
+      organizationDataResponse?.completedBookings.toInt() ?? 0;
+  int get totalOrders => organizationDataResponse?.totalOrders.toInt() ?? 0;
+  int get acceptedOrders =>
+      organizationDataResponse?.acceptedOrders.toInt() ?? 0;
+  int get completedOrders =>
+      organizationDataResponse?.completedOrders.toInt() ?? 0;
+  int get rejectedBookings =>
+      organizationDataResponse?.rejectedBookings.toInt() ?? 0;
+  int get pendingOrders => organizationDataResponse?.pendingOrders.toInt() ?? 0;
 
   bool loading = false;
 
@@ -25,14 +43,12 @@ class OrganizationProvider extends ChangeNotifier {
     getAllOrganizationServices();
   }
   String? organizationId;
-  int index = 1;
 
   //change index
-  void changeIndex(int newIndex) {
-    index = newIndex;
-    notifyListeners();
-  }
-
+  ListingSchema listingSchema = ListingSchema(
+    page: 1,
+    limit: 100,
+  );
   //get the organization details
   Future<void> getOrganizationDetails() async {
     final response = await backendService.getOrganization();
@@ -61,6 +77,7 @@ class OrganizationProvider extends ChangeNotifier {
 
     final response = await backendService.getAllServices(
       orgId: organizationId ?? organization!.id,
+      listingSchema: listingSchema,
     );
     if (response.result != null &&
         response.statusCode == 200 &&
@@ -80,6 +97,9 @@ class OrganizationProvider extends ChangeNotifier {
   //get the data for dashboard
 
   Future<void> getOrganizationData() async {
+    if (organization == null) {
+      return;
+    }
     try {
       final response = await backendService.getOrganizationData();
       if (response.result != null &&

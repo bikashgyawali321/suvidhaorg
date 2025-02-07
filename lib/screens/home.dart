@@ -16,6 +16,15 @@ import 'package:suvidhaorg/services/notification.dart';
 import '../providers/auth_provider.dart';
 import '../providers/organization_provider.dart';
 
+class IndexProvider extends ChangeNotifier {
+  int _index = 1;
+  int get index => _index;
+  void changeIndex(int index) {
+    _index = index;
+    notifyListeners();
+  }
+}
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -58,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-
+    final indexProvider = context.watch<IndexProvider>();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -68,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen>
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1),
-          child: organizationProvider.index == 1
+          child: indexProvider.index == 1
               ? Text(
                   DateTime.now().toLocal().toVerbalDateTimeWithDay,
                 )
@@ -162,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen>
       body: Stack(
         children: [
           IndexedStack(
-            index: organizationProvider.index,
+            index: indexProvider.index,
             children: const [
               BookingScreen(),
               DashboardScreen(),
@@ -174,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen>
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.075,
+                height: MediaQuery.of(context).size.height * 0.078,
                 width: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(
                   color: Theme.of(context).brightness == Brightness.dark
@@ -183,98 +192,100 @@ class _HomeScreenState extends State<HomeScreen>
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      GestureDetector(
-                        onTap: () => organizationProvider.changeIndex(0),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.event,
-                              size: organizationProvider.index == 0 ? 30 : 25,
-                              color: organizationProvider.index == 0
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                  : Theme.of(context).colorScheme.onSurface,
-                            ),
-                            Text(
-                              'Bookings',
-                              style: TextStyle(
-                                color: organizationProvider.index == 0
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () => indexProvider.changeIndex(0),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.event,
+                                size: indexProvider.index == 0 ? 30 : 25,
+                                color: indexProvider.index == 0
                                     ? Theme.of(context)
                                         .colorScheme
                                         .primaryContainer
                                     : Theme.of(context).colorScheme.onSurface,
-                                fontWeight: organizationProvider.index == 0
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
                               ),
-                            )
-                          ],
+                              Text(
+                                'Bookings',
+                                style: TextStyle(
+                                  color: indexProvider.index == 0
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                      : Theme.of(context).colorScheme.onSurface,
+                                  fontWeight: indexProvider.index == 0
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () => organizationProvider.changeIndex(1),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.house,
-                              size: organizationProvider.index == 1 ? 30 : 25,
-                              color: organizationProvider.index == 1
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                  : Theme.of(context).colorScheme.onSurface,
-                            ),
-                            Text(
-                              'Home',
-                              style: TextStyle(
-                                color: organizationProvider.index == 1
+                        GestureDetector(
+                          onTap: () => indexProvider.changeIndex(1),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.house,
+                                size: indexProvider.index == 1 ? 30 : 25,
+                                color: indexProvider.index == 1
                                     ? Theme.of(context)
                                         .colorScheme
                                         .primaryContainer
                                     : Theme.of(context).colorScheme.onSurface,
-                                fontWeight: organizationProvider.index == 1
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
                               ),
-                            )
-                          ],
+                              Text(
+                                'Home',
+                                style: TextStyle(
+                                  color: indexProvider.index == 1
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                      : Theme.of(context).colorScheme.onSurface,
+                                  fontWeight: indexProvider.index == 1
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () => organizationProvider.changeIndex(2),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.history,
-                              size: organizationProvider.index == 2 ? 30 : 25,
-                              color: organizationProvider.index == 2
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                  : Theme.of(context).colorScheme.onSurface,
-                            ),
-                            Text(
-                              'Orders',
-                              style: TextStyle(
-                                color: organizationProvider.index == 2
+                        GestureDetector(
+                          onTap: () => indexProvider.changeIndex(2),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.history,
+                                size: indexProvider.index == 2 ? 30 : 25,
+                                color: indexProvider.index == 2
                                     ? Theme.of(context)
                                         .colorScheme
                                         .primaryContainer
                                     : Theme.of(context).colorScheme.onSurface,
-                                fontWeight: organizationProvider.index == 2
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
                               ),
-                            )
-                          ],
+                              Text(
+                                'Orders',
+                                style: TextStyle(
+                                  color: indexProvider.index == 2
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                      : Theme.of(context).colorScheme.onSurface,
+                                  fontWeight: indexProvider.index == 2
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

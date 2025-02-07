@@ -111,7 +111,6 @@ class ProfileContent extends StatelessWidget {
                   : () {
                       context.push(
                         '/organization_details',
-                        extra: provider.organizationProvider.organization,
                       );
                     },
             ),
