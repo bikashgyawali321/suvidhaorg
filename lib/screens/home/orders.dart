@@ -32,6 +32,7 @@ class OrderProvider extends ChangeNotifier {
   }
 
   Future<void> fetchOrders({bool reset = false}) async {
+    await Future.delayed(const Duration(seconds: 3));
     if (organizationProvider.organization == null) {
       loading = false;
       notifyListeners();
@@ -49,7 +50,7 @@ class OrderProvider extends ChangeNotifier {
     loading = true;
     notifyListeners();
 
-    final response = await _backendService.getAlOrders(
+    final response = await _backendService.getAllOrders(
       listingSchema: listingSchema,
     );
 

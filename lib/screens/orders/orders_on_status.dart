@@ -58,7 +58,7 @@ class OrderOnStatusProvider extends ChangeNotifier {
       return;
     }
     final response =
-        await _backendService.getAlOrders(listingSchema: listingSchema!);
+        await _backendService.getAllOrders(listingSchema: listingSchema!);
 
     if (response.result != null &&
         response.statusCode == 200 &&

@@ -384,9 +384,8 @@ class BackendService extends ChangeNotifier {
 
 //get all orders
 
-  Future<BackendResponse> getAlOrders(
+  Future<BackendResponse> getAllOrders(
       {required ListingSchema listingSchema}) async {
-    print('Listing shema ar order service: ${listingSchema.toJson()}');
     return await handleRequest(
       request: _dio.get(
         '/order/',

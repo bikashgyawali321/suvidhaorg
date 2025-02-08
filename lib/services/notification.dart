@@ -70,7 +70,8 @@ class NotificationService extends ChangeNotifier {
     //flutter notification setup
     await localNotification.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse:
+          onDidReceiveNotificationResponse,
     );
 
     isFlutterLocalNotificatioInitialized = true;
@@ -131,7 +132,7 @@ class NotificationService extends ChangeNotifier {
     final orderId = response.payload;
     if (orderId != null && orderId.isNotEmpty) {
       debugPrint('🔗 Navigating to order: $orderId');
-      GoRouter.of(navigatorKey.currentContext!).go('/order/$orderId');
+      GoRouter.of(navigatorKey.currentContext!).pushNamed('/order/$orderId');
     } else {
       debugPrint(' No valid order ID found in notification');
     }
@@ -312,13 +313,4 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   await notificationService.setupFlutterNotifications();
   await notificationService.showNotifications(message);
-  await CustomHive().saveNotifications(
-    NotificationModel(
-      orderId: message.data['orderId'],
-      data: message.notification?.body ?? 'You have an update on your order',
-      date: DateTime.now(),
-      title: message.notification?.title ?? 'Order Update',
-      isRead: true,
-    ),
-  );
 }
