@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:suvidhaorg/providers/location_provider.dart';
 import 'package:suvidhaorg/screens/home.dart';
 
 import '../../providers/organization_provider.dart';
@@ -14,6 +15,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final organizationProvider = context.watch<OrganizationProvider>();
     final IndexProvider indexProvider = context.watch<IndexProvider>();
+    final LocationProvider locationProvider = context.watch<LocationProvider>();
     return SafeArea(
       child: SingleChildScrollView(
         child: SafeArea(

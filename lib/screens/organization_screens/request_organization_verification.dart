@@ -31,6 +31,7 @@ class RequestOrganizationVerificationProvider extends ChangeNotifier {
         await _backendService.requestOrgVerification(orgId: organizationId);
     if (response.result != null && response.statusCode == 200) {
       _organizationProvider.getOrganizationDetails();
+      context.go('/home');
       context.pop();
       SnackBarHelper.showSnackbar(
         context: context,
@@ -53,8 +54,8 @@ class RequestOrganizationVerification extends StatelessWidget {
   RequestOrganizationVerification({super.key, required this.organizationId});
   String? organizationId;
 
-  static void show(BuildContext context, String organizationId) {
-    showModalBottomSheet(
+  static Future<T?> show<T>(BuildContext context, String organizationId) {
+    return showModalBottomSheet<T>(
       context: context,
       builder: (context) =>
           RequestOrganizationVerification(organizationId: organizationId),
@@ -63,7 +64,6 @@ class RequestOrganizationVerification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orgProvider = Provider.of<OrganizationProvider>(context);
     return ChangeNotifierProvider(
       create: (_) =>
           RequestOrganizationVerificationProvider(context, organizationId!),
@@ -88,7 +88,7 @@ class RequestOrganizationVerification extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomButton(
-                        onPressed: () => context.pop(),
+                        onPressed: () => context.go('/home'),
                         label: 'Not Now',
                         backgroundColor: Colors.red,
                       ),
@@ -99,7 +99,7 @@ class RequestOrganizationVerification extends StatelessWidget {
                         onPressed: () => provider.sendVerificatioRequest(),
                         label: 'Request',
                         backgroundColor: Colors.blueAccent,
-                        loading: orgProvider.loading,
+                        loading: provider.loading,
                       ),
                     ),
                   ],

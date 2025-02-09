@@ -68,11 +68,13 @@ class ProviderWrappedApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => notificationService,
         ),
+        ChangeNotifierProvider(
+          create: (_) => LocationProvider(),
+        ),
         ChangeNotifierProvider(create: (_) => OrganizationProvider(_)),
         ChangeNotifierProvider(
           create: (_) => BookingProvider(_),
         ),
-        ChangeNotifierProvider(create: (_) => LocationProvider())
       ],
       child: MyApp(),
     );
@@ -109,7 +111,6 @@ GoRouter _router = GoRouter(
     GoRoute(
       path: '/organization_details',
       builder: (context, state) {
-   
         return OrganizationDetailsScreen();
       },
     ),

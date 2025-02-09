@@ -299,6 +299,7 @@ class NotificationService extends ChangeNotifier {
     if (resp.statusCode == 200) {
       print('Order accepted');
       GoRouter.of(navigatorKey.currentContext!).push('/order/$orderId');
+      navigatorKey.currentState?.pop();
     }
 
     notifyListeners();

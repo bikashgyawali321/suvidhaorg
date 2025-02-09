@@ -26,6 +26,7 @@ class AddOrganizationProvider extends ChangeNotifier {
   void initialize() {
     backendService = Provider.of<BackendService>(context);
     locationProvider = Provider.of<LocationProvider>(context);
+    organizationProvider = Provider.of<OrganizationProvider>(context);
     org = NewOrganization(
       nameOrg: '',
       intro: '',
@@ -50,6 +51,7 @@ class AddOrganizationProvider extends ChangeNotifier {
     );
   }
 
+  String get organizationAddress => locationProvider.currentAddress ?? '';
   late BackendService backendService;
   late OrganizationProvider organizationProvider;
   bool loading = false;
@@ -225,8 +227,8 @@ class AddOrganizationProvider extends ChangeNotifier {
         loading = false;
         organizationModel = OrganizationModel.fromJson(response.result!);
         RequestOrganizationVerification.show(context, organizationModel!.id);
-        context.go('/home');
-        organizationProvider.getAllOrganizationServices();
+        await organizationProvider.getAllOrganizationServices();
+
         notifyListeners();
       } else {
         loading = false;
@@ -377,7 +379,6 @@ class AddOrganizationScreen extends StatelessWidget {
                                             .hasMatch(value)) {
                                           return 'Organization name should contain at least one alphabet';
                                         }
-                                        //org name should be 5 characters long
                                         if (value.length < 5) {
                                           return 'Organization name should be at least 5 characters long';
                                         }
@@ -495,6 +496,7 @@ class AddOrganizationScreen extends StatelessWidget {
                                       ),
                                       onChanged: (value) =>
                                           provider.org!.panNo = value,
+                                      keyboardType: TextInputType.number,
                                       maxLength: 20,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
