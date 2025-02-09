@@ -30,14 +30,17 @@ class AddOrganizationProvider extends ChangeNotifier {
       nameOrg: '',
       intro: '',
       address: locationProvider.currentAddress ?? '',
-      longLat: LongitudeLatitudeModel(type: 'Point', coordinates: [
-        locationProvider.currentPosition?.latitude != null
-            ? locationProvider.currentPosition!.longitude
-            : 0.0,
-        locationProvider.currentPosition?.latitude != null
-            ? locationProvider.currentPosition!.longitude
-            : 0.0,
-      ]),
+      longLat: LongitudeLatitudeModel(
+        type: 'Point',
+        coordinates: [
+          locationProvider.currentPosition?.latitude != null
+              ? locationProvider.currentPosition!.latitude
+              : 0.0,
+          locationProvider.currentPosition?.latitude != null
+              ? locationProvider.currentPosition!.longitude
+              : 0.0,
+        ],
+      ),
       contactPerson: '',
       contactNumber: '',
       panNo: '',
@@ -181,7 +184,10 @@ class AddOrganizationProvider extends ChangeNotifier {
             children: <Widget>[
               ListTile(
                 title: Text("Camera"),
-                onTap: () => Navigator.pop(context, ImageSource.camera),
+                onTap: () => Navigator.pop(
+                  context,
+                  ImageSource.camera,
+                ),
                 leading: Icon(Icons.camera_alt),
               ),
               ListTile(

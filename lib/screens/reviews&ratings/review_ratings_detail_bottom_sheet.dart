@@ -139,9 +139,12 @@ class ReviewRatingsDetailBottomSheet extends StatelessWidget {
                         "Review",
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      subtitle: Flexible(
-                        child: Text(reviewRating.review ?? "Not Provided"),
+                      subtitle:reviewRating.review!=null? 
+                      SizedBox(height:100, child:
+                      Flexible(
+                        child: Text(reviewRating.review ),
                       ),
+                      ):Text("No Review Pro"),
                     ),
                   ],
                 ),
